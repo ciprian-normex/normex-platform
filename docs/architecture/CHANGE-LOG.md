@@ -6,6 +6,68 @@ It is not a general coding changelog.
 
 ---
 
+## 2026-09-19 - Bounded Firestore Rule-Efficiency Refactor
+
+Separated actor identity and record-read authorisation from write shape and
+delegation validation. Reused resolved actor/project/target maps and changed-field
+sets; retained deep validation for profile creation, authority/status changes and
+membership grants. Self display-name updates avoid the delegation matrix.
+The approved canonical authority model, tenant grant matrix, specialist boundaries
+and batch protections remain unchanged.
+
+Retained all 104 existing security tests and added eight focused regressions.
+Negative assertions reject explicit rule-engine failures, with an additional
+emulator-diagnostic check. The root production rules were copied and compiled by
+the isolated emulator: **112 tests ran, 112 passed, 0 failed**. No expression-limit
+or document-access-limit errors remained in the completed run.
+
+Representative coverage includes reads/queries, profile administration, membership
+grants, scoped Commercial access and a successful five-target membership batch.
+Profile/membership creation and authority updates remain the most expensive sampled
+individual operations. Coverage aggregates multiple evaluator phases, so no precise
+remaining budget is claimed. Local ignored diagnostic artifacts and their limits
+are described in `.tests/firestore/README.md`.
+
+Only firestore.rules, the authority test file, its README and this log were changed
+for this refactor. No application, Plant, Storage, production Firebase configuration
+or live-data changes; no deployment. Ready for deployment review, subject to the
+existing canonical-data migration and frontend compatibility gates. Earlier test
+status entries below are historical and superseded by this verification.
+
+---
+
+## 2026-09-19 - Bounded Canonical Authority Security Implementation
+
+Implemented local canonical profile/delegation and membership write validation
+in firestore.rules. Platform Admin requires ACTIVE / 99 / PLATFORM_ADMIN;
+Organisation Manager requires ACTIVE / 6 / ORGANISATION_MANAGER and both
+administration permissions. Tenant grants follow the explicit role-related ceiling
+recorded in ROLE-ACCESS-MODEL.md. Legacy role fallback is removed from Firestore.
+Membership authority must match the current canonical profile UID and role.
+
+Added the isolated .tests/firestore harness for all 14 original cases, seven
+additional cases, grant ceilings, scope, legacy aliases and atomic-write attacks.
+Dependency installation, JavaScript syntax and SDK imports were checked.
+The emulator command failed before tests with spawn java ENOENT: JDK 21+ is
+required. Firestore compilation and security assertions are not yet verified.
+
+No application, Plant JavaScript, Storage rules, production Firebase configuration,
+vision or live data changes; no deployment. Canonical account migration and
+coordinated legacy frontend cutover remain deployment prerequisites. Existing
+Plant numeric visibility/request shortcuts remain separate work.
+
+---
+
+## 2026-09-19 - Approved Foundation and Plant Delivery Decisions
+
+Recorded AD-01 to AD-08 in [DEVELOPMENT-ROADMAP.md](DEVELOPMENT-ROADMAP.md): Option A, safe fixed delegation, Plant cost restrictions, absence privacy, 50 MB evidence, eight loading states, asset-first delivery and bounded Phase 0.
+
+Corrected AGENTS.MD vision paths and reconciled Plant/access/security/document specifications. No application/rule changes, deployment or record migration. Coding requires separate approval.
+
+Historical notes below are retained as history. The old 25 MB limit is superseded by 50 MB. The earlier Storage-rebuild statement is not evidence of current enforcement: checked-in storage.rules denies all client access.
+
+---
+
 ## 2026-09-07
 
 ### Architecture Foundation Locked
@@ -85,9 +147,11 @@ canManageCommercial
 
 Level 99 remains the explicit platform-wide override.
 
-### Authority Model
+### Superseded Authority Model (historical)
 
-Confirmed:
+The following earlier hierarchy is superseded by the functional authority model above and must not guide implementation.
+
+Previously recorded:
 
 - Level 1 - Operational
 - Level 2 - Project / Site Management
