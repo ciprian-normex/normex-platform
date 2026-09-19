@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>
+    Fleet | Plant | Colemans | NORMEX
+  </title>
+
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/plant/shared/plant-shell.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/plant/fleet/fleet.css"
+  />
+
+</head>
+
+
+<body>
+
+  <div class="workspace">
+
+
+    <!-- =====================================================
+         ORGANISATION HEADER
+    ====================================================== -->
+
+    <header class="workspace-header">
+
+      <div class="workspace-container">
+
+        <div class="workspace-header__surface">
+
+
+          <div class="workspace-brand">
+
+            <p class="workspace-brand__product">
+              NORMEX · Contractor Workspace
+            </p>
+
+            <h1
+              id="workspaceOrganisationName"
+              class="workspace-brand__name"
+            >
+              Colemans
+            </h1>
+
+            <p class="workspace-brand__tagline">
+              Projects, resources and operational control
+            </p>
+
+          </div>
+
+
+          <div class="workspace-header-actions">
+
+
+            <div class="workspace-status">
+
+              <span
+                class="workspace-status__pulse"
+                aria-hidden="true"
+              ></span>
+
+              <span class="workspace-status__label">
+                Organisation Workspace
+              </span>
+
+            </div>
+
+
+            <div class="workspace-user">
+
+              <div class="workspace-user__details">
+
+                <span
+                  id="workspaceUserName"
+                  class="workspace-user__name"
+                >
+                  User
+                </span>
+
+                <span
+                  id="workspaceUserRole"
+                  class="workspace-user__role"
+                >
+                  Loading
+                </span>
+
+              </div>
+
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ORGANISATION NAV
+    ====================================================== -->
+
+    <nav
+      class="workspace-nav"
+      aria-label="Organisation navigation"
+    >
+
+      <div class="workspace-container">
+
+        <div
+          id="contractorNavSurface"
+          class="workspace-nav__surface"
+        >
+
+          <div
+            id="contractorNavLinks"
+            class="workspace-nav__links"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="workspace-main">
+
+      <div class="workspace-container">
+
+
+        <!-- =================================================
+             PLANT SUBNAV
+        ================================================== -->
+
+        <nav
+          id="plantSubnav"
+          aria-label="Plant workspace navigation"
+        ></nav>
+
+
+        <!-- =================================================
+             FLEET HERO
+        ================================================== -->
+
+        <section class="fleet-hero">
+
+          <div class="fleet-hero__identity">
+
+
+            <div>
+
+              <p class="fleet-eyebrow">
+                Fleet Control
+              </p>
+
+              <h2 class="fleet-hero__title">
+                Fleet
+              </h2>
+
+              <p class="fleet-hero__note">
+                Live control of owned, hired and leased plant across the organisation.
+              </p>
+
+            </div>
+
+
+            <div class="fleet-hero__actions">
+
+
+              <a
+                id="hireControlButton"
+                class="fleet-secondary-action"
+                href="/modules/contractor/plant/hire/"
+                hidden
+              >
+                Hire Control
+              </a>
+
+
+              <a
+                id="requestPlantButton"
+                class="fleet-secondary-action"
+                href="/modules/contractor/plant/requests/"
+                hidden
+              >
+                Request Plant
+              </a>
+
+
+              <button
+                id="addPlantButton"
+                class="fleet-primary-action"
+                type="button"
+                hidden
+              >
+                + Add Plant
+              </button>
+
+
+            </div>
+
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FINANCIAL POSITION
+        ================================================== -->
+
+        <section
+          id="financialPositionSection"
+          class="fleet-section fleet-section--financial"
+          hidden
+        >
+
+          <header class="fleet-section__header">
+
+            <div>
+
+              <p class="fleet-eyebrow">
+                Financial Position
+              </p>
+
+              <h3 class="fleet-section__title">
+                Hire Exposure
+              </h3>
+
+              <p class="fleet-section__note">
+                Current external fleet commitment and immediate cost pressure.
+              </p>
+
+            </div>
+
+
+            <span
+              id="hireExposureLabel"
+              class="fleet-access-label"
+            >
+              Live hire position
+            </span>
+
+          </header>
+
+
+          <div
+            id="financialMetrics"
+            class="fleet-metrics fleet-metrics--financial"
+          ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             CURRENT POSITION
+        ================================================== -->
+
+        <section class="fleet-section">
+
+          <header class="fleet-section__header">
+
+            <div>
+
+              <p class="fleet-eyebrow">
+                Current Position
+              </p>
+
+              <h3 class="fleet-section__title">
+                Fleet Position
+              </h3>
+
+              <p class="fleet-section__note">
+                Organisation-wide operational position across every active plant asset.
+              </p>
+
+            </div>
+
+
+            <span
+              id="fleetAccessLabel"
+              class="fleet-access-label"
+            >
+              Read only
+            </span>
+
+          </header>
+
+
+          <div
+            id="fleetMetrics"
+            class="fleet-metrics"
+          ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             HIRED / LEASED
+        ================================================== -->
+
+        <section class="fleet-section">
+
+          <header class="fleet-section__header fleet-section__header--split">
+
+            <div>
+
+              <p class="fleet-eyebrow">
+                Priority View
+              </p>
+
+              <h3 class="fleet-section__title">
+                Hired / Leased Fleet
+              </h3>
+
+              <p class="fleet-section__note">
+                External plant is shown first because cost continues while hire remains active.
+              </p>
+
+            </div>
+
+
+            <div class="fleet-section__actions">
+
+              <span
+                id="hiredFleetCount"
+                class="fleet-count"
+              >
+                0 plant
+              </span>
+
+
+              <button
+                id="showAllHiredButton"
+                class="fleet-small-action"
+                type="button"
+              >
+                View hired fleet
+              </button>
+
+            </div>
+
+          </header>
+
+
+          <div
+            id="hiredFleetGrid"
+            class="fleet-priority-grid"
+          ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             OWNED
+        ================================================== -->
+
+        <section class="fleet-section">
+
+          <header class="fleet-section__header fleet-section__header--split">
+
+            <div>
+
+              <p class="fleet-eyebrow">
+                Organisation Fleet
+              </p>
+
+              <h3 class="fleet-section__title">
+                Owned Plant
+              </h3>
+
+              <p class="fleet-section__note">
+                Owned assets, current deployment, utilisation and operational condition.
+              </p>
+
+            </div>
+
+
+            <div class="fleet-section__actions">
+
+              <span
+                id="ownedFleetCount"
+                class="fleet-count"
+              >
+                0 plant
+              </span>
+
+
+              <button
+                id="showAllOwnedButton"
+                class="fleet-small-action"
+                type="button"
+              >
+                View owned fleet
+              </button>
+
+            </div>
+
+          </header>
+
+
+          <div
+            id="ownedFleetGrid"
+            class="fleet-priority-grid"
+          ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             FLEET BY TYPE
+        ================================================== -->
+
+        <section class="fleet-section">
+
+          <header class="fleet-section__header">
+
+            <div>
+
+              <p class="fleet-eyebrow">
+                Fleet Structure
+              </p>
+
+              <h3 class="fleet-section__title">
+                Fleet by Type
+              </h3>
+
+              <p class="fleet-section__note">
+                Select a category to focus the live fleet view below.
+              </p>
+
+            </div>
+
+
+            <span
+              id="fleetCategoryCount"
+              class="fleet-count"
+            >
+              0 categories
+            </span>
+
+          </header>
+
+
+          <div
+            id="fleetCategoryGrid"
+            class="fleet-category-grid"
+          ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             LIVE FLEET
+        ================================================== -->
+
+        <section class="fleet-section">
+
+          <header class="fleet-section__header fleet-section__header--split">
+
+            <div>
+
+              <p class="fleet-eyebrow">
+                Fleet Assets
+              </p>
+
+              <h3
+                id="currentFleetTitle"
+                class="fleet-section__title"
+              >
+                Current Fleet
+              </h3>
+
+              <p
+                id="currentFleetNote"
+                class="fleet-section__note"
+              >
+                Live asset position across the organisation.
+              </p>
+
+            </div>
+
+
+            <span
+              id="currentFleetCount"
+              class="fleet-count"
+            >
+              0 plant
+            </span>
+
+          </header>
+
+
+          <div
+            class="fleet-view-switch"
+            role="group"
+            aria-label="Fleet ownership view"
+          >
+
+            <button
+              class="fleet-view-switch__button is-active"
+              type="button"
+              data-fleet-view="ALL"
+            >
+              All Fleet
+            </button>
+
+
+            <button
+              class="fleet-view-switch__button"
+              type="button"
+              data-fleet-view="HIRED"
+            >
+              Hired / Leased
+            </button>
+
+
+            <button
+              class="fleet-view-switch__button"
+              type="button"
+              data-fleet-view="OWNED"
+            >
+              Owned
+            </button>
+
+          </div>
+
+
+          <div class="fleet-toolbar">
+
+
+            <label class="fleet-field fleet-field--search">
+
+              <span>
+                Search
+              </span>
+
+              <input
+                id="fleetSearchInput"
+                type="search"
+                placeholder="Plant ID, make, model, serial, supplier or location"
+                autocomplete="off"
+              />
+
+            </label>
+
+
+            <label class="fleet-field">
+
+              <span>
+                Plant Type
+              </span>
+
+              <select id="fleetTypeFilter">
+
+                <option value="">
+                  All Plant Types
+                </option>
+
+              </select>
+
+            </label>
+
+
+            <label class="fleet-field">
+
+              <span>
+                Status
+              </span>
+
+              <select id="fleetStatusFilter">
+
+                <option value="">
+                  All Statuses
+                </option>
+
+              </select>
+
+            </label>
+
+
+            <button
+              id="clearFleetFilters"
+              class="fleet-clear-button"
+              type="button"
+            >
+              Clear
+            </button>
+
+
+          </div>
+
+
+          <div
+            id="fleetAssetGrid"
+            class="fleet-asset-grid"
+          ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             REGISTER
+        ================================================== -->
+
+        <section class="fleet-section">
+
+          <header class="fleet-section__header">
+
+            <div>
+
+              <p class="fleet-eyebrow">
+                Plant Register
+              </p>
+
+              <h3 class="fleet-section__title">
+                Full Fleet Register
+              </h3>
+
+              <p class="fleet-section__note">
+                Administrative register for searching, reporting and opening the full asset record.
+              </p>
+
+            </div>
+
+
+            <span
+              id="fleetRegisterCount"
+              class="fleet-count"
+            >
+              0 plant
+            </span>
+
+          </header>
+
+
+          <div
+            id="fleetRegister"
+            class="fleet-register"
+          ></div>
+
+        </section>
+
+
+      </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="workspace-footer">
+
+      <div class="workspace-container">
+
+        <div class="workspace-footer__inner">
+
+          <span class="workspace-footer__brand">
+            <strong>NORMEX</strong>
+          </span>
+
+          <span
+            id="workspaceFooterOrganisation"
+            class="workspace-footer__context"
+          >
+            Colemans
+          </span>
+
+        </div>
+
+      </div>
+
+    </footer>
+
+
+  </div>
+
+
+  <!-- =====================================================
+       MOBILE NAV
+  ====================================================== -->
+
+  <aside
+    id="contractorMobileNav"
+    class="workspace-mobile-nav"
+    hidden
+  >
+
+    <div
+      id="mobileNavBackdrop"
+      class="workspace-mobile-nav__backdrop"
+    ></div>
+
+
+    <div class="workspace-mobile-nav__panel">
+
+      <header class="workspace-mobile-nav__header">
+
+        <div>
+
+          <span class="workspace-mobile-nav__eyebrow">
+            Colemans
+          </span>
+
+          <h2 class="workspace-mobile-nav__title">
+            Navigation
+          </h2>
+
+        </div>
+
+
+        <button
+          id="mobileNavClose"
+          class="workspace-mobile-nav__close"
+          type="button"
+          aria-label="Close navigation"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <nav
+        id="contractorMobileNavLinks"
+        class="workspace-mobile-nav__links"
+        aria-label="Mobile organisation navigation"
+      ></nav>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =====================================================
+       ADD PLANT MODAL
+  ====================================================== -->
+
+  <div
+    id="addPlantModal"
+    class="fleet-modal"
+    hidden
+  >
+
+    <div
+      id="addPlantBackdrop"
+      class="fleet-modal__backdrop"
+    ></div>
+
+
+    <section
+      class="fleet-modal__panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="addPlantModalTitle"
+    >
+
+      <header class="fleet-modal__header">
+
+        <div>
+
+          <p class="fleet-eyebrow">
+            Plant Record
+          </p>
+
+          <h2
+            id="addPlantModalTitle"
+            class="fleet-modal__title"
+          >
+            Add Plant
+          </h2>
+
+          <p class="fleet-modal__subtitle">
+            Create the permanent plant identity first. Deployment, inspections,
+            defects and movements will build its operational history.
+          </p>
+
+        </div>
+
+
+        <button
+          id="closeAddPlantModal"
+          class="fleet-modal__close"
+          type="button"
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <form
+        id="addPlantForm"
+        class="fleet-modal__body"
+      >
+
+
+        <!-- ===============================================
+             01 IDENTITY
+        ================================================ -->
+
+        <section class="fleet-form-section">
+
+          <header>
+
+            <span>
+              01
+            </span>
+
+            <div>
+
+              <strong>
+                Plant Identity
+              </strong>
+
+              <p>
+                The NORMEX Plant ID is permanent and will also be used as the
+                Firestore document ID.
+              </p>
+
+            </div>
+
+          </header>
+
+
+          <div class="fleet-form-grid">
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Plant Type *
+              </span>
+
+              <select
+                id="plantType"
+                required
+              ></select>
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Ownership *
+              </span>
+
+              <select
+                id="plantOwnershipType"
+                required
+              ></select>
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Manufacturer
+              </span>
+
+              <input
+                id="plantManufacturer"
+                type="text"
+                placeholder="e.g. Hitachi"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Model
+              </span>
+
+              <input
+                id="plantModel"
+                type="text"
+                placeholder="e.g. ZX490"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Serial Number
+              </span>
+
+              <input
+                id="plantSerialNumber"
+                type="text"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Registration Number
+              </span>
+
+              <input
+                id="plantRegistrationNumber"
+                type="text"
+                placeholder="If applicable"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Year
+              </span>
+
+              <input
+                id="plantYear"
+                type="number"
+                min="1950"
+                max="2100"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Fuel / Power
+              </span>
+
+              <select id="plantFuelType">
+
+                <option value="">
+                  Not recorded
+                </option>
+
+                <option value="DIESEL">
+                  Diesel
+                </option>
+
+                <option value="HVO">
+                  HVO
+                </option>
+
+                <option value="PETROL">
+                  Petrol
+                </option>
+
+                <option value="ELECTRIC">
+                  Electric
+                </option>
+
+                <option value="HYBRID">
+                  Hybrid
+                </option>
+
+                <option value="OTHER">
+                  Other
+                </option>
+
+              </select>
+
+            </label>
+
+
+          </div>
+
+
+          <div class="fleet-reference-preview">
+
+            <span>
+              NORMEX Plant ID
+            </span>
+
+            <strong id="plantReferencePreview">
+              Generated when plant is saved
+            </strong>
+
+          </div>
+
+        </section>
+
+
+        <!-- ===============================================
+             02 SPECIFICATION
+        ================================================ -->
+
+        <section class="fleet-form-section">
+
+          <header>
+
+            <span>
+              02
+            </span>
+
+            <div>
+
+              <strong>
+                Specification
+              </strong>
+
+              <p>
+                Enough information to identify whether this asset is suitable
+                for future requests.
+              </p>
+
+            </div>
+
+          </header>
+
+
+          <div class="fleet-form-grid">
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Operating Weight
+              </span>
+
+              <input
+                id="plantOperatingWeight"
+                type="text"
+                placeholder="e.g. 50t"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Capacity / Reach
+              </span>
+
+              <input
+                id="plantCapacity"
+                type="text"
+                placeholder="e.g. 24m reach"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field fleet-form-field--wide">
+
+              <span>
+                Description / Specification
+              </span>
+
+              <textarea
+                id="plantSpecification"
+                rows="3"
+                placeholder="Key capabilities, configuration or limitations"
+              ></textarea>
+
+            </label>
+
+
+          </div>
+
+        </section>
+
+
+        <!-- ===============================================
+             03 HIRE
+        ================================================ -->
+
+        <section
+          id="hireDetailsSection"
+          class="fleet-form-section"
+          hidden
+        >
+
+          <header>
+
+            <span>
+              03
+            </span>
+
+            <div>
+
+              <strong>
+                Hire & Financial Position
+              </strong>
+
+              <p>
+                Creates the first canonical hire record linked to this plant asset.
+              </p>
+
+            </div>
+
+          </header>
+
+
+          <div class="fleet-form-grid">
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Hire Supplier *
+              </span>
+
+              <input
+                id="plantSupplierName"
+                type="text"
+                placeholder="e.g. Sunbelt Rentals"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Supplier Asset Ref
+              </span>
+
+              <input
+                id="plantSupplierReference"
+                type="text"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Hire Start
+              </span>
+
+              <input
+                id="plantHireStart"
+                type="date"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Expected Off-Hire
+              </span>
+
+              <input
+                id="plantExpectedOffHire"
+                type="date"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Hire Rate
+              </span>
+
+              <input
+                id="plantHireRate"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Rate Unit
+              </span>
+
+              <select id="plantHireRateUnit">
+
+                <option value="DAY">
+                  Per Day
+                </option>
+
+                <option
+                  value="WEEK"
+                  selected
+                >
+                  Per Week
+                </option>
+
+                <option value="MONTH">
+                  Per Month
+                </option>
+
+              </select>
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Delivery Charge
+              </span>
+
+              <input
+                id="plantDeliveryCharge"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Collection Charge
+              </span>
+
+              <input
+                id="plantCollectionCharge"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Hire Contract Ref
+              </span>
+
+              <input
+                id="plantHireContractReference"
+                type="text"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Minimum Hire Period
+              </span>
+
+              <input
+                id="plantMinimumHirePeriod"
+                type="text"
+                placeholder="e.g. 4 weeks"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Contact Name
+              </span>
+
+              <input
+                id="plantHireContactName"
+                type="text"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Contact Phone
+              </span>
+
+              <input
+                id="plantHireContactPhone"
+                type="tel"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field fleet-form-field--wide">
+
+              <span>
+                Contact Email
+              </span>
+
+              <input
+                id="plantHireContactEmail"
+                type="email"
+              />
+
+            </label>
+
+
+          </div>
+
+        </section>
+
+
+        <!-- ===============================================
+             04 ATTACHMENTS
+        ================================================ -->
+
+        <section class="fleet-form-section">
+
+          <header>
+
+            <span>
+              04
+            </span>
+
+            <div>
+
+              <strong>
+                Configuration & Attachments
+              </strong>
+
+              <p>
+                Record major attachments or configuration supplied with the plant.
+              </p>
+
+            </div>
+
+          </header>
+
+
+          <div class="fleet-inline-add">
+
+            <input
+              id="plantAttachmentInput"
+              type="text"
+              placeholder="e.g. Pulveriser, selector grab, breaker"
+            />
+
+            <button
+              id="addPlantAttachmentButton"
+              class="fleet-secondary-action"
+              type="button"
+            >
+              + Add Attachment
+            </button>
+
+          </div>
+
+
+          <div
+            id="plantAttachmentList"
+            class="fleet-tag-list"
+          >
+
+            <span class="fleet-muted-text">
+              No attachments added
+            </span>
+
+          </div>
+
+        </section>
+
+
+        <!-- ===============================================
+             05 START POSITION
+        ================================================ -->
+
+        <section class="fleet-form-section">
+
+          <header>
+
+            <span>
+              05
+            </span>
+
+            <div>
+
+              <strong>
+                Starting Position
+              </strong>
+
+              <p>
+                This is the asset's initial operational cache. Formal deployment
+                history will be controlled through assignments and movements.
+              </p>
+
+            </div>
+
+          </header>
+
+
+          <div class="fleet-form-grid">
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Starting Status
+              </span>
+
+              <select id="plantInitialStatus">
+
+                <option value="AVAILABLE">
+                  Available
+                </option>
+
+                <option value="RESERVED">
+                  Reserved
+                </option>
+
+                <option value="AWAITING_TRANSPORT">
+                  Awaiting Transport
+                </option>
+
+                <option value="IN_TRANSIT">
+                  In Transit
+                </option>
+
+                <option value="DEPLOYED">
+                  Deployed
+                </option>
+
+                <option value="MAINTENANCE">
+                  Maintenance
+                </option>
+
+                <option value="OFF_ROAD">
+                  Off Road
+                </option>
+
+              </select>
+
+            </label>
+
+
+            <label class="fleet-form-field">
+
+              <span>
+                Current Location
+              </span>
+
+              <input
+                id="plantCurrentLocation"
+                type="text"
+                placeholder="e.g. Colemans Yard / JLR Castle Bromwich"
+              />
+
+            </label>
+
+
+            <label class="fleet-form-field fleet-form-field--wide">
+
+              <span>
+                Operational Notes
+              </span>
+
+              <textarea
+                id="plantNotes"
+                rows="3"
+                placeholder="Useful identification or initial control information"
+              ></textarea>
+
+            </label>
+
+
+          </div>
+
+        </section>
+
+
+        <div
+          id="addPlantError"
+          class="fleet-message fleet-message--error"
+          hidden
+        ></div>
+
+
+        <footer class="fleet-modal__footer">
+
+          <button
+            id="cancelAddPlant"
+            class="fleet-secondary-action"
+            type="button"
+          >
+            Cancel
+          </button>
+
+
+          <button
+            id="savePlant"
+            class="fleet-primary-action"
+            type="submit"
+          >
+            Add Plant
+          </button>
+
+        </footer>
+
+
+      </form>
+
+    </section>
+
+  </div>
+
+
+  <script
+    src="/modules/contractor/shared/js/config.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/shared/js/shell.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/plant/fleet/fleet.js"
+  ></script>
+
+
+</body>
+
+</html>

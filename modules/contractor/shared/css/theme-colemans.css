@@ -1,0 +1,54 @@
+/* =========================================================
+   COLEMANS
+   ORGANISATION THEME
+
+   Branding only.
+   Structural workspace styling lives in workspace.css.
+========================================================= */
+
+:root {
+  /* =====================================================
+     CORE BRAND
+  ===================================================== */
+
+  --brand-primary: #30463a;
+  --brand-primary-hover: #263a30;
+  --brand-primary-dark: #1d2d25;
+  --brand-primary-deep: #142119;
+
+  --brand-secondary: #65776d;
+  --brand-muted: #87958d;
+
+  --brand-accent: #9caf9f;
+  --brand-accent-soft: #dfe8e1;
+
+  --brand-surface: #f1f5f2;
+  --brand-surface-strong: #e6ede8;
+
+
+  /* =====================================================
+     PAGE ATMOSPHERE
+  ===================================================== */
+
+  --brand-page-top: #26392f;
+  --brand-page-top-deep: #18271f;
+
+  --brand-page-bg: #edf1ee;
+
+
+  /* =====================================================
+     STATUS
+  ===================================================== */
+
+  --status-good: #4e8259;
+  --status-good-bg: #edf6ee;
+
+  --status-warning: #a87410;
+  --status-warning-bg: #fff7df;
+
+  --status-danger: #a23b41;
+  --status-danger-bg: #fff0f1;
+
+  --status-neutral: #657069;
+  --status-neutral-bg: #eff2f0;
+}

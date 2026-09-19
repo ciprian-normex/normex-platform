@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="theme-color"
+    content="#202d27"
+  />
+
+  <title>Colemans | NORMEX</title>
+
+  <link
+    rel="stylesheet"
+    href="/css/login.css"
+  />
+</head>
+
+<body>
+
+  <main class="login-page">
+
+    <!-- =====================================================
+         BRAND / PRODUCT SIDE
+    ====================================================== -->
+
+    <section class="login-brand">
+
+      <div class="login-brand__glow login-brand__glow--one"></div>
+      <div class="login-brand__glow login-brand__glow--two"></div>
+
+      <div class="login-brand__grid"></div>
+
+
+      <div class="login-brand__top">
+
+        <div class="brand-mark">
+          <span class="brand-mark__dot"></span>
+
+          <span class="brand-mark__text">
+            COLEMANS
+          </span>
+        </div>
+
+      </div>
+
+
+      <div class="login-brand__content">
+
+        <p class="login-brand__eyebrow">
+          Organisation Workspace
+        </p>
+
+        <h1 class="login-brand__title">
+          Control where it matters.
+        </h1>
+
+
+        <div class="login-brand__cycle">
+
+          <span class="login-brand__cycle-label">
+            Keep
+          </span>
+
+          <div class="login-brand__cycle-window">
+
+            <div class="login-brand__cycle-track">
+              <span>projects ready.</span>
+              <span>people competent.</span>
+              <span>plant compliant.</span>
+              <span>actions visible.</span>
+              <span>margins understood.</span>
+              <span>projects ready.</span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="login-brand__footer">
+
+        <span>
+          Secure organisation access
+        </span>
+
+        <span class="powered-by">
+          Powered by
+          <strong>NORMEX</strong>
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         AUTHENTICATION SIDE
+    ====================================================== -->
+
+    <section class="login-access">
+
+      <div class="login-access__inner">
+
+
+        <!-- =================================================
+             LOGIN PANEL
+        ================================================== -->
+
+        <section
+          id="loginPanel"
+          class="auth-panel"
+          hidden
+        >
+
+          <header class="auth-header">
+
+            <p class="auth-header__eyebrow">
+              Welcome back
+            </p>
+
+            <h2 class="auth-header__title">
+              Sign in
+            </h2>
+
+            <p class="auth-header__note">
+              Use your Colemans organisation account.
+            </p>
+
+          </header>
+
+
+          <form
+            id="loginForm"
+            class="auth-form"
+          >
+
+            <div class="form-field">
+
+              <label
+                class="form-field__label"
+                for="email"
+              >
+                Email address
+              </label>
+
+              <input
+                id="email"
+                class="form-field__input"
+                type="email"
+                autocomplete="email"
+                spellcheck="false"
+                required
+              />
+
+            </div>
+
+
+            <div class="form-field">
+
+              <label
+                class="form-field__label"
+                for="password"
+              >
+                Password
+              </label>
+
+              <input
+                id="password"
+                class="form-field__input"
+                type="password"
+                autocomplete="current-password"
+                required
+              />
+
+            </div>
+
+
+            <button
+              id="loginButton"
+              class="auth-button"
+              type="submit"
+            >
+              <span>
+                Sign in
+              </span>
+
+              <span
+                class="auth-button__arrow"
+                aria-hidden="true"
+              >
+                →
+              </span>
+            </button>
+
+
+            <p
+              id="loginError"
+              class="auth-message auth-message--error"
+              hidden
+            ></p>
+
+          </form>
+
+
+          <div class="auth-panel__footer">
+            <span>
+              Protected NORMEX workspace
+            </span>
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             LOADING PANEL
+        ================================================== -->
+
+        <section
+          id="loadingPanel"
+          class="auth-state"
+        >
+
+          <div
+            class="auth-loader"
+            aria-hidden="true"
+          >
+            <span></span>
+          </div>
+
+          <h2 class="auth-state__title">
+            Opening workspace
+          </h2>
+
+          <p class="auth-state__note">
+            Checking your account.
+          </p>
+
+        </section>
+
+
+        <!-- =================================================
+             NO WORKSPACE ACCESS
+        ================================================== -->
+
+        <section
+          id="accessPanel"
+          class="auth-state"
+          hidden
+        >
+
+          <div class="auth-state__symbol">
+            !
+          </div>
+
+          <h2 class="auth-state__title">
+            Workspace unavailable
+          </h2>
+
+          <p class="auth-state__note">
+            Your account does not currently have access.
+          </p>
+
+        </section>
+
+
+      </div>
+
+
+      <footer class="login-access__footer">
+
+        <span>
+          COLEMANS
+        </span>
+
+        <span>
+          NORMEX
+        </span>
+
+      </footer>
+
+    </section>
+
+  </main>
+
+
+  <script
+    type="module"
+    src="/js/auth.js"
+  ></script>
+
+</body>
+</html>

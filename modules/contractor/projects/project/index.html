@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>
+    Project | Colemans | NORMEX
+  </title>
+
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/projects/shared/project-nav.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/projects/project/project.css"
+  />
+
+</head>
+
+
+<body>
+
+  <div class="workspace">
+
+
+    <!-- =====================================================
+         ORGANISATION HEADER
+    ====================================================== -->
+
+    <header class="workspace-header">
+
+      <div class="workspace-container">
+
+        <div class="workspace-header__surface">
+
+
+          <div class="workspace-brand">
+
+            <p class="workspace-brand__product">
+              NORMEX · Contractor Workspace
+            </p>
+
+            <h1
+              id="workspaceOrganisationName"
+              class="workspace-brand__name"
+            >
+              Colemans
+            </h1>
+
+            <p class="workspace-brand__tagline">
+              Projects, resources and operational control
+            </p>
+
+          </div>
+
+
+          <div class="workspace-header-actions">
+
+            <div class="workspace-status">
+
+              <span
+                class="workspace-status__pulse"
+                aria-hidden="true"
+              ></span>
+
+              <span class="workspace-status__label">
+                Organisation Workspace
+              </span>
+
+            </div>
+
+
+            <div class="workspace-user">
+
+              <div class="workspace-user__details">
+
+                <span
+                  id="workspaceUserName"
+                  class="workspace-user__name"
+                >
+                  User
+                </span>
+
+                <span
+                  id="workspaceUserRole"
+                  class="workspace-user__role"
+                >
+                  Loading
+                </span>
+
+              </div>
+
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ORGANISATION NAVIGATION
+    ====================================================== -->
+
+    <nav
+      class="workspace-nav"
+      aria-label="Organisation navigation"
+    >
+
+      <div class="workspace-container">
+
+        <div
+          id="contractorNavSurface"
+          class="workspace-nav__surface"
+        >
+
+          <div
+            id="contractorNavLinks"
+            class="workspace-nav__links"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="workspace-main">
+
+      <div class="workspace-container">
+
+
+        <!-- ===============================================
+             PROJECT NAVIGATION
+        ================================================ -->
+
+        <nav
+          class="project-subnav"
+          aria-label="Project navigation"
+        >
+
+          <div class="project-subnav__surface">
+
+
+            <div class="project-subnav__identity">
+
+              <a
+                class="project-subnav__back"
+                href="/modules/contractor/projects/"
+              >
+                ← Projects
+              </a>
+
+
+              <div class="project-subnav__project">
+
+                <span class="project-subnav__eyebrow">
+                  Project Workspace
+                </span>
+
+                <span
+                  id="projectSubnavName"
+                  class="project-subnav__name"
+                >
+                  Loading project
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div
+              id="projectSubnavLinks"
+              class="project-subnav__links"
+            ></div>
+
+
+          </div>
+
+        </nav>
+
+
+        <!-- ===============================================
+             PROJECT HERO
+        ================================================ -->
+
+        <section class="project-hero">
+
+
+          <div class="project-hero__main">
+
+            <div class="project-hero__identity">
+
+              <div class="project-hero__heading">
+
+                <p class="page-eyebrow">
+                  Project Overview
+                </p>
+
+                <h2
+                  id="projectName"
+                  class="page-title"
+                >
+                  Loading project
+                </h2>
+
+                <p
+                  id="projectMeta"
+                  class="page-note"
+                >
+                  Loading project information.
+                </p>
+
+              </div>
+
+
+              <span
+                id="projectStatus"
+                class="project-hero__status"
+              >
+                Loading
+              </span>
+
+            </div>
+
+
+            <div class="project-hero__facts">
+
+              <div>
+
+                <span>
+                  Project Code
+                </span>
+
+                <strong id="projectCode">
+                  —
+                </strong>
+
+              </div>
+
+
+              <div>
+
+                <span>
+                  Current Phase
+                </span>
+
+                <strong id="projectPhase">
+                  —
+                </strong>
+
+              </div>
+
+
+              <div>
+
+                <span>
+                  Project Manager
+                </span>
+
+                <strong id="projectManager">
+                  —
+                </strong>
+
+              </div>
+
+
+              <div>
+
+                <span>
+                  Target Finish
+                </span>
+
+                <strong id="projectFinish">
+                  —
+                </strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+        </section>
+
+
+        <!-- ===============================================
+             PROJECT POSITION
+        ================================================ -->
+
+        <section class="project-position">
+
+          <div class="project-section-heading">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Position
+              </p>
+
+              <h3 class="section-heading__title">
+                Project Control
+              </h3>
+
+            </div>
+
+          </div>
+
+
+          <div class="project-position__grid">
+
+
+            <article class="project-position-card">
+
+              <span class="project-position-card__label">
+                Readiness
+              </span>
+
+              <strong id="projectReadiness">
+                —
+              </strong>
+
+              <span class="project-position-card__note">
+                Current readiness position
+              </span>
+
+            </article>
+
+
+            <article class="project-position-card">
+
+              <span class="project-position-card__label">
+                Programme
+              </span>
+
+              <strong
+                id="projectProgramme"
+                class="project-position-card__word"
+              >
+                —
+              </strong>
+
+              <span class="project-position-card__note">
+                Current programme position
+              </span>
+
+            </article>
+
+
+            <article class="project-position-card">
+
+              <span class="project-position-card__label">
+                Assurance
+              </span>
+
+              <strong
+                id="projectAssurance"
+                class="project-position-card__word"
+              >
+                —
+              </strong>
+
+              <span class="project-position-card__note">
+                Open assurance position
+              </span>
+
+            </article>
+
+
+            <article class="project-position-card">
+
+              <span class="project-position-card__label">
+                Commercial
+              </span>
+
+              <strong
+                id="projectCommercial"
+                class="project-position-card__word"
+              >
+                —
+              </strong>
+
+              <span class="project-position-card__note">
+                Current commercial position
+              </span>
+
+            </article>
+
+
+          </div>
+
+        </section>
+
+
+        <!-- ===============================================
+             MANAGEMENT VIEW
+        ================================================ -->
+
+        <div class="project-management-grid">
+
+
+          <!-- ATTENTION REQUIRED -->
+
+          <section class="workspace-panel">
+
+            <div class="workspace-panel__heading">
+
+              <div>
+
+                <p class="section-heading__eyebrow">
+                  Control
+                </p>
+
+                <h3 class="section-heading__title">
+                  Attention Required
+                </h3>
+
+              </div>
+
+
+              <span
+                id="projectAttentionCount"
+                class="panel-count"
+              >
+                0
+              </span>
+
+            </div>
+
+
+            <div
+              id="projectAttentionState"
+              class="project-empty-state"
+            >
+
+              <div class="project-empty-state__mark">
+                ✓
+              </div>
+
+              <strong>
+                No project exceptions recorded
+              </strong>
+
+              <p>
+                Blockers and actions will appear here.
+              </p>
+
+            </div>
+
+          </section>
+
+
+          <!-- CURRENT PHASE -->
+
+          <section class="workspace-panel">
+
+            <div class="workspace-panel__heading">
+
+              <div>
+
+                <p class="section-heading__eyebrow">
+                  Scope
+                </p>
+
+                <h3 class="section-heading__title">
+                  Current Phase
+                </h3>
+
+              </div>
+
+            </div>
+
+
+            <div class="project-current-phase">
+
+              <span class="project-current-phase__label">
+                Current activity
+              </span>
+
+              <strong id="projectPhaseLarge">
+                Not set
+              </strong>
+
+              <p>
+                The active work package and phase position will develop here.
+              </p>
+
+            </div>
+
+          </section>
+
+
+        </div>
+
+
+        <!-- ===============================================
+             PROJECT AREAS
+        ================================================ -->
+
+        <section class="project-areas">
+
+          <div class="project-section-heading">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Workspace
+              </p>
+
+              <h3 class="section-heading__title">
+                Project Areas
+              </h3>
+
+            </div>
+
+          </div>
+
+
+          <div class="project-area-grid">
+
+
+            <a
+              class="project-area-card"
+              data-project-section="readiness"
+              href="#"
+            >
+
+              <span class="project-area-card__index">
+                01
+              </span>
+
+              <strong>
+                Readiness
+              </strong>
+
+              <p>
+                Start and phase readiness.
+              </p>
+
+            </a>
+
+
+            <a
+              class="project-area-card"
+              data-project-section="scope"
+              href="#"
+            >
+
+              <span class="project-area-card__index">
+                02
+              </span>
+
+              <strong>
+                Scope
+              </strong>
+
+              <p>
+                Work packages and current scope.
+              </p>
+
+            </a>
+
+
+            <a
+              class="project-area-card"
+              data-project-section="resources"
+              href="#"
+            >
+
+              <span class="project-area-card__index">
+                03
+              </span>
+
+              <strong>
+                Resources
+              </strong>
+
+              <p>
+                People, plant and allocation.
+              </p>
+
+            </a>
+
+
+            <a
+              class="project-area-card"
+              data-project-section="documents"
+              href="#"
+            >
+
+              <span class="project-area-card__index">
+                04
+              </span>
+
+              <strong>
+                Documents
+              </strong>
+
+              <p>
+                Project-controlled information.
+              </p>
+
+            </a>
+
+
+            <a
+              class="project-area-card"
+              data-project-section="programme"
+              href="#"
+            >
+
+              <span class="project-area-card__index">
+                05
+              </span>
+
+              <strong>
+                Programme
+              </strong>
+
+              <p>
+                Milestones and progress.
+              </p>
+
+            </a>
+
+
+            <a
+              class="project-area-card"
+              data-project-section="commercial"
+              href="#"
+            >
+
+              <span class="project-area-card__index">
+                06
+              </span>
+
+              <strong>
+                Commercial
+              </strong>
+
+              <p>
+                Cost and commercial control.
+              </p>
+
+            </a>
+
+
+          </div>
+
+        </section>
+
+
+      </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="workspace-footer">
+
+      <div class="workspace-container">
+
+        <div class="workspace-footer__inner">
+
+          <span class="workspace-footer__brand">
+            <strong>NORMEX</strong>
+          </span>
+
+          <span
+            id="workspaceFooterOrganisation"
+            class="workspace-footer__context"
+          >
+            Colemans
+          </span>
+
+        </div>
+
+      </div>
+
+    </footer>
+
+
+  </div>
+
+
+  <!-- =====================================================
+       MOBILE ORGANISATION NAV
+  ====================================================== -->
+
+  <aside
+    id="contractorMobileNav"
+    class="workspace-mobile-nav"
+    hidden
+  >
+
+    <div
+      id="mobileNavBackdrop"
+      class="workspace-mobile-nav__backdrop"
+    ></div>
+
+
+    <div class="workspace-mobile-nav__panel">
+
+      <header class="workspace-mobile-nav__header">
+
+        <div>
+
+          <span class="workspace-mobile-nav__eyebrow">
+            Colemans
+          </span>
+
+          <h2 class="workspace-mobile-nav__title">
+            Navigation
+          </h2>
+
+        </div>
+
+
+        <button
+          id="mobileNavClose"
+          class="workspace-mobile-nav__close"
+          type="button"
+          aria-label="Close navigation"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <nav
+        id="contractorMobileNavLinks"
+        class="workspace-mobile-nav__links"
+        aria-label="Mobile organisation navigation"
+      ></nav>
+
+    </div>
+
+  </aside>
+
+
+  <script
+    src="/modules/contractor/shared/js/config.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/shared/js/shell.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/projects/project/project.js"
+  ></script>
+
+</body>
+
+</html>

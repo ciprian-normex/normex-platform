@@ -1,0 +1,309 @@
+/* =========================================================
+   NORMEX
+   PROJECT WORKSPACE NAVIGATION
+========================================================= */
+
+
+.project-subnav {
+  margin-bottom: 16px;
+}
+
+
+.project-subnav__surface {
+  min-height: 76px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 26px;
+
+  padding:
+    9px 10px 9px 14px;
+
+  border:
+    1px solid
+    rgba(31, 49, 39, 0.08);
+
+  border-radius:
+    20px;
+
+  background:
+    rgba(255, 255, 255, 0.975);
+
+  box-shadow:
+    0 12px 34px
+    rgba(16, 31, 22, 0.075);
+}
+
+
+/* =========================================================
+   PROJECT IDENTITY
+========================================================= */
+
+.project-subnav__identity {
+  min-width: 270px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+}
+
+
+.project-subnav__back {
+  min-height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    0 13px;
+
+  border:
+    1px solid
+    rgba(37, 57, 45, 0.10);
+
+  border-radius:
+    11px;
+
+  background:
+    #f8faf8;
+
+  color:
+    #425149;
+
+  text-decoration:
+    none;
+
+  font-size:
+    var(--font-size-body-small);
+
+  font-weight:
+    var(--font-weight-bold);
+
+  white-space:
+    nowrap;
+}
+
+
+.project-subnav__back:hover {
+  background:
+    #edf3ef;
+}
+
+
+.project-subnav__project {
+  min-width: 0;
+}
+
+
+.project-subnav__eyebrow {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color:
+    #87928c;
+
+  font-size:
+    0.52rem;
+
+  font-weight:
+    var(--font-weight-heavy);
+
+  letter-spacing:
+    0.12em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.project-subnav__name {
+  display: block;
+
+  overflow: hidden;
+
+  color:
+    #202d26;
+
+  font-size:
+    0.78rem;
+
+  font-weight:
+    var(--font-weight-bold);
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+
+/* =========================================================
+   LINKS
+========================================================= */
+
+.project-subnav__links {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 4px;
+
+  flex: 1;
+}
+
+
+.project-subnav__link {
+  min-height: 44px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    0 12px;
+
+  border:
+    1px solid
+    transparent;
+
+  border-radius:
+    11px;
+
+  color:
+    #718078;
+
+  text-decoration:
+    none;
+
+  white-space:
+    nowrap;
+
+  font-size:
+    0.58rem;
+
+  font-weight:
+    var(--font-weight-bold);
+
+  transition:
+    color 150ms ease,
+    background 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease;
+}
+
+
+.project-subnav__link:hover {
+  color:
+    #2a4034;
+
+  border-color:
+    rgba(40, 61, 49, 0.08);
+
+  background:
+    #f3f7f4;
+}
+
+
+.project-subnav__link.is-active {
+  color:
+    #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #365144,
+      #20362b
+    );
+
+  box-shadow:
+    0 8px 18px
+    rgba(21, 39, 29, 0.16);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1180px) {
+
+  .project-subnav__surface {
+    align-items: stretch;
+    flex-direction: column;
+
+    gap: 8px;
+
+    padding:
+      10px;
+  }
+
+
+  .project-subnav__identity {
+    width: 100%;
+  }
+
+
+  .project-subnav__links {
+    width: 100%;
+
+    justify-content: flex-start;
+
+    overflow-x: auto;
+
+    padding-bottom: 2px;
+
+    scrollbar-width: thin;
+  }
+
+
+  .project-subnav__link {
+    flex:
+      0 0 auto;
+  }
+
+}
+
+
+@media (max-width: 560px) {
+
+  .project-subnav__identity {
+    min-width: 0;
+  }
+
+
+  .project-subnav__back {
+    min-height: 40px;
+
+    padding:
+      0 10px;
+  }
+
+
+  .project-subnav__project {
+    min-width: 0;
+
+    flex: 1;
+  }
+
+
+  .project-subnav__links {
+    gap: 3px;
+  }
+
+
+  .project-subnav__link {
+    min-height: 40px;
+
+    padding:
+      0 10px;
+  }
+
+}

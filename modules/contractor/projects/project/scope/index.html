@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>Project Scope | Colemans | NORMEX</title>
+
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/projects/shared/project-nav.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/projects/project/scope/scope.css"
+  />
+
+</head>
+
+
+<body>
+
+  <div class="workspace">
+
+
+    <!-- =====================================================
+         ORGANISATION HEADER
+    ====================================================== -->
+
+    <header class="workspace-header">
+
+      <div class="workspace-container">
+
+        <div class="workspace-header__surface">
+
+
+          <div class="workspace-brand">
+
+            <p class="workspace-brand__product">
+              NORMEX · Contractor Workspace
+            </p>
+
+            <h1
+              id="workspaceOrganisationName"
+              class="workspace-brand__name"
+            >
+              Colemans
+            </h1>
+
+            <p class="workspace-brand__tagline">
+              Projects, resources and operational control
+            </p>
+
+          </div>
+
+
+          <div class="workspace-header-actions">
+
+
+            <div class="workspace-status">
+
+              <span
+                class="workspace-status__pulse"
+                aria-hidden="true"
+              ></span>
+
+              <span class="workspace-status__label">
+                Organisation Workspace
+              </span>
+
+            </div>
+
+
+            <div class="workspace-user">
+
+              <div class="workspace-user__details">
+
+                <span
+                  id="workspaceUserName"
+                  class="workspace-user__name"
+                >
+                  User
+                </span>
+
+                <span
+                  id="workspaceUserRole"
+                  class="workspace-user__role"
+                >
+                  Loading
+                </span>
+
+              </div>
+
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ORGANISATION NAV
+    ====================================================== -->
+
+    <nav
+      class="workspace-nav"
+      aria-label="Organisation navigation"
+    >
+
+      <div class="workspace-container">
+
+        <div
+          id="contractorNavSurface"
+          class="workspace-nav__surface"
+        >
+
+          <div
+            id="contractorNavLinks"
+            class="workspace-nav__links"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="workspace-main">
+
+      <div class="workspace-container">
+
+
+        <!-- =================================================
+             PROJECT NAV
+        ================================================== -->
+
+        <nav
+          class="project-subnav"
+          aria-label="Project navigation"
+        >
+
+          <div class="project-subnav__surface">
+
+
+            <div class="project-subnav__identity">
+
+              <a
+                class="project-subnav__back"
+                href="/modules/contractor/projects/"
+              >
+                ← Projects
+              </a>
+
+
+              <div class="project-subnav__project">
+
+                <span class="project-subnav__eyebrow">
+                  Project Workspace
+                </span>
+
+                <span
+                  id="projectSubnavName"
+                  class="project-subnav__name"
+                >
+                  Loading project
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div
+              id="projectSubnavLinks"
+              class="project-subnav__links"
+            ></div>
+
+
+          </div>
+
+        </nav>
+
+
+        <!-- =================================================
+             PAGE INTRO
+        ================================================== -->
+
+        <section class="scope-intro">
+
+          <div>
+
+            <p class="page-eyebrow">
+              Project Delivery
+            </p>
+
+            <h2 class="page-title">
+              Scope
+            </h2>
+
+            <p class="page-note">
+              Define and control the individual scopes of work within this project.
+            </p>
+
+          </div>
+
+
+          <button
+            id="addScopeButton"
+            class="scope-primary-action"
+            type="button"
+            hidden
+          >
+            + Add Scope
+          </button>
+
+        </section>
+
+
+        <!-- =================================================
+             SUMMARY
+        ================================================== -->
+
+        <section class="scope-summary">
+
+
+          <article class="scope-summary__item">
+
+            <span>
+              Total Scopes
+            </span>
+
+            <strong id="scopeTotalCount">
+              0
+            </strong>
+
+          </article>
+
+
+          <article class="scope-summary__item">
+
+            <span>
+              Live
+            </span>
+
+            <strong id="scopeLiveCount">
+              0
+            </strong>
+
+          </article>
+
+
+          <article class="scope-summary__item">
+
+            <span>
+              Pre-Start
+            </span>
+
+            <strong id="scopePreStartCount">
+              0
+            </strong>
+
+          </article>
+
+
+          <article class="scope-summary__item">
+
+            <span>
+              Complete
+            </span>
+
+            <strong id="scopeCompleteCount">
+              0
+            </strong>
+
+          </article>
+
+
+          <article class="scope-summary__item">
+
+            <span>
+              With Evidence
+            </span>
+
+            <strong id="scopeEvidenceCount">
+              0
+            </strong>
+
+          </article>
+
+
+        </section>
+
+
+        <!-- =================================================
+             REGISTER
+        ================================================== -->
+
+        <section class="scope-panel">
+
+
+          <header class="scope-panel__header">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Delivery Structure
+              </p>
+
+              <h3 class="section-heading__title">
+                Scope Register
+              </h3>
+
+            </div>
+
+
+            <div class="scope-controls">
+
+
+              <input
+                id="scopeSearchInput"
+                class="scope-search"
+                type="search"
+                placeholder="Search scopes"
+                autocomplete="off"
+              />
+
+
+              <select
+                id="scopeStatusFilter"
+                class="scope-filter"
+              >
+
+                <option value="">
+                  All Statuses
+                </option>
+
+                <option value="PLANNED">
+                  Planned
+                </option>
+
+                <option value="PRE_START">
+                  Pre-Start
+                </option>
+
+                <option value="LIVE">
+                  Live
+                </option>
+
+                <option value="ON_HOLD">
+                  On Hold
+                </option>
+
+                <option value="COMPLETE">
+                  Complete
+                </option>
+
+              </select>
+
+
+            </div>
+
+          </header>
+
+
+          <div
+            id="scopeRegister"
+            class="scope-register"
+          >
+
+            <div class="scope-empty">
+              Loading project scopes
+            </div>
+
+          </div>
+
+
+        </section>
+
+
+      </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         ADD SCOPE MODAL
+    ====================================================== -->
+
+    <div
+      id="scopeModal"
+      class="scope-modal"
+      hidden
+    >
+
+      <div
+        id="scopeModalBackdrop"
+        class="scope-modal__backdrop"
+      ></div>
+
+
+      <section
+        class="scope-modal__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="scopeModalTitle"
+      >
+
+        <header class="scope-modal__header">
+
+          <div>
+
+            <p class="section-heading__eyebrow">
+              Project Delivery
+            </p>
+
+            <h2
+              id="scopeModalTitle"
+              class="scope-modal__title"
+            >
+              Add Scope
+            </h2>
+
+          </div>
+
+
+          <button
+            id="closeScopeModal"
+            class="scope-modal__close"
+            type="button"
+            aria-label="Close"
+          >
+            ×
+          </button>
+
+        </header>
+
+
+        <form
+          id="scopeForm"
+          class="scope-modal__body"
+        >
+
+
+          <div class="scope-form-grid">
+
+
+            <div class="scope-field">
+
+              <label for="scopeCode">
+                Scope Code
+              </label>
+
+              <input
+                id="scopeCode"
+                name="scopeCode"
+                type="text"
+                maxlength="40"
+                placeholder="e.g. S-001"
+                required
+              />
+
+            </div>
+
+
+            <div class="scope-field">
+
+              <label for="scopeStatus">
+                Initial Status
+              </label>
+
+              <select
+                id="scopeStatus"
+                name="status"
+              >
+
+                <option value="PLANNED">
+                  Planned
+                </option>
+
+                <option value="PRE_START">
+                  Pre-Start
+                </option>
+
+                <option value="LIVE">
+                  Live
+                </option>
+
+                <option value="ON_HOLD">
+                  On Hold
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="scope-field scope-field--wide">
+
+              <label for="scopeName">
+                Scope Name
+              </label>
+
+              <input
+                id="scopeName"
+                name="name"
+                type="text"
+                maxlength="140"
+                required
+              />
+
+            </div>
+
+
+            <div class="scope-field">
+
+              <label for="scopePlannedStart">
+                Planned Start
+              </label>
+
+              <input
+                id="scopePlannedStart"
+                name="plannedStart"
+                type="date"
+              />
+
+            </div>
+
+
+            <div class="scope-field">
+
+              <label for="scopeTargetFinish">
+                Target Finish
+              </label>
+
+              <input
+                id="scopeTargetFinish"
+                name="targetFinishDate"
+                type="date"
+              />
+
+            </div>
+
+
+            <div class="scope-field scope-field--wide">
+
+              <label for="scopeDescription">
+                Scope Description
+              </label>
+
+              <textarea
+                id="scopeDescription"
+                name="description"
+                rows="5"
+                maxlength="2000"
+              ></textarea>
+
+            </div>
+
+
+          </div>
+
+
+          <section class="scope-upload-section">
+
+            <div class="scope-upload-section__heading">
+
+              <div>
+
+                <span class="scope-upload-section__eyebrow">
+                  Supporting Evidence
+                </span>
+
+                <strong>
+                  Scope Document
+                </strong>
+
+              </div>
+
+              <span>
+                Optional
+              </span>
+
+            </div>
+
+
+            <label
+              for="scopeFile"
+              class="scope-file-picker"
+            >
+
+              <input
+                id="scopeFile"
+                name="scopeFile"
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+              />
+
+
+              <span class="scope-file-picker__icon">
+                +
+              </span>
+
+
+              <span>
+
+                <strong id="scopeFileTitle">
+                  Attach PDF or image
+                </strong>
+
+                <small id="scopeFileMeta">
+                  PDF, JPG or PNG · Maximum 25 MB
+                </small>
+
+              </span>
+
+            </label>
+
+
+            <div
+              id="scopeUploadProgress"
+              class="scope-upload-progress"
+              hidden
+            >
+
+              <div class="scope-upload-progress__track">
+
+                <span
+                  id="scopeUploadProgressBar"
+                  class="scope-upload-progress__bar"
+                ></span>
+
+              </div>
+
+              <span id="scopeUploadProgressText">
+                Preparing upload
+              </span>
+
+            </div>
+
+          </section>
+
+
+          <div
+            id="scopeFormError"
+            class="scope-message scope-message--error"
+            hidden
+          ></div>
+
+
+          <footer class="scope-modal__footer">
+
+            <button
+              id="cancelScopeButton"
+              class="scope-secondary-action"
+              type="button"
+            >
+              Cancel
+            </button>
+
+
+            <button
+              id="saveScopeButton"
+              class="scope-primary-action"
+              type="submit"
+            >
+              Create Scope
+            </button>
+
+          </footer>
+
+
+        </form>
+
+      </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         EDIT SCOPE MODAL
+    ====================================================== -->
+
+    <div
+      id="editScopeModal"
+      class="scope-modal"
+      hidden
+    >
+
+      <div
+        id="editScopeBackdrop"
+        class="scope-modal__backdrop"
+      ></div>
+
+
+      <section
+        class="scope-modal__panel"
+        role="dialog"
+        aria-modal="true"
+      >
+
+        <header class="scope-modal__header">
+
+          <div>
+
+            <p class="section-heading__eyebrow">
+              Scope Control
+            </p>
+
+            <h2 class="scope-modal__title">
+              Edit Scope
+            </h2>
+
+          </div>
+
+
+          <button
+            id="closeEditScopeModal"
+            class="scope-modal__close"
+            type="button"
+            aria-label="Close"
+          >
+            ×
+          </button>
+
+        </header>
+
+
+        <form
+          id="editScopeForm"
+          class="scope-modal__body"
+        >
+
+
+          <div class="scope-form-grid">
+
+
+            <div class="scope-field">
+
+              <label for="editScopeCode">
+                Scope Code
+              </label>
+
+              <input
+                id="editScopeCode"
+                name="scopeCode"
+                type="text"
+                required
+              />
+
+            </div>
+
+
+            <div class="scope-field">
+
+              <label for="editScopeStatus">
+                Status
+              </label>
+
+              <select
+                id="editScopeStatus"
+                name="status"
+              >
+
+                <option value="PLANNED">
+                  Planned
+                </option>
+
+                <option value="PRE_START">
+                  Pre-Start
+                </option>
+
+                <option value="LIVE">
+                  Live
+                </option>
+
+                <option value="ON_HOLD">
+                  On Hold
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="scope-field scope-field--wide">
+
+              <label for="editScopeName">
+                Scope Name
+              </label>
+
+              <input
+                id="editScopeName"
+                name="name"
+                type="text"
+                required
+              />
+
+            </div>
+
+
+            <div class="scope-field">
+
+              <label for="editScopePlannedStart">
+                Planned Start
+              </label>
+
+              <input
+                id="editScopePlannedStart"
+                name="plannedStart"
+                type="date"
+              />
+
+            </div>
+
+
+            <div class="scope-field">
+
+              <label for="editScopeTargetFinish">
+                Target Finish
+              </label>
+
+              <input
+                id="editScopeTargetFinish"
+                name="targetFinishDate"
+                type="date"
+              />
+
+            </div>
+
+
+            <div class="scope-field scope-field--wide">
+
+              <label for="editScopeDescription">
+                Scope Description
+              </label>
+
+              <textarea
+                id="editScopeDescription"
+                name="description"
+                rows="5"
+              ></textarea>
+
+            </div>
+
+
+          </div>
+
+
+          <div
+            id="editScopeError"
+            class="scope-message scope-message--error"
+            hidden
+          ></div>
+
+
+          <footer class="scope-modal__footer">
+
+            <button
+              id="cancelEditScope"
+              class="scope-secondary-action"
+              type="button"
+            >
+              Cancel
+            </button>
+
+
+            <button
+              id="saveEditScope"
+              class="scope-primary-action"
+              type="submit"
+            >
+              Save Changes
+            </button>
+
+          </footer>
+
+
+        </form>
+
+      </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         COMPLETE SCOPE MODAL
+    ====================================================== -->
+
+    <div
+      id="completeScopeModal"
+      class="scope-modal"
+      hidden
+    >
+
+      <div
+        id="completeScopeBackdrop"
+        class="scope-modal__backdrop"
+      ></div>
+
+
+      <section
+        class="scope-modal__panel scope-modal__panel--compact"
+        role="dialog"
+        aria-modal="true"
+      >
+
+        <header class="scope-modal__header">
+
+          <div>
+
+            <p class="section-heading__eyebrow">
+              Scope Control
+            </p>
+
+            <h2 class="scope-modal__title">
+              Complete Scope
+            </h2>
+
+          </div>
+
+
+          <button
+            id="closeCompleteScopeModal"
+            class="scope-modal__close"
+            type="button"
+            aria-label="Close"
+          >
+            ×
+          </button>
+
+        </header>
+
+
+        <div class="scope-modal__body">
+
+          <p class="scope-complete-copy">
+            Confirm that this scope has been completed.
+          </p>
+
+
+          <div class="scope-complete-summary">
+
+
+            <div>
+
+              <span>
+                Scope
+              </span>
+
+              <strong id="completeScopeName">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Target Finish
+              </span>
+
+              <strong id="completeScopeTarget">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Actual Finish
+              </span>
+
+              <strong id="completeScopeDate">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Programme Position
+              </span>
+
+              <strong id="completeScopeVariance">
+                —
+              </strong>
+
+            </div>
+
+
+          </div>
+
+
+          <div
+            id="completeScopeError"
+            class="scope-message scope-message--error"
+            hidden
+          ></div>
+
+
+          <footer class="scope-modal__footer">
+
+            <button
+              id="cancelCompleteScope"
+              class="scope-secondary-action"
+              type="button"
+            >
+              Cancel
+            </button>
+
+
+            <button
+              id="confirmCompleteScope"
+              class="scope-primary-action"
+              type="button"
+            >
+              Confirm Complete
+            </button>
+
+          </footer>
+
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         SCOPE DOCUMENTS MODAL
+    ====================================================== -->
+
+    <div
+      id="scopeDocumentsModal"
+      class="scope-modal"
+      hidden
+    >
+
+      <div
+        id="scopeDocumentsBackdrop"
+        class="scope-modal__backdrop"
+      ></div>
+
+
+      <section
+        class="scope-modal__panel scope-modal__panel--documents"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="scopeDocumentsTitle"
+      >
+
+        <header class="scope-modal__header">
+
+          <div>
+
+            <p class="section-heading__eyebrow">
+              Scope Evidence
+            </p>
+
+            <h2
+              id="scopeDocumentsTitle"
+              class="scope-modal__title"
+            >
+              Scope Documents
+            </h2>
+
+            <p
+              id="scopeDocumentsSubtitle"
+              class="scope-documents__subtitle"
+            >
+              —
+            </p>
+
+          </div>
+
+
+          <button
+            id="closeScopeDocumentsModal"
+            class="scope-modal__close"
+            type="button"
+            aria-label="Close"
+          >
+            ×
+          </button>
+
+        </header>
+
+
+        <div class="scope-modal__body">
+
+
+          <!-- ===============================================
+               EXISTING DOCUMENTS
+          ================================================ -->
+
+          <div
+            id="scopeDocumentsList"
+            class="scope-documents__list"
+          >
+
+            <div class="scope-empty">
+              No documents attached.
+            </div>
+
+          </div>
+
+
+          <!-- ===============================================
+               ADD DOCUMENT
+          ================================================ -->
+
+          <section
+            id="scopeDocumentUploadSection"
+            class="scope-document-upload"
+            hidden
+          >
+
+            <header class="scope-document-upload__header">
+
+              <div>
+
+                <span class="scope-upload-section__eyebrow">
+                  Add Evidence
+                </span>
+
+                <strong>
+                  Attach Document
+                </strong>
+
+              </div>
+
+            </header>
+
+
+            <form id="scopeDocumentForm">
+
+
+              <div class="scope-form-grid">
+
+
+                <div class="scope-field">
+
+                  <label for="scopeDocumentType">
+                    Document Type
+                  </label>
+
+                  <select
+                    id="scopeDocumentType"
+                    name="documentType"
+                  >
+
+                    <option value="SCOPE_DOCUMENT">
+                      Scope Document
+                    </option>
+
+                    <option value="CLIENT_INSTRUCTION">
+                      Client Instruction
+                    </option>
+
+                    <option value="DRAWING">
+                      Drawing
+                    </option>
+
+                    <option value="SKETCH">
+                      Sketch
+                    </option>
+
+                    <option value="PHOTOGRAPH">
+                      Photograph
+                    </option>
+
+                    <option value="SUPPORTING_DETAIL">
+                      Supporting Detail
+                    </option>
+
+                    <option value="OTHER">
+                      Other
+                    </option>
+
+                  </select>
+
+                </div>
+
+
+                <div class="scope-field">
+
+                  <label for="scopeDocumentReference">
+                    Reference
+                  </label>
+
+                  <input
+                    id="scopeDocumentReference"
+                    name="reference"
+                    type="text"
+                    maxlength="80"
+                    placeholder="Optional"
+                  />
+
+                </div>
+
+
+                <div class="scope-field scope-field--wide">
+
+                  <label for="scopeDocumentTitleInput">
+                    Document Title
+                  </label>
+
+                  <input
+                    id="scopeDocumentTitleInput"
+                    name="title"
+                    type="text"
+                    maxlength="160"
+                    placeholder="Optional - file name will be used if blank"
+                  />
+
+                </div>
+
+
+                <div class="scope-field scope-field--wide">
+
+                  <label
+                    for="scopeAdditionalFile"
+                    class="scope-file-picker"
+                  >
+
+                    <input
+                      id="scopeAdditionalFile"
+                      name="file"
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                      required
+                    />
+
+
+                    <span class="scope-file-picker__icon">
+                      +
+                    </span>
+
+
+                    <span>
+
+                      <strong id="scopeAdditionalFileTitle">
+                        Select PDF or image
+                      </strong>
+
+                      <small id="scopeAdditionalFileMeta">
+                        PDF, JPG or PNG · Maximum 25 MB
+                      </small>
+
+                    </span>
+
+                  </label>
+
+                </div>
+
+
+              </div>
+
+
+              <div
+                id="scopeAdditionalUploadProgress"
+                class="scope-upload-progress"
+                hidden
+              >
+
+                <div class="scope-upload-progress__track">
+
+                  <span
+                    id="scopeAdditionalUploadProgressBar"
+                    class="scope-upload-progress__bar"
+                  ></span>
+
+                </div>
+
+                <span id="scopeAdditionalUploadProgressText">
+                  Preparing upload
+                </span>
+
+              </div>
+
+
+              <div
+                id="scopeDocumentError"
+                class="scope-message scope-message--error"
+                hidden
+              ></div>
+
+
+              <div class="scope-document-upload__actions">
+
+                <button
+                  id="uploadScopeDocumentButton"
+                  class="scope-primary-action"
+                  type="submit"
+                >
+                  Add Document
+                </button>
+
+              </div>
+
+
+            </form>
+
+          </section>
+
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="workspace-footer">
+
+      <div class="workspace-container">
+
+        <div class="workspace-footer__inner">
+
+          <span class="workspace-footer__brand">
+            <strong>NORMEX</strong>
+          </span>
+
+          <span
+            id="workspaceFooterOrganisation"
+            class="workspace-footer__context"
+          >
+            Colemans
+          </span>
+
+        </div>
+
+      </div>
+
+    </footer>
+
+
+  </div>
+
+
+  <!-- =====================================================
+       MOBILE NAV
+  ====================================================== -->
+
+  <aside
+    id="contractorMobileNav"
+    class="workspace-mobile-nav"
+    hidden
+  >
+
+    <div
+      id="mobileNavBackdrop"
+      class="workspace-mobile-nav__backdrop"
+    ></div>
+
+
+    <div class="workspace-mobile-nav__panel">
+
+      <header class="workspace-mobile-nav__header">
+
+        <div>
+
+          <span class="workspace-mobile-nav__eyebrow">
+            Colemans
+          </span>
+
+          <h2 class="workspace-mobile-nav__title">
+            Navigation
+          </h2>
+
+        </div>
+
+
+        <button
+          id="mobileNavClose"
+          class="workspace-mobile-nav__close"
+          type="button"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <nav
+        id="contractorMobileNavLinks"
+        class="workspace-mobile-nav__links"
+      ></nav>
+
+    </div>
+
+  </aside>
+
+
+  <script
+    src="/modules/contractor/shared/js/config.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/shared/js/shell.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/projects/project/scope/scope.js"
+  ></script>
+
+</body>
+
+</html>

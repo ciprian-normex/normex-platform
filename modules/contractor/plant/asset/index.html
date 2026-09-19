@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>
+    Plant Asset | Colemans | NORMEX
+  </title>
+
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/plant/shared/plant-shell.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/plant/asset/asset.css"
+  />
+
+</head>
+
+
+<body>
+
+  <div class="workspace">
+
+
+    <!-- =====================================================
+         ORGANISATION HEADER
+    ====================================================== -->
+
+    <header class="workspace-header">
+
+      <div class="workspace-container">
+
+        <div class="workspace-header__surface">
+
+
+          <div class="workspace-brand">
+
+            <p class="workspace-brand__product">
+              NORMEX · Contractor Workspace
+            </p>
+
+            <h1
+              id="workspaceOrganisationName"
+              class="workspace-brand__name"
+            >
+              Colemans
+            </h1>
+
+            <p class="workspace-brand__tagline">
+              Projects, resources and operational control
+            </p>
+
+          </div>
+
+
+          <div class="workspace-header-actions">
+
+
+            <div class="workspace-status">
+
+              <span
+                class="workspace-status__pulse"
+                aria-hidden="true"
+              ></span>
+
+              <span class="workspace-status__label">
+                Organisation Workspace
+              </span>
+
+            </div>
+
+
+            <div class="workspace-user">
+
+              <div class="workspace-user__details">
+
+                <span
+                  id="workspaceUserName"
+                  class="workspace-user__name"
+                >
+                  User
+                </span>
+
+                <span
+                  id="workspaceUserRole"
+                  class="workspace-user__role"
+                >
+                  Loading
+                </span>
+
+              </div>
+
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ORGANISATION NAV
+    ====================================================== -->
+
+    <nav
+      class="workspace-nav"
+      aria-label="Organisation navigation"
+    >
+
+      <div class="workspace-container">
+
+        <div
+          id="contractorNavSurface"
+          class="workspace-nav__surface"
+        >
+
+          <div
+            id="contractorNavLinks"
+            class="workspace-nav__links"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="workspace-main">
+
+      <div class="workspace-container">
+
+
+        <!-- =================================================
+             PLANT NAV
+        ================================================== -->
+
+        <nav
+          id="plantSubnav"
+          aria-label="Plant workspace navigation"
+        ></nav>
+
+
+        <!-- =================================================
+             ASSET HERO
+        ================================================== -->
+
+        <section class="asset-hero">
+
+
+          <div class="asset-hero__top">
+
+
+            <div class="asset-hero__identity">
+
+
+              <a
+                class="asset-back-link"
+                href="/modules/contractor/plant/fleet/"
+              >
+                ← Fleet
+              </a>
+
+
+              <div class="asset-hero__heading">
+
+                <p class="asset-eyebrow">
+                  Plant Asset
+                </p>
+
+                <h2
+                  id="assetReference"
+                  class="asset-hero__title"
+                >
+                  Loading asset
+                </h2>
+
+                <p
+                  id="assetDescription"
+                  class="asset-hero__description"
+                >
+                  Loading plant information
+                </p>
+
+              </div>
+
+
+            </div>
+
+
+            <div class="asset-hero__state">
+
+              <span
+                id="assetOwnershipChip"
+                class="asset-ownership-chip"
+              >
+                —
+              </span>
+
+              <span
+                id="assetStatus"
+                class="asset-status-chip"
+              >
+                Loading
+              </span>
+
+            </div>
+
+
+          </div>
+
+
+          <div class="asset-hero__position">
+
+
+            <div>
+
+              <span>
+                Current Location
+              </span>
+
+              <strong id="assetCurrentLocation">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Current Project
+              </span>
+
+              <strong id="assetCurrentProject">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Current Use
+              </span>
+
+              <strong id="assetCurrentUse">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Supplier
+              </span>
+
+              <strong id="assetSupplier">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Last Inspection
+              </span>
+
+              <strong id="assetHeroInspection">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Next Movement
+              </span>
+
+              <strong id="assetHeroNextMovement">
+                —
+              </strong>
+
+            </div>
+
+
+          </div>
+
+
+        </section>
+
+
+        <!-- =================================================
+             ASSET WORKSPACE NAV
+        ================================================== -->
+
+        <nav
+          class="asset-subnav"
+          aria-label="Asset workspace navigation"
+        >
+
+          <button
+            class="asset-subnav__link is-active"
+            type="button"
+            data-asset-view="overview"
+          >
+            Overview
+          </button>
+
+
+          <button
+            class="asset-subnav__link"
+            type="button"
+            data-asset-view="financials"
+          >
+            Financials
+          </button>
+
+
+          <button
+            class="asset-subnav__link"
+            type="button"
+            data-asset-view="deployment"
+          >
+            Location & Deployment
+          </button>
+
+
+          <button
+            class="asset-subnav__link"
+            type="button"
+            data-asset-view="inspections"
+          >
+            Inspections
+          </button>
+
+
+          <button
+            class="asset-subnav__link"
+            type="button"
+            data-asset-view="defects"
+          >
+            Defects & Repairs
+          </button>
+
+
+          <button
+            class="asset-subnav__link"
+            type="button"
+            data-asset-view="maintenance"
+          >
+            Maintenance
+          </button>
+
+
+          <button
+            class="asset-subnav__link"
+            type="button"
+            data-asset-view="compliance"
+          >
+            Compliance
+          </button>
+
+
+          <button
+            class="asset-subnav__link"
+            type="button"
+            data-asset-view="documents"
+          >
+            Documents
+          </button>
+
+        </nav>
+
+
+        <!-- =================================================
+             SINGLE DYNAMIC WORKSPACE
+        ================================================== -->
+
+        <section
+          id="assetWorkspace"
+          class="asset-workspace"
+        >
+
+          <div class="asset-loading">
+
+            Loading asset workspace...
+
+          </div>
+
+        </section>
+
+
+      </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         ERROR
+    ====================================================== -->
+
+    <div
+      id="assetLoadError"
+      class="asset-load-error"
+      hidden
+    ></div>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="workspace-footer">
+
+      <div class="workspace-container">
+
+        <div class="workspace-footer__inner">
+
+          <span class="workspace-footer__brand">
+            <strong>NORMEX</strong>
+          </span>
+
+          <span
+            id="workspaceFooterOrganisation"
+            class="workspace-footer__context"
+          >
+            Colemans
+          </span>
+
+        </div>
+
+      </div>
+
+    </footer>
+
+
+  </div>
+
+
+  <!-- =====================================================
+       MOBILE NAV
+  ====================================================== -->
+
+  <aside
+    id="contractorMobileNav"
+    class="workspace-mobile-nav"
+    hidden
+  >
+
+    <div
+      id="mobileNavBackdrop"
+      class="workspace-mobile-nav__backdrop"
+    ></div>
+
+
+    <div class="workspace-mobile-nav__panel">
+
+      <header class="workspace-mobile-nav__header">
+
+        <div>
+
+          <span class="workspace-mobile-nav__eyebrow">
+            Colemans
+          </span>
+
+          <h2 class="workspace-mobile-nav__title">
+            Navigation
+          </h2>
+
+        </div>
+
+
+        <button
+          id="mobileNavClose"
+          class="workspace-mobile-nav__close"
+          type="button"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <nav
+        id="contractorMobileNavLinks"
+        class="workspace-mobile-nav__links"
+      ></nav>
+
+    </div>
+
+  </aside>
+
+
+  <script
+    src="/modules/contractor/shared/js/config.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/shared/js/shell.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/plant/asset/asset.js"
+  ></script>
+
+
+</body>
+
+</html>

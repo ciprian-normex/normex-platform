@@ -1,0 +1,2067 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>People | Colemans | NORMEX</title>
+
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/people/people.css"
+  />
+
+</head>
+
+
+<body>
+
+  <div class="workspace">
+
+
+    <!-- =====================================================
+         ORGANISATION HEADER
+    ====================================================== -->
+
+    <header class="workspace-header">
+
+      <div class="workspace-container">
+
+        <div class="workspace-header__surface">
+
+
+          <div class="workspace-brand">
+
+            <p class="workspace-brand__product">
+              NORMEX · Contractor Workspace
+            </p>
+
+            <h1
+              id="workspaceOrganisationName"
+              class="workspace-brand__name"
+            >
+              Colemans
+            </h1>
+
+            <p class="workspace-brand__tagline">
+              Projects, resources and operational control
+            </p>
+
+          </div>
+
+
+          <div class="workspace-header-actions">
+
+
+            <div class="workspace-status">
+
+              <span
+                class="workspace-status__pulse"
+                aria-hidden="true"
+              ></span>
+
+              <span class="workspace-status__label">
+                Organisation Workspace
+              </span>
+
+            </div>
+
+
+            <div class="workspace-user">
+
+              <div class="workspace-user__details">
+
+                <span
+                  id="workspaceUserName"
+                  class="workspace-user__name"
+                >
+                  User
+                </span>
+
+                <span
+                  id="workspaceUserRole"
+                  class="workspace-user__role"
+                >
+                  Loading
+                </span>
+
+              </div>
+
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ORGANISATION NAVIGATION
+    ====================================================== -->
+
+    <nav
+      class="workspace-nav"
+      aria-label="Organisation navigation"
+    >
+
+      <div class="workspace-container">
+
+        <div
+          id="contractorNavSurface"
+          class="workspace-nav__surface"
+        >
+
+          <div
+            id="contractorNavLinks"
+            class="workspace-nav__links"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="workspace-main">
+
+      <div class="workspace-container">
+
+
+        <!-- =================================================
+             PAGE INTRO
+        ================================================== -->
+
+        <section class="people-intro">
+
+          <div>
+
+            <p class="page-eyebrow">
+              Workforce Control
+            </p>
+
+            <h2 class="page-title">
+              People
+            </h2>
+
+            <p class="page-note">
+              Workforce availability, capability, deployment and forward resource position.
+            </p>
+
+          </div>
+
+
+          <div class="people-intro__actions">
+
+            <button
+              id="addPersonButton"
+              class="people-primary-action"
+              type="button"
+            >
+              + Add Person
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CONTEXT CONTROL
+        ================================================== -->
+
+        <section class="people-command">
+
+          <div class="people-command__context">
+
+            <div class="people-command__heading">
+
+              <span class="people-command__eyebrow">
+                Workforce View
+              </span>
+
+              <strong id="peopleViewTitle">
+                Organisation Position
+              </strong>
+
+              <span id="peopleViewSubtitle">
+                All active workforce across the organisation
+              </span>
+
+            </div>
+
+
+            <div class="people-command__filters">
+
+              <div class="people-command-field">
+
+                <label for="peopleContextProject">
+                  View
+                </label>
+
+                <select
+                  id="peopleContextProject"
+                  class="people-context-select"
+                >
+
+                  <option value="">
+                    Organisation View
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="people-command-field">
+
+                <label for="peoplePlanningWindow">
+                  Planning Window
+                </label>
+
+                <select
+                  id="peoplePlanningWindow"
+                  class="people-context-select"
+                >
+
+                  <option value="TODAY">
+                    Today
+                  </option>
+
+                  <option
+                    value="7_DAYS"
+                    selected
+                  >
+                    Next 7 Days
+                  </option>
+
+                  <option value="30_DAYS">
+                    Next 30 Days
+                  </option>
+
+                  <option value="60_DAYS">
+                    Next 60 Days
+                  </option>
+
+                </select>
+
+              </div>
+
+
+              <div class="people-command-field people-command-field--search">
+
+                <label for="peopleQuickSearch">
+                  Find Person
+                </label>
+
+                <input
+                  id="peopleQuickSearch"
+                  class="people-context-search"
+                  type="search"
+                  placeholder="Search workforce"
+                  autocomplete="off"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div
+            id="peopleContextSummary"
+            class="people-command__summary"
+          >
+
+            <span class="people-command__summary-status">
+              LIVE POSITION
+            </span>
+
+            <strong>
+              Workforce intelligence
+            </strong>
+
+            <span>
+              Availability and capability will update with the selected context
+            </span>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             WORKFORCE POSITION
+        ================================================== -->
+
+        <section class="people-panel people-panel--position">
+
+          <header class="people-panel__header">
+
+            <div>
+
+              <p class="people-heading__eyebrow">
+                Current Position
+              </p>
+
+              <h3 class="people-heading__title">
+                Workforce Position
+              </h3>
+
+            </div>
+
+
+            <span
+              id="workforcePositionLabel"
+              class="people-position-label"
+            >
+              Assessing workforce
+            </span>
+
+          </header>
+
+
+          <div
+            id="workforceMetrics"
+            class="people-metrics"
+          >
+
+            <article class="people-metric people-metric--primary">
+
+              <span>
+                Active Workforce
+              </span>
+
+              <strong>
+                —
+              </strong>
+
+              <small>
+                Available workforce records
+              </small>
+
+            </article>
+
+
+            <article class="people-metric">
+
+              <span>
+                Deployed
+              </span>
+
+              <strong>
+                —
+              </strong>
+
+              <small>
+                Assigned to live work
+              </small>
+
+            </article>
+
+
+            <article class="people-metric">
+
+              <span>
+                Available
+              </span>
+
+              <strong>
+                —
+              </strong>
+
+              <small>
+                Free for deployment
+              </small>
+
+            </article>
+
+
+            <article class="people-metric">
+
+              <span>
+                Off / Unavailable
+              </span>
+
+              <strong>
+                —
+              </strong>
+
+              <small>
+                Leave, sickness or training
+              </small>
+
+            </article>
+
+
+            <article class="people-metric">
+
+              <span>
+                Competence Alerts
+              </span>
+
+              <strong>
+                —
+              </strong>
+
+              <small>
+                Expiry or evidence issues
+              </small>
+
+            </article>
+
+
+            <article class="people-metric">
+
+              <span>
+                Resource Gaps
+              </span>
+
+              <strong>
+                —
+              </strong>
+
+              <small>
+                Known capability shortfalls
+              </small>
+
+            </article>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             WORKFORCE OUTLOOK
+        ================================================== -->
+
+        <section class="people-panel">
+
+          <header class="people-panel__header">
+
+            <div>
+
+              <p class="people-heading__eyebrow">
+                Forward Planning
+              </p>
+
+              <h3 class="people-heading__title">
+                Workforce Outlook
+              </h3>
+
+            </div>
+
+
+            <span
+              id="peopleOutlookLabel"
+              class="people-register-count"
+            >
+              Next 30 days
+            </span>
+
+          </header>
+
+
+          <div
+            id="peopleOutlook"
+            class="people-outlook"
+          >
+
+            <article class="people-outlook-card">
+
+              <span class="people-outlook-card__period">
+                Today
+              </span>
+
+              <strong class="people-outlook-card__headline">
+                Current deployment
+              </strong>
+
+              <div class="people-outlook-card__rows">
+
+                <div>
+
+                  <span>
+                    Deployed
+                  </span>
+
+                  <strong>
+                    —
+                  </strong>
+
+                </div>
+
+
+                <div>
+
+                  <span>
+                    Available
+                  </span>
+
+                  <strong>
+                    —
+                  </strong>
+
+                </div>
+
+
+                <div>
+
+                  <span>
+                    Unavailable
+                  </span>
+
+                  <strong>
+                    —
+                  </strong>
+
+                </div>
+
+              </div>
+
+            </article>
+
+
+            <article class="people-outlook-card">
+
+              <span class="people-outlook-card__period">
+                Next 7 Days
+              </span>
+
+              <strong class="people-outlook-card__headline">
+                Immediate workforce pressure
+              </strong>
+
+              <div class="people-outlook-card__rows">
+
+                <div>
+
+                  <span>
+                    Leave / absence
+                  </span>
+
+                  <strong>
+                    —
+                  </strong>
+
+                </div>
+
+
+                <div>
+
+                  <span>
+                    Weekend risks
+                  </span>
+
+                  <strong>
+                    —
+                  </strong>
+
+                </div>
+
+
+                <div>
+
+                  <span>
+                    Allocation conflicts
+                  </span>
+
+                  <strong>
+                    —
+                  </strong>
+
+                </div>
+
+              </div>
+
+            </article>
+
+
+            <article class="people-outlook-card">
+
+              <span class="people-outlook-card__period">
+                Next 30 Days
+              </span>
+
+              <strong class="people-outlook-card__headline">
+                Forward capability position
+              </strong>
+
+              <div class="people-outlook-card__rows">
+
+                <div>
+
+                  <span>
+                    Qualifications expiring
+                  </span>
+
+                  <strong>
+                    —
+                  </strong>
+
+                </div>
+
+
+                <div>
+
+                  <span>
+                    Single-point dependencies
+                  </span>
+
+                  <strong>
+                    —
+                  </strong>
+
+                </div>
+
+
+                <div>
+
+                  <span>
+                    Resource shortfalls
+                  </span>
+
+                  <strong>
+                    —
+                  </strong>
+
+                </div>
+
+              </div>
+
+            </article>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CAPACITY PIPELINE
+        ================================================== -->
+
+        <section class="people-panel people-panel--pipeline">
+
+          <header class="people-panel__header">
+
+            <div>
+
+              <p class="people-heading__eyebrow">
+                Forward Resource Capacity
+              </p>
+
+              <h3 class="people-heading__title">
+                Upcoming Workforce Releases
+              </h3>
+
+              <p class="people-heading__note">
+                People finishing current allocations and their next known commitment.
+              </p>
+
+            </div>
+
+
+            <span
+              id="capacityPipelineLabel"
+              class="people-register-count"
+            >
+              No upcoming releases
+            </span>
+
+          </header>
+
+
+          <div
+            id="capacityPipeline"
+            class="people-capacity-pipeline"
+          >
+
+            <div class="people-empty people-empty--compact">
+              Workforce release position will appear here.
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             AVAILABILITY TRACKER
+        ================================================== -->
+
+        <section class="people-panel people-panel--availability">
+
+          <header class="people-panel__header people-panel__header--availability">
+
+            <div>
+
+              <p class="people-heading__eyebrow">
+                Resource Planning
+              </p>
+
+              <h3 class="people-heading__title">
+                Workforce Availability
+              </h3>
+
+              <p class="people-heading__note">
+                Rolling two-month view of deployment, leave, training and workforce availability.
+              </p>
+
+            </div>
+
+
+            <div class="people-availability-actions">
+
+              <button
+                id="availabilityPreviousButton"
+                class="people-icon-action"
+                type="button"
+                aria-label="Previous period"
+              >
+                ←
+              </button>
+
+
+              <span
+                id="availabilityPeriodLabel"
+                class="people-availability-period"
+              >
+                September - October 2026
+              </span>
+
+
+              <button
+                id="availabilityNextButton"
+                class="people-icon-action"
+                type="button"
+                aria-label="Next period"
+              >
+                →
+              </button>
+
+            </div>
+
+          </header>
+
+
+          <div class="people-availability-toolbar">
+
+            <div class="people-availability-legend">
+
+              <span>
+
+                <i class="people-legend-dot is-available"></i>
+
+                Available
+
+              </span>
+
+
+              <span>
+
+                <i class="people-legend-dot is-deployed"></i>
+
+                Project Assigned
+
+              </span>
+
+
+              <span>
+
+                <i class="people-legend-dot is-holiday"></i>
+
+                Holiday
+
+              </span>
+
+
+              <span>
+
+                <i class="people-legend-dot is-training"></i>
+
+                Training
+
+              </span>
+
+
+              <span>
+
+                <i class="people-legend-dot is-unavailable"></i>
+
+                Unavailable
+
+              </span>
+
+            </div>
+
+
+            <div class="people-availability-filters">
+
+              <select
+                id="availabilityCapabilityFilter"
+                class="people-filter"
+              >
+
+                <option value="">
+                  All Capabilities
+                </option>
+
+              </select>
+
+
+              <select
+  id="availabilityStatusFilter"
+  class="people-filter"
+>
+
+  <option value="">
+    All People
+  </option>
+
+  <option value="AVAILABLE">
+    Available in Period
+  </option>
+
+  <option value="DEPLOYED">
+    Project Assigned
+  </option>
+
+  <option value="HOLIDAY">
+    Holiday
+  </option>
+
+  <option value="TRAINING">
+    Training
+  </option>
+
+  <option value="SICKNESS">
+    Sickness
+  </option>
+
+  <option value="UNAVAILABLE">
+    Other Unavailable
+  </option>
+
+</select>
+
+            </div>
+
+          </div>
+
+
+          <div
+            id="workforceAvailabilityCalendar"
+            class="people-calendar"
+          >
+
+            <div class="people-calendar__placeholder">
+
+              <div class="people-calendar__placeholder-month">
+
+                <span>
+                  September 2026
+                </span>
+
+                <strong>
+                  Workforce calendar loading
+                </strong>
+
+              </div>
+
+
+              <div class="people-calendar__placeholder-month">
+
+                <span>
+                  October 2026
+                </span>
+
+                <strong>
+                  Availability intelligence loading
+                </strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             NEEDS ATTENTION
+        ================================================== -->
+
+        <section
+          id="peopleAttentionPanel"
+          class="people-panel"
+        >
+
+          <header class="people-panel__header">
+
+            <div>
+
+              <p class="people-heading__eyebrow">
+                Workforce Risk
+              </p>
+
+              <h3 class="people-heading__title">
+                Needs Attention
+              </h3>
+
+            </div>
+
+
+            <span
+              id="peopleAttentionCount"
+              class="people-register-count"
+            >
+              0 alerts
+            </span>
+
+          </header>
+
+
+          <div
+            id="peopleAttentionList"
+            class="people-attention-list"
+          >
+
+            <div class="people-empty people-empty--compact">
+              Assessing workforce risks
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CAPABILITY COVERAGE
+        ================================================== -->
+
+        <section class="people-panel">
+
+          <header class="people-panel__header">
+
+            <div>
+
+              <p class="people-heading__eyebrow">
+                Organisational Capability
+              </p>
+
+              <h3 class="people-heading__title">
+                Capability Coverage
+              </h3>
+
+              <p class="people-heading__note">
+                Understand where competent resource exists and where the organisation has little or no spare cover.
+              </p>
+
+            </div>
+
+
+            <span
+              id="capabilityCoverageCount"
+              class="people-register-count"
+            >
+              0 capabilities
+            </span>
+
+          </header>
+
+
+          <div
+            id="capabilityCoverage"
+            class="people-capability-grid"
+          >
+
+            <div class="people-empty people-empty--compact">
+              Add capability records to begin workforce coverage analysis.
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DEPLOYMENT
+        ================================================== -->
+
+        <section class="people-panel">
+
+          <header class="people-panel__header">
+
+            <div>
+
+              <p class="people-heading__eyebrow">
+                Resource Deployment
+              </p>
+
+              <h3 class="people-heading__title">
+                Project Workforce Position
+              </h3>
+
+              <p class="people-heading__note">
+                Current workforce allocation across live and planned projects.
+              </p>
+
+            </div>
+
+
+            <span
+              id="deploymentPositionLabel"
+              class="people-register-count"
+            >
+              Current allocation
+            </span>
+
+          </header>
+
+
+          <div
+            id="deploymentOverview"
+            class="people-deployment-grid"
+          >
+
+            <div class="people-empty people-empty--compact">
+              No active project deployments recorded.
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             WORKFORCE REGISTER
+        ================================================== -->
+
+        <section class="people-controls-panel">
+
+          <div class="people-register-heading">
+
+            <div>
+
+              <p class="people-heading__eyebrow">
+                Workforce Register
+              </p>
+
+              <h3 class="people-heading__title">
+                People
+              </h3>
+
+              <p class="people-heading__note">
+                Search the workforce and open individual operational records.
+              </p>
+
+            </div>
+
+
+            <span
+              id="peopleRegisterCount"
+              class="people-register-count"
+            >
+              0 people
+            </span>
+
+          </div>
+
+
+          <div class="people-controls">
+
+            <input
+              id="peopleSearchInput"
+              class="people-search"
+              type="search"
+              placeholder="Search name, role, capability or project"
+              autocomplete="off"
+            />
+
+
+            <select
+              id="peopleStatusFilter"
+              class="people-filter"
+            >
+
+              <option value="">
+                All Statuses
+              </option>
+
+              <option value="ACTIVE">
+                Active
+              </option>
+
+              <option value="ON_LEAVE">
+                On Leave
+              </option>
+
+              <option value="SICK">
+                Sick
+              </option>
+
+              <option value="TRAINING">
+                Training
+              </option>
+
+              <option value="LEFT">
+                Left Company
+              </option>
+
+            </select>
+
+
+            <select
+              id="peopleProjectFilter"
+              class="people-filter"
+            >
+
+              <option value="">
+                All Projects
+              </option>
+
+            </select>
+
+
+            <select
+              id="peopleAvailabilityFilter"
+              class="people-filter"
+            >
+
+              <option value="">
+                All Availability
+              </option>
+
+              <option value="AVAILABLE">
+                Available
+              </option>
+
+              <option value="DEPLOYED">
+                Deployed
+              </option>
+
+              <option value="UNAVAILABLE">
+                Unavailable
+              </option>
+
+            </select>
+
+          </div>
+
+        </section>
+
+
+        <section class="people-panel">
+
+          <div
+            id="peopleRegister"
+            class="people-register"
+          >
+
+            <div class="people-empty">
+              Loading workforce
+            </div>
+
+          </div>
+
+        </section>
+
+
+      </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         ADD PERSON MODAL
+    ====================================================== -->
+
+    <div
+      id="addPersonModal"
+      class="people-modal"
+      hidden
+    >
+
+      <div
+        id="addPersonBackdrop"
+        class="people-modal__backdrop"
+      ></div>
+
+
+      <section
+        class="people-modal__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="addPersonModalTitle"
+      >
+
+        <header class="people-modal__header">
+
+          <div>
+
+            <p class="people-heading__eyebrow">
+              Workforce Record
+            </p>
+
+            <h2
+              id="addPersonModalTitle"
+              class="people-modal__title"
+            >
+              Add Person
+            </h2>
+
+            <p class="people-modal__subtitle">
+              Create an operational workforce record. A NORMEX login account is not required.
+            </p>
+
+          </div>
+
+
+          <button
+            id="closeAddPersonModal"
+            class="people-modal__close"
+            type="button"
+            aria-label="Close"
+          >
+            ×
+          </button>
+
+        </header>
+
+
+        <form
+          id="addPersonForm"
+          class="people-modal__body"
+        >
+
+          <div class="people-form-grid">
+
+
+            <div class="people-field">
+
+              <label for="personFirstName">
+                First Name
+              </label>
+
+              <input
+                id="personFirstName"
+                name="firstName"
+                type="text"
+                maxlength="80"
+                required
+              />
+
+            </div>
+
+
+            <div class="people-field">
+
+              <label for="personLastName">
+                Last Name
+              </label>
+
+              <input
+                id="personLastName"
+                name="lastName"
+                type="text"
+                maxlength="80"
+                required
+              />
+
+            </div>
+
+
+            <div class="people-field">
+
+              <label for="personEmployeeNumber">
+                Internal / Employee Ref
+              </label>
+
+              <input
+                id="personEmployeeNumber"
+                name="employeeNumber"
+                type="text"
+                maxlength="60"
+                placeholder="e.g. NORMEX-00131"
+              />
+
+            </div>
+
+
+            <div class="people-field">
+
+              <label for="personEmploymentStatus">
+                Employment Status
+              </label>
+
+              <select
+                id="personEmploymentStatus"
+                name="employmentStatus"
+              >
+
+                <option value="ACTIVE">
+                  Active
+                </option>
+
+                <option value="ON_LEAVE">
+                  On Leave
+                </option>
+
+                <option value="SICK">
+                  Sick
+                </option>
+
+                <option value="TRAINING">
+                  Training
+                </option>
+
+                <option value="LEFT">
+                  Left Company
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="people-field">
+
+              <label for="personPrimaryRole">
+                Primary Role
+              </label>
+
+              <input
+                id="personPrimaryRole"
+                name="primaryRole"
+                type="text"
+                maxlength="120"
+                placeholder="e.g. Demolition Operative"
+              />
+
+            </div>
+
+
+            <div class="people-field">
+
+              <label for="personDepartment">
+                Department / Discipline
+              </label>
+
+              <input
+                id="personDepartment"
+                name="department"
+                type="text"
+                maxlength="120"
+                placeholder="e.g. Demolition"
+              />
+
+            </div>
+
+
+            <div class="people-field">
+
+              <label for="personEmploymentType">
+                Employment Type
+              </label>
+
+              <select
+                id="personEmploymentType"
+                name="employmentType"
+              >
+
+                <option value="EMPLOYEE">
+                  Employee
+                </option>
+
+                <option value="CIS">
+                  CIS
+                </option>
+
+                <option value="AGENCY">
+                  Agency
+                </option>
+
+                <option value="SUBCONTRACT">
+                  Subcontract
+                </option>
+
+                <option value="OTHER">
+                  Other
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="people-field">
+
+              <label for="personNormalWorkingPattern">
+                Normal Working Pattern
+              </label>
+
+              <select
+                id="personNormalWorkingPattern"
+                name="normalWorkingPattern"
+              >
+
+                <option value="MON_FRI">
+                  Monday - Friday
+                </option>
+
+                <option value="MON_SAT">
+                  Monday - Saturday
+                </option>
+
+                <option value="ROTATING">
+                  Rotating / Shift Pattern
+                </option>
+
+                <option value="VARIABLE">
+                  Variable
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="people-field">
+
+              <label for="personSaturdayAvailable">
+                Saturday Availability
+              </label>
+
+              <select
+                id="personSaturdayAvailable"
+                name="saturdayAvailable"
+              >
+
+                <option value="YES">
+                  Normally Available
+                </option>
+
+                <option value="NO">
+                  Normally Unavailable
+                </option>
+
+                <option value="ASK">
+                  Confirm Each Time
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="people-field">
+
+              <label for="personSundayAvailable">
+                Sunday Availability
+              </label>
+
+              <select
+                id="personSundayAvailable"
+                name="sundayAvailable"
+              >
+
+                <option value="YES">
+                  Normally Available
+                </option>
+
+                <option value="NO">
+                  Normally Unavailable
+                </option>
+
+                <option value="ASK">
+                  Confirm Each Time
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="people-field people-field--wide">
+
+              <label for="personNotes">
+                Operational Notes
+              </label>
+
+              <textarea
+                id="personNotes"
+                name="notes"
+                rows="4"
+                maxlength="1500"
+                placeholder="Useful resource planning information, special skills or working constraints"
+              ></textarea>
+
+            </div>
+
+
+          </div>
+
+
+          <div
+            id="addPersonError"
+            class="people-message people-message--error"
+            hidden
+          ></div>
+
+
+          <footer class="people-modal__footer">
+
+            <button
+              id="cancelAddPerson"
+              class="people-secondary-action"
+              type="button"
+            >
+              Cancel
+            </button>
+
+
+            <button
+              id="savePerson"
+              class="people-primary-action"
+              type="submit"
+            >
+              Add Person
+            </button>
+
+          </footer>
+
+        </form>
+
+      </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         PERSON WORKSPACE
+    ====================================================== -->
+
+    <div
+      id="personWorkspaceModal"
+      class="people-modal"
+      hidden
+    >
+
+      <div
+        id="personWorkspaceBackdrop"
+        class="people-modal__backdrop"
+      ></div>
+
+
+      <section
+        class="people-modal__panel people-modal__panel--workspace"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="personWorkspaceName"
+      >
+
+        <header class="people-modal__header">
+
+          <div>
+
+            <p
+              id="personWorkspaceReference"
+              class="people-heading__eyebrow"
+            >
+              Workforce Record
+            </p>
+
+            <h2
+              id="personWorkspaceName"
+              class="people-modal__title"
+            >
+              Person
+            </h2>
+
+            <p
+              id="personWorkspaceRole"
+              class="people-modal__subtitle"
+            >
+              —
+            </p>
+
+          </div>
+
+
+          <button
+            id="closePersonWorkspace"
+            class="people-modal__close"
+            type="button"
+            aria-label="Close"
+          >
+            ×
+          </button>
+
+        </header>
+
+
+        <div class="people-modal__body">
+
+
+          <div
+            id="personWorkspaceSummary"
+            class="person-workspace-summary"
+          ></div>
+
+
+          <div class="person-workspace-grid">
+
+
+            <!-- =============================================
+                 CAPABILITIES
+            ============================================== -->
+
+            <section class="person-workspace-card">
+
+              <header class="person-workspace-card__header">
+
+                <div>
+
+                  <span>
+                    Capability
+                  </span>
+
+                  <strong>
+                    Operational Capabilities
+                  </strong>
+
+                </div>
+
+
+                <button
+                  id="showAddCapabilityButton"
+                  class="people-small-action"
+                  type="button"
+                >
+                  + Add
+                </button>
+
+              </header>
+
+
+              <div
+                id="personCapabilities"
+                class="person-chip-list"
+              ></div>
+
+
+              <form
+                id="addCapabilityForm"
+                class="person-inline-form"
+                hidden
+              >
+
+                <select
+                  id="personCapabilityCode"
+                  name="capabilityCode"
+                  required
+                ></select>
+
+
+                <input
+                  id="personCapabilityExpiry"
+                  name="expiryDate"
+                  type="date"
+                />
+
+
+                <button
+                  class="people-primary-action"
+                  type="submit"
+                >
+                  Save
+                </button>
+
+
+                <button
+                  id="cancelAddCapability"
+                  class="people-secondary-action"
+                  type="button"
+                >
+                  Cancel
+                </button>
+
+              </form>
+
+            </section>
+
+
+            <!-- =============================================
+                 PROJECT ASSIGNMENTS
+            ============================================== -->
+
+            <section class="person-workspace-card">
+
+              <header class="person-workspace-card__header">
+
+                <div>
+
+                  <span>
+                    Deployment
+                  </span>
+
+                  <strong>
+                    Project Assignments
+                  </strong>
+
+                </div>
+
+
+                <button
+                  id="showAddAssignmentButton"
+                  class="people-small-action"
+                  type="button"
+                >
+                  + Assign
+                </button>
+
+              </header>
+
+
+              <div
+                id="personAssignments"
+                class="person-record-list"
+              ></div>
+
+
+              <form
+                id="addAssignmentForm"
+                class="person-inline-form person-inline-form--stack"
+                hidden
+              >
+
+                <select
+                  id="personAssignmentProject"
+                  name="projectId"
+                  required
+                ></select>
+
+
+                <input
+                  id="personAssignmentRole"
+                  name="roleOnProject"
+                  type="text"
+                  placeholder="Role on project"
+                />
+
+
+                <div class="person-inline-form__dates">
+
+                  <input
+                    id="personAssignmentFrom"
+                    name="assignedFrom"
+                    type="date"
+                  />
+
+
+                  <input
+                    id="personAssignmentUntil"
+                    name="assignedUntil"
+                    type="date"
+                  />
+
+                </div>
+
+
+                <div class="person-inline-form__actions">
+
+                  <button
+                    class="people-primary-action"
+                    type="submit"
+                  >
+                    Save Assignment
+                  </button>
+
+
+                  <button
+                    id="cancelAddAssignment"
+                    class="people-secondary-action"
+                    type="button"
+                  >
+                    Cancel
+                  </button>
+
+                </div>
+
+              </form>
+
+            </section>
+
+
+            <!-- =============================================
+                 AVAILABILITY
+            ============================================== -->
+
+            <section class="person-workspace-card">
+
+              <header class="person-workspace-card__header">
+
+                <div>
+
+                  <span>
+                    Availability
+                  </span>
+
+                  <strong>
+                    Leave & Absence
+                  </strong>
+
+                </div>
+
+
+                <button
+                  id="showAddAbsenceButton"
+                  class="people-small-action"
+                  type="button"
+                >
+                  + Add
+                </button>
+
+              </header>
+
+
+              <div
+                id="personAbsences"
+                class="person-record-list"
+              ></div>
+
+
+              <form
+                id="addAbsenceForm"
+                class="person-inline-form person-inline-form--stack"
+                hidden
+              >
+
+                <select
+                  id="personAbsenceType"
+                  name="absenceType"
+                >
+
+                  <option value="HOLIDAY">
+                    Holiday
+                  </option>
+
+                  <option value="SICKNESS">
+                    Sickness
+                  </option>
+
+                  <option value="TRAINING">
+                    Training
+                  </option>
+
+                  <option value="OTHER">
+                    Other
+                  </option>
+
+                </select>
+
+
+                <div class="person-inline-form__dates">
+
+                  <input
+                    id="personAbsenceFrom"
+                    name="startDate"
+                    type="date"
+                    required
+                  />
+
+
+                  <input
+                    id="personAbsenceUntil"
+                    name="endDate"
+                    type="date"
+                    required
+                  />
+
+                </div>
+
+
+                <div class="person-inline-form__actions">
+
+                  <button
+                    class="people-primary-action"
+                    type="submit"
+                  >
+                    Save Absence
+                  </button>
+
+
+                  <button
+                    id="cancelAddAbsence"
+                    class="people-secondary-action"
+                    type="button"
+                  >
+                    Cancel
+                  </button>
+
+                </div>
+
+              </form>
+
+            </section>
+
+
+          </div>
+
+
+          <div
+            id="personWorkspaceError"
+            class="people-message people-message--error"
+            hidden
+          ></div>
+
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="workspace-footer">
+
+      <div class="workspace-container">
+
+        <div class="workspace-footer__inner">
+
+          <span class="workspace-footer__brand">
+            <strong>NORMEX</strong>
+          </span>
+
+          <span
+            id="workspaceFooterOrganisation"
+            class="workspace-footer__context"
+          >
+            Colemans
+          </span>
+
+        </div>
+
+      </div>
+
+    </footer>
+
+
+  </div>
+
+
+  <!-- =====================================================
+       MOBILE NAV
+  ====================================================== -->
+
+  <aside
+    id="contractorMobileNav"
+    class="workspace-mobile-nav"
+    hidden
+  >
+
+    <div
+      id="mobileNavBackdrop"
+      class="workspace-mobile-nav__backdrop"
+    ></div>
+
+
+    <div class="workspace-mobile-nav__panel">
+
+      <header class="workspace-mobile-nav__header">
+
+        <div>
+
+          <span class="workspace-mobile-nav__eyebrow">
+            Colemans
+          </span>
+
+          <h2 class="workspace-mobile-nav__title">
+            Navigation
+          </h2>
+
+        </div>
+
+
+        <button
+          id="mobileNavClose"
+          class="workspace-mobile-nav__close"
+          type="button"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <nav
+        id="contractorMobileNavLinks"
+        class="workspace-mobile-nav__links"
+      ></nav>
+
+    </div>
+
+  </aside>
+
+
+  <script src="/modules/contractor/shared/js/config.js"></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/shared/js/shell.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/people/people.js"
+  ></script>
+
+</body>
+
+</html>

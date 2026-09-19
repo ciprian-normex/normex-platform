@@ -1,0 +1,21 @@
+NORMEX CONTRACTOR WORKSPACE STRUCTURE
+
+Rule:
+- /shared = contractor-wide shared assets
+- /<domain>/shared = assets shared only inside that domain
+- /<domain>/<submodule>/ = submodule-specific HTML/CSS/JS
+
+Top-level navigation:
+Home
+Projects
+Operations
+People
+Plant
+Assurance
+Commercial
+Reports
+Admin
+Support Tickets
+
+Before copying this into the project, rename the old prototype contractor folder
+so this folder can become /modules/contractor/.

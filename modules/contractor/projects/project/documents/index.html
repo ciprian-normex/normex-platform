@@ -1,0 +1,2121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>Project Documents | Colemans | NORMEX</title>
+
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/projects/shared/project-nav.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/projects/project/documents/documents.css"
+  />
+
+</head>
+
+
+<body>
+
+  <div class="workspace">
+
+
+    <!-- =====================================================
+         ORGANISATION HEADER
+    ====================================================== -->
+
+    <header class="workspace-header">
+
+      <div class="workspace-container">
+
+        <div class="workspace-header__surface">
+
+
+          <div class="workspace-brand">
+
+            <p class="workspace-brand__product">
+              NORMEX · Contractor Workspace
+            </p>
+
+            <h1
+              id="workspaceOrganisationName"
+              class="workspace-brand__name"
+            >
+              Colemans
+            </h1>
+
+            <p class="workspace-brand__tagline">
+              Projects, resources and operational control
+            </p>
+
+          </div>
+
+
+          <div class="workspace-header-actions">
+
+
+            <div class="workspace-status">
+
+              <span
+                class="workspace-status__pulse"
+                aria-hidden="true"
+              ></span>
+
+              <span class="workspace-status__label">
+                Organisation Workspace
+              </span>
+
+            </div>
+
+
+            <div class="workspace-user">
+
+              <div class="workspace-user__details">
+
+                <span
+                  id="workspaceUserName"
+                  class="workspace-user__name"
+                >
+                  User
+                </span>
+
+                <span
+                  id="workspaceUserRole"
+                  class="workspace-user__role"
+                >
+                  Loading
+                </span>
+
+              </div>
+
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ORGANISATION NAV
+    ====================================================== -->
+
+    <nav
+      class="workspace-nav"
+      aria-label="Organisation navigation"
+    >
+
+      <div class="workspace-container">
+
+        <div
+          id="contractorNavSurface"
+          class="workspace-nav__surface"
+        >
+
+          <div
+            id="contractorNavLinks"
+            class="workspace-nav__links"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="workspace-main">
+
+      <div class="workspace-container">
+
+
+        <!-- =================================================
+             PROJECT NAV
+        ================================================== -->
+
+        <nav
+          class="project-subnav"
+          aria-label="Project navigation"
+        >
+
+          <div class="project-subnav__surface">
+
+
+            <div class="project-subnav__identity">
+
+              <a
+                class="project-subnav__back"
+                href="/modules/contractor/projects/"
+              >
+                ← Projects
+              </a>
+
+
+              <div class="project-subnav__project">
+
+                <span class="project-subnav__eyebrow">
+                  Project Workspace
+                </span>
+
+                <span
+                  id="projectSubnavName"
+                  class="project-subnav__name"
+                >
+                  Loading project
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div
+              id="projectSubnavLinks"
+              class="project-subnav__links"
+            ></div>
+
+
+          </div>
+
+        </nav>
+
+
+        <!-- =================================================
+             INTRO
+        ================================================== -->
+
+        <section class="documents-intro">
+
+          <div>
+
+            <p class="page-eyebrow">
+              Project Information Control
+            </p>
+
+            <h2 class="page-title">
+              Documents
+            </h2>
+
+            <p class="page-note">
+              Readiness, required information, controlled revisions and document review.
+            </p>
+
+          </div>
+
+
+          <div class="documents-intro__actions">
+
+            <button
+              id="addRequirementButton"
+              class="documents-secondary-action"
+              type="button"
+              hidden
+            >
+              + Add Requirement
+            </button>
+
+
+            <button
+              id="addProjectDocumentButton"
+              class="documents-primary-action"
+              type="button"
+              hidden
+            >
+              + Add Document
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PROJECT INFORMATION POSITION
+        ================================================== -->
+
+        <section class="documents-panel">
+
+          <header class="documents-panel__header">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Readiness
+              </p>
+
+              <h3 class="section-heading__title">
+                Project Information Position
+              </h3>
+
+            </div>
+
+
+            <span
+  id="projectInformationPositionLabel"
+  class="documents-readiness-label"
+>
+  Assessing project information
+</span>
+
+          </header>
+
+
+          <div
+  id="projectInformationPositionGrid"
+  class="documents-gate-grid"
+>
+
+            <div class="documents-empty documents-empty--compact">
+              Assessing project information gates
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             BLOCKING / IMPORTANT
+        ================================================== -->
+
+        <section
+          id="importantItemsPanel"
+          class="documents-panel"
+          hidden
+        >
+
+          <header class="documents-panel__header">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Priority Control
+              </p>
+
+              <h3 class="section-heading__title">
+                Blocking & Important Items
+              </h3>
+
+            </div>
+
+
+            <span
+              id="importantItemsCount"
+              class="documents-register-count"
+            >
+              0 items
+            </span>
+
+          </header>
+
+
+          <div
+            id="importantItemsList"
+            class="documents-priority-list"
+          ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             REVIEW QUEUE
+        ================================================== -->
+
+        <section
+          id="reviewQueuePanel"
+          class="documents-panel"
+          hidden
+        >
+
+          <header class="documents-panel__header">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Assigned Control
+              </p>
+
+              <h3 class="section-heading__title">
+                Document Review Queue
+              </h3>
+
+            </div>
+
+
+            <span
+              id="reviewQueueCount"
+              class="documents-register-count"
+            >
+              0 reviews
+            </span>
+
+          </header>
+
+
+          <div
+            id="reviewQueueList"
+            class="documents-review-list"
+          ></div>
+
+        </section>
+
+
+        <!-- =================================================
+             REQUIREMENTS
+        ================================================== -->
+
+        <section class="documents-panel">
+
+          <header class="documents-panel__header">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Required Information
+              </p>
+
+              <h3 class="section-heading__title">
+                Project Document Requirements
+              </h3>
+
+            </div>
+
+
+            <div class="documents-panel__header-actions">
+
+              <select
+                id="requirementGateFilter"
+                class="documents-filter"
+              >
+
+                <option value="">
+                  All Gates
+                </option>
+
+                <option value="PROJECT_START">
+                  Project Start
+                </option>
+
+                <option value="PHASE_START">
+                  Phase Start
+                </option>
+
+                <option value="PHASE_COMPLETE">
+                  Phase Complete
+                </option>
+
+                <option value="PROJECT_HANDOVER">
+                  Project Handover
+                </option>
+
+                <option value="NONE">
+                  No Gate
+                </option>
+
+              </select>
+
+
+              <select
+                id="requirementCriticalityFilter"
+                class="documents-filter"
+              >
+
+                <option value="">
+                  All Criticalities
+                </option>
+
+                <option value="CRITICAL">
+                  Critical
+                </option>
+
+                <option value="REQUIRED">
+                  Required
+                </option>
+
+                <option value="SUPPORTING">
+                  Supporting
+                </option>
+
+              </select>
+
+
+              <select
+                id="requirementStatusFilter"
+                class="documents-filter"
+              >
+
+                <option value="">
+                  All Positions
+                </option>
+
+                <option value="MISSING">
+                  Missing
+                </option>
+
+                <option value="UNDER_REVIEW">
+                  Under Review
+                </option>
+
+                <option value="SATISFIED">
+                  Satisfied
+                </option>
+
+                <option value="ACTION_REQUIRED">
+                  Action Required
+                </option>
+
+                <option value="NO_CURRENT_REVISION">
+                  No Current Revision
+                </option>
+
+                <option value="CONDITIONAL">
+                  Conditional
+                </option>
+
+                <option value="NOT_REQUIRED">
+                  Not Required
+                </option>
+
+              </select>
+
+            </div>
+
+          </header>
+
+
+          <div
+            id="documentRequirementsRegister"
+            class="documents-requirements-register"
+          >
+
+            <div class="documents-empty documents-empty--compact">
+              Loading project document requirements
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FIND DOCUMENT
+        ================================================== -->
+
+        <section class="documents-controls-panel">
+
+          <div class="documents-finder-heading">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Document Finder
+              </p>
+
+              <h3 class="section-heading__title">
+                Find a Document
+              </h3>
+
+            </div>
+
+
+            <span
+              id="documentsRegisterCount"
+              class="documents-register-count"
+            >
+              0 documents
+            </span>
+
+          </div>
+
+
+          <div
+            id="documentCategoryTabs"
+            class="documents-category-tabs"
+          ></div>
+
+
+          <div class="documents-controls">
+
+            <input
+              id="documentSearchInput"
+              class="documents-search"
+              type="search"
+              placeholder="Search reference, title, type, scope, phase or file name"
+              autocomplete="off"
+            />
+
+
+            <select
+              id="documentStateFilter"
+              class="documents-filter"
+            >
+
+              <option value="">
+                All States
+              </option>
+
+              <option value="CURRENT">
+                Current Controlled
+              </option>
+
+              <option value="UNDER_REVIEW">
+                Under Review
+              </option>
+
+              <option value="REVISE_AND_RESUBMIT">
+                Revise & Resubmit
+              </option>
+
+              <option value="REJECTED">
+                Rejected
+              </option>
+
+              <option value="REFERENCE">
+                Reference
+              </option>
+
+              <option value="NO_CURRENT">
+                No Current Revision
+              </option>
+
+            </select>
+
+
+            <select
+              id="documentScopeFilter"
+              class="documents-filter"
+            >
+
+              <option value="">
+                All Scopes / Phases
+              </option>
+
+            </select>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DOCUMENT REGISTER
+        ================================================== -->
+
+        <section class="documents-panel">
+
+          <div
+            id="documentsRegister"
+            class="documents-register"
+          >
+
+            <div class="documents-empty">
+              Loading controlled documents
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             RECENT MOVEMENT
+        ================================================== -->
+
+        <section class="documents-panel">
+
+          <header class="documents-panel__header">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Recent Movement
+              </p>
+
+              <h3 class="section-heading__title">
+                Latest Document Activity
+              </h3>
+
+            </div>
+
+          </header>
+
+
+          <div
+            id="documentsRecentActivity"
+            class="documents-activity"
+          >
+
+            <div class="documents-empty documents-empty--compact">
+              No recent document activity
+            </div>
+
+          </div>
+
+        </section>
+
+
+      </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         ADD REQUIREMENT MODAL
+    ====================================================== -->
+
+    <div
+      id="requirementModal"
+      class="documents-modal"
+      hidden
+    >
+
+      <div
+        id="requirementBackdrop"
+        class="documents-modal__backdrop"
+      ></div>
+
+
+      <section
+        class="documents-modal__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="requirementModalTitle"
+      >
+
+        <header class="documents-modal__header">
+
+          <div>
+
+            <p class="section-heading__eyebrow">
+              Project Readiness
+            </p>
+
+            <h2
+              id="requirementModalTitle"
+              class="documents-modal__title"
+            >
+              Add Document Requirement
+            </h2>
+
+          </div>
+
+
+          <button
+            id="closeRequirementModal"
+            class="documents-modal__close"
+            type="button"
+            aria-label="Close"
+          >
+            ×
+          </button>
+
+        </header>
+
+
+        <form
+          id="requirementForm"
+          class="documents-modal__body"
+        >
+
+          <div class="documents-form-grid">
+
+
+            <div class="documents-field">
+
+              <label for="requirementCategory">
+                Domain
+              </label>
+
+              <select
+                id="requirementCategory"
+                name="category"
+                required
+              ></select>
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="requirementDocumentType">
+                Document Type
+              </label>
+
+              <select
+                id="requirementDocumentType"
+                name="documentType"
+                required
+              ></select>
+
+            </div>
+
+
+            <div class="documents-field documents-field--wide">
+
+              <label for="requirementTitle">
+                Requirement
+              </label>
+
+              <input
+                id="requirementTitle"
+                name="title"
+                type="text"
+                maxlength="180"
+                required
+              />
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="requirementCriticality">
+                Criticality
+              </label>
+
+              <select
+                id="requirementCriticality"
+                name="criticality"
+              >
+
+                <option value="CRITICAL">
+                  Critical
+                </option>
+
+                <option value="REQUIRED">
+                  Required
+                </option>
+
+                <option value="SUPPORTING">
+                  Supporting
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="requirementBlocksProgress">
+                Blocks Progress?
+              </label>
+
+              <select
+                id="requirementBlocksProgress"
+                name="blocksProgress"
+              >
+
+                <option value="YES">
+                  Yes - blocks the gate
+                </option>
+
+                <option value="NO">
+                  No - important but non-blocking
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="requirementState">
+                Requirement State
+              </label>
+
+              <select
+                id="requirementState"
+                name="requirementState"
+              >
+
+                <option value="REQUIRED">
+                  Required
+                </option>
+
+                <option value="CONDITIONAL">
+                  Conditional
+                </option>
+
+                <option value="NOT_REQUIRED">
+                  Not Required
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="requirementGateType">
+                Control Gate
+              </label>
+
+              <select
+                id="requirementGateType"
+                name="gateType"
+              >
+
+                <option value="PROJECT_START">
+                  Project Start
+                </option>
+
+                <option value="PHASE_START">
+                  Phase Start
+                </option>
+
+                <option value="PHASE_COMPLETE">
+                  Phase Complete
+                </option>
+
+                <option value="PROJECT_HANDOVER">
+                  Project Handover
+                </option>
+
+                <option value="NONE">
+                  No Gate
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div
+              id="requirementPhaseField"
+              class="documents-field"
+              hidden
+            >
+
+              <label for="requirementPhase">
+                Phase
+              </label>
+
+              <select
+                id="requirementPhase"
+                name="phaseId"
+              >
+
+                <option value="">
+                  Select phase
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="requirementScope">
+                Scope
+              </label>
+
+              <select
+                id="requirementScope"
+                name="scopeId"
+              >
+
+                <option value="">
+                  Project Level
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="requirementReviewRole">
+                Default Review Role
+              </label>
+
+              <select
+                id="requirementReviewRole"
+                name="reviewRoleCode"
+              >
+
+                <option value="">
+                  No Default Review Role
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="documents-field documents-field--wide">
+
+              <label for="requirementNotes">
+                Requirement Notes
+              </label>
+
+              <textarea
+                id="requirementNotes"
+                name="notes"
+                rows="4"
+                maxlength="2000"
+                placeholder="Why this information is required or what it controls"
+              ></textarea>
+
+            </div>
+
+
+          </div>
+
+
+          <div
+            id="requirementError"
+            class="documents-message documents-message--error"
+            hidden
+          ></div>
+
+
+          <footer class="documents-modal__footer">
+
+            <button
+              id="cancelRequirement"
+              class="documents-secondary-action"
+              type="button"
+            >
+              Cancel
+            </button>
+
+            <button
+              id="saveRequirement"
+              class="documents-primary-action"
+              type="submit"
+            >
+              Add Requirement
+            </button>
+
+          </footer>
+
+        </form>
+
+      </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         ADD DOCUMENT MODAL
+    ====================================================== -->
+
+    <div
+      id="addDocumentModal"
+      class="documents-modal"
+      hidden
+    >
+
+      <div
+        id="addDocumentBackdrop"
+        class="documents-modal__backdrop"
+      ></div>
+
+
+      <section
+        class="documents-modal__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="addDocumentModalTitle"
+      >
+
+        <header class="documents-modal__header">
+
+          <div>
+
+            <p class="section-heading__eyebrow">
+              Project Document Control
+            </p>
+
+            <h2
+              id="addDocumentModalTitle"
+              class="documents-modal__title"
+            >
+              Add Controlled Document
+            </h2>
+
+          </div>
+
+
+          <button
+            id="closeAddDocumentModal"
+            class="documents-modal__close"
+            type="button"
+            aria-label="Close"
+          >
+            ×
+          </button>
+
+        </header>
+
+
+        <form
+          id="addDocumentForm"
+          class="documents-modal__body"
+        >
+
+          <div class="documents-form-grid">
+
+
+            <div class="documents-field">
+
+              <label for="addDocumentCategory">
+                Domain
+              </label>
+
+              <select
+                id="addDocumentCategory"
+                name="category"
+                required
+              ></select>
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="addDocumentType">
+                Document Type
+              </label>
+
+              <select
+                id="addDocumentType"
+                name="documentType"
+                required
+              ></select>
+
+            </div>
+
+
+            <div class="documents-field documents-field--wide">
+
+              <label for="addDocumentTitle">
+                Document Title
+              </label>
+
+              <input
+                id="addDocumentTitle"
+                name="title"
+                type="text"
+                maxlength="180"
+                required
+              />
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="addDocumentReferencePreview">
+                Reference
+              </label>
+
+              <input
+                id="addDocumentReferencePreview"
+                type="text"
+                value="AUTO"
+                readonly
+              />
+
+              <small class="documents-field-note">
+                Generated automatically when saved
+              </small>
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="addDocumentRevision">
+                Initial Revision
+              </label>
+
+              <input
+                id="addDocumentRevision"
+                name="revision"
+                type="text"
+                maxlength="30"
+                value="1"
+                required
+              />
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="addDocumentSourceType">
+                Source
+              </label>
+
+              <select
+                id="addDocumentSourceType"
+                name="sourceType"
+              >
+
+                <option value="INTERNAL">
+                  Internal
+                </option>
+
+                <option value="CLIENT">
+                  Client
+                </option>
+
+                <option value="DESIGNER">
+                  Designer
+                </option>
+
+                <option value="CONTRACTOR">
+                  Contractor
+                </option>
+
+                <option value="CONSULTANT">
+                  Consultant
+                </option>
+
+                <option value="OTHER_EXTERNAL">
+                  Other External
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div
+              id="addDocumentExternalStatusField"
+              class="documents-field"
+              hidden
+            >
+
+              <label for="addDocumentExternalStatus">
+                External Status
+              </label>
+
+              <select
+                id="addDocumentExternalStatus"
+                name="externalStatus"
+              >
+
+                <option value="">
+                  Not Stated
+                </option>
+
+                <option value="APPROVED_FOR_CONSTRUCTION">
+                  Approved for Construction
+                </option>
+
+                <option value="APPROVED">
+                  Approved
+                </option>
+
+                <option value="ISSUED_FOR_CONSTRUCTION">
+                  Issued for Construction
+                </option>
+
+                <option value="ISSUED_FOR_INFORMATION">
+                  Issued for Information
+                </option>
+
+                <option value="PRELIMINARY">
+                  Preliminary
+                </option>
+
+                <option value="AS_BUILT">
+                  As Built
+                </option>
+
+                <option value="OTHER">
+                  Other
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="addDocumentOwner">
+                Document Owner
+              </label>
+
+              <input
+                id="addDocumentOwner"
+                name="ownerName"
+                type="text"
+                maxlength="120"
+                required
+              />
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="addDocumentDate">
+                Document Date
+              </label>
+
+              <input
+                id="addDocumentDate"
+                name="documentDate"
+                type="date"
+              />
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="addDocumentScope">
+                Scope
+              </label>
+
+              <select
+                id="addDocumentScope"
+                name="scopeId"
+              >
+
+                <option value="">
+                  Project Level
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="addDocumentPhase">
+                Phase
+              </label>
+
+              <select
+                id="addDocumentPhase"
+                name="phaseId"
+              >
+
+                <option value="">
+                  Project Level
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="documents-field">
+
+              <label for="addDocumentReviewRequired">
+                Internal Review
+              </label>
+
+              <select
+                id="addDocumentReviewRequired"
+                name="reviewRequired"
+              >
+
+                <option value="YES">
+                  Review Required
+                </option>
+
+                <option value="NO">
+                  No Review Required
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div
+              id="addDocumentReviewRoleField"
+              class="documents-field"
+            >
+
+              <label for="addDocumentReviewRole">
+                Assigned Review Role
+              </label>
+
+              <select
+                id="addDocumentReviewRole"
+                name="reviewRoleCode"
+              ></select>
+
+            </div>
+
+
+            <div
+              id="addDocumentReviewDueField"
+              class="documents-field"
+            >
+
+              <label for="addDocumentReviewDueDate">
+                Review Due
+              </label>
+
+              <input
+                id="addDocumentReviewDueDate"
+                name="reviewDueDate"
+                type="date"
+              />
+
+            </div>
+
+
+            <div class="documents-field documents-field--wide">
+
+              <label for="addDocumentRequirement">
+                Satisfies Requirement
+              </label>
+
+              <select
+                id="addDocumentRequirement"
+                name="requirementId"
+              >
+
+                <option value="">
+                  No Linked Requirement
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="documents-field documents-field--wide">
+
+              <label
+                for="addDocumentFile"
+                class="documents-file-picker"
+              >
+
+                <input
+                  id="addDocumentFile"
+                  name="file"
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                  required
+                />
+
+                <span class="documents-file-picker__icon">
+                  +
+                </span>
+
+                <span>
+
+                  <strong id="addDocumentFileTitle">
+                    Select PDF or image
+                  </strong>
+
+                  <small id="addDocumentFileMeta">
+                    PDF, JPG or PNG · Maximum 100 MB
+                  </small>
+
+                </span>
+
+              </label>
+
+            </div>
+
+
+          </div>
+
+
+          <div
+            id="addDocumentUploadProgress"
+            class="documents-upload-progress"
+            hidden
+          >
+
+            <div class="documents-upload-progress__track">
+
+              <span
+                id="addDocumentUploadProgressBar"
+                class="documents-upload-progress__bar"
+              ></span>
+
+            </div>
+
+            <span id="addDocumentUploadProgressText">
+              Preparing upload
+            </span>
+
+          </div>
+
+
+          <div
+            id="addDocumentError"
+            class="documents-message documents-message--error"
+            hidden
+          ></div>
+
+
+          <footer class="documents-modal__footer">
+
+            <button
+              id="cancelAddDocument"
+              class="documents-secondary-action"
+              type="button"
+            >
+              Cancel
+            </button>
+
+            <button
+              id="saveAddDocument"
+              class="documents-primary-action"
+              type="submit"
+            >
+              Add Document
+            </button>
+
+          </footer>
+
+        </form>
+
+      </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         DOCUMENT WORKSPACE
+    ====================================================== -->
+
+    <div
+      id="documentWorkspaceModal"
+      class="documents-modal"
+      hidden
+    >
+
+      <div
+        id="documentWorkspaceBackdrop"
+        class="documents-modal__backdrop"
+      ></div>
+
+
+      <section
+        class="documents-modal__panel documents-modal__panel--workspace"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="documentWorkspaceTitle"
+      >
+
+        <header class="documents-modal__header">
+
+          <div>
+
+            <p
+              id="documentWorkspaceReference"
+              class="section-heading__eyebrow"
+            >
+              Controlled Document
+            </p>
+
+            <h2
+              id="documentWorkspaceTitle"
+              class="documents-modal__title"
+            >
+              Document
+            </h2>
+
+            <p
+              id="documentWorkspaceSubtitle"
+              class="documents-modal__subtitle"
+            >
+              —
+            </p>
+
+          </div>
+
+
+          <button
+            id="closeDocumentWorkspace"
+            class="documents-modal__close"
+            type="button"
+            aria-label="Close"
+          >
+            ×
+          </button>
+
+        </header>
+
+
+        <div class="documents-modal__body">
+
+
+          <div class="document-workspace-actions">
+
+            <button
+              id="viewCurrentDocumentButton"
+              class="documents-secondary-action"
+              type="button"
+              hidden
+            >
+              View Current
+            </button>
+
+
+            <button
+              id="viewLatestDocumentButton"
+              class="documents-secondary-action"
+              type="button"
+              hidden
+            >
+              View Latest
+            </button>
+
+
+            <button
+              id="showNewRevisionButton"
+              class="documents-primary-action"
+              type="button"
+              hidden
+            >
+              + Upload New Revision
+            </button>
+
+          </div>
+
+
+          <section
+            id="documentWorkspaceSummary"
+            class="document-workspace-summary"
+          ></section>
+
+
+          <section
+            id="documentRequirementLink"
+            class="document-linked-requirement"
+            hidden
+          ></section>
+
+
+          <section
+            id="documentReviewSection"
+            class="document-review-panel"
+            hidden
+          >
+
+            <header class="document-section-header">
+
+              <div>
+
+                <span>
+                  Assigned Control
+                </span>
+
+                <strong>
+                  Document Review
+                </strong>
+
+              </div>
+
+
+              <span
+                id="documentReviewAssignmentBadge"
+                class="documents-assignment-badge"
+              >
+                —
+              </span>
+
+            </header>
+
+
+            <div
+              id="documentReviewDetails"
+              class="document-review-details"
+            ></div>
+
+
+            <div
+              id="documentReviewActions"
+              class="document-review-actions"
+              hidden
+            >
+
+              <div class="documents-your-action">
+
+                <span class="documents-attention-dot"></span>
+
+                <strong>
+                  This review is assigned to your role
+                </strong>
+
+              </div>
+
+
+              <textarea
+                id="documentReviewComments"
+                rows="4"
+                maxlength="3000"
+                placeholder="Review comments or decision notes"
+              ></textarea>
+
+
+              <div class="document-review-actions__buttons">
+
+                <button
+                  class="documents-secondary-action"
+                  type="button"
+                  data-review-decision="REJECTED"
+                >
+                  Reject
+                </button>
+
+                <button
+                  class="documents-secondary-action"
+                  type="button"
+                  data-review-decision="REVISE_AND_RESUBMIT"
+                >
+                  Revise & Resubmit
+                </button>
+
+                <button
+                  class="documents-secondary-action"
+                  type="button"
+                  data-review-decision="ACCEPTED_WITH_COMMENTS"
+                >
+                  Accept with Comments
+                </button>
+
+                <button
+                  class="documents-primary-action"
+                  type="button"
+                  data-review-decision="ACCEPTED"
+                >
+                  Accept
+                </button>
+
+              </div>
+
+            </div>
+
+
+            <div
+              id="documentReviewError"
+              class="documents-message documents-message--error"
+              hidden
+            ></div>
+
+          </section>
+
+
+          <section class="document-revision-section">
+
+            <header class="document-section-header">
+
+              <div>
+
+                <span>
+                  Controlled History
+                </span>
+
+                <strong>
+                  Revision History
+                </strong>
+
+              </div>
+
+            </header>
+
+
+            <div
+              id="documentRevisionHistory"
+              class="document-revision-history"
+            ></div>
+
+          </section>
+
+
+          <section
+            id="newRevisionSection"
+            class="new-revision-panel"
+            hidden
+          >
+
+            <header class="document-section-header">
+
+              <div>
+
+                <span>
+                  Revision Control
+                </span>
+
+                <strong>
+                  Upload New Revision
+                </strong>
+
+              </div>
+
+            </header>
+
+
+            <form id="newRevisionForm">
+
+              <div class="documents-form-grid">
+
+
+                <div class="documents-field">
+
+                  <label for="newRevisionNumber">
+                    New Revision
+                  </label>
+
+                  <input
+                    id="newRevisionNumber"
+                    name="revision"
+                    type="text"
+                    maxlength="30"
+                    required
+                  />
+
+                </div>
+
+
+                <div class="documents-field">
+
+                  <label for="newRevisionDate">
+                    Document Date
+                  </label>
+
+                  <input
+                    id="newRevisionDate"
+                    name="documentDate"
+                    type="date"
+                  />
+
+                </div>
+
+
+                <div class="documents-field documents-field--wide">
+
+                  <label for="newRevisionNote">
+                    What Changed?
+                  </label>
+
+                  <textarea
+                    id="newRevisionNote"
+                    name="revisionNote"
+                    rows="3"
+                    maxlength="1500"
+                    placeholder="Briefly explain what changed in this revision"
+                    required
+                  ></textarea>
+
+                </div>
+
+
+                <div class="documents-field">
+
+                  <label for="newRevisionReviewRequired">
+                    Internal Review
+                  </label>
+
+                  <select
+                    id="newRevisionReviewRequired"
+                    name="reviewRequired"
+                  >
+
+                    <option value="YES">
+                      Review Required
+                    </option>
+
+                    <option value="NO">
+                      No Review Required
+                    </option>
+
+                  </select>
+
+                </div>
+
+
+                <div
+                  id="newRevisionReviewRoleField"
+                  class="documents-field"
+                >
+
+                  <label for="newRevisionReviewRole">
+                    Assigned Review Role
+                  </label>
+
+                  <select
+                    id="newRevisionReviewRole"
+                    name="reviewRoleCode"
+                  ></select>
+
+                </div>
+
+
+                <div
+                  id="newRevisionReviewDueField"
+                  class="documents-field"
+                >
+
+                  <label for="newRevisionReviewDueDate">
+                    Review Due
+                  </label>
+
+                  <input
+                    id="newRevisionReviewDueDate"
+                    name="reviewDueDate"
+                    type="date"
+                  />
+
+                </div>
+
+
+                <div class="documents-field documents-field--wide">
+
+                  <label
+                    for="newRevisionFile"
+                    class="documents-file-picker"
+                  >
+
+                    <input
+                      id="newRevisionFile"
+                      name="file"
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png"
+                      required
+                    />
+
+                    <span class="documents-file-picker__icon">
+                      +
+                    </span>
+
+                    <span>
+
+                      <strong id="newRevisionFileTitle">
+                        Select new revision
+                      </strong>
+
+                      <small id="newRevisionFileMeta">
+                        PDF, JPG or PNG · Maximum 100 MB
+                      </small>
+
+                    </span>
+
+                  </label>
+
+                </div>
+
+
+              </div>
+
+
+              <div
+                id="newRevisionUploadProgress"
+                class="documents-upload-progress"
+                hidden
+              >
+
+                <div class="documents-upload-progress__track">
+
+                  <span
+                    id="newRevisionUploadProgressBar"
+                    class="documents-upload-progress__bar"
+                  ></span>
+
+                </div>
+
+                <span id="newRevisionUploadProgressText">
+                  Preparing upload
+                </span>
+
+              </div>
+
+
+              <div
+                id="newRevisionError"
+                class="documents-message documents-message--error"
+                hidden
+              ></div>
+
+
+              <footer class="documents-modal__footer">
+
+                <button
+                  id="cancelNewRevision"
+                  class="documents-secondary-action"
+                  type="button"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  id="saveNewRevision"
+                  class="documents-primary-action"
+                  type="submit"
+                >
+                  Upload Revision
+                </button>
+
+              </footer>
+
+            </form>
+
+          </section>
+
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="workspace-footer">
+
+      <div class="workspace-container">
+
+        <div class="workspace-footer__inner">
+
+          <span class="workspace-footer__brand">
+            <strong>NORMEX</strong>
+          </span>
+
+          <span
+            id="workspaceFooterOrganisation"
+            class="workspace-footer__context"
+          >
+            Colemans
+          </span>
+
+        </div>
+
+      </div>
+
+    </footer>
+
+
+  </div>
+
+
+  <!-- =====================================================
+       MOBILE NAV
+  ====================================================== -->
+
+  <aside
+    id="contractorMobileNav"
+    class="workspace-mobile-nav"
+    hidden
+  >
+
+    <div
+      id="mobileNavBackdrop"
+      class="workspace-mobile-nav__backdrop"
+    ></div>
+
+
+    <div class="workspace-mobile-nav__panel">
+
+      <header class="workspace-mobile-nav__header">
+
+        <div>
+
+          <span class="workspace-mobile-nav__eyebrow">
+            Colemans
+          </span>
+
+          <h2 class="workspace-mobile-nav__title">
+            Navigation
+          </h2>
+
+        </div>
+
+
+        <button
+          id="mobileNavClose"
+          class="workspace-mobile-nav__close"
+          type="button"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <nav
+        id="contractorMobileNavLinks"
+        class="workspace-mobile-nav__links"
+      ></nav>
+
+    </div>
+
+  </aside>
+
+
+  <script src="/modules/contractor/shared/js/config.js"></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/shared/js/shell.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/projects/project/documents/documents.js"
+  ></script>
+
+  <script
+  type="module"
+  src="/modules/contractor/projects/project/documents/project-information-position.js"
+></script>
+</body>
+
+</html>

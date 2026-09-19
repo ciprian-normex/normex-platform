@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>Project Details | Colemans | NORMEX</title>
+
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/projects/shared/project-nav.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/projects/project/details/details.css"
+  />
+
+</head>
+
+
+<body>
+
+  <div class="workspace">
+
+
+    <!-- =====================================================
+         ORGANISATION HEADER
+    ====================================================== -->
+
+    <header class="workspace-header">
+
+      <div class="workspace-container">
+
+        <div class="workspace-header__surface">
+
+
+          <div class="workspace-brand">
+
+            <p class="workspace-brand__product">
+              NORMEX · Contractor Workspace
+            </p>
+
+            <h1
+              id="workspaceOrganisationName"
+              class="workspace-brand__name"
+            >
+              Colemans
+            </h1>
+
+            <p class="workspace-brand__tagline">
+              Projects, resources and operational control
+            </p>
+
+          </div>
+
+
+          <div class="workspace-header-actions">
+
+
+            <div class="workspace-status">
+
+              <span
+                class="workspace-status__pulse"
+                aria-hidden="true"
+              ></span>
+
+              <span class="workspace-status__label">
+                Organisation Workspace
+              </span>
+
+            </div>
+
+
+            <div class="workspace-user">
+
+              <div class="workspace-user__details">
+
+                <span
+                  id="workspaceUserName"
+                  class="workspace-user__name"
+                >
+                  User
+                </span>
+
+                <span
+                  id="workspaceUserRole"
+                  class="workspace-user__role"
+                >
+                  Loading
+                </span>
+
+              </div>
+
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ORGANISATION NAV
+    ====================================================== -->
+
+    <nav
+      class="workspace-nav"
+      aria-label="Organisation navigation"
+    >
+
+      <div class="workspace-container">
+
+        <div
+          id="contractorNavSurface"
+          class="workspace-nav__surface"
+        >
+
+          <div
+            id="contractorNavLinks"
+            class="workspace-nav__links"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="workspace-main">
+
+      <div class="workspace-container">
+
+
+        <!-- =================================================
+             PROJECT NAV
+        ================================================== -->
+
+        <nav
+          class="project-subnav"
+          aria-label="Project navigation"
+        >
+
+          <div class="project-subnav__surface">
+
+
+            <div class="project-subnav__identity">
+
+              <a
+                class="project-subnav__back"
+                href="/modules/contractor/projects/"
+              >
+                ← Projects
+              </a>
+
+
+              <div class="project-subnav__project">
+
+                <span class="project-subnav__eyebrow">
+                  Project Workspace
+                </span>
+
+                <span
+                  id="projectSubnavName"
+                  class="project-subnav__name"
+                >
+                  Loading project
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div
+              id="projectSubnavLinks"
+              class="project-subnav__links"
+            ></div>
+
+
+          </div>
+
+        </nav>
+
+
+        <!-- =================================================
+             PAGE INTRO
+        ================================================== -->
+
+        <section class="details-intro">
+
+          <div>
+
+            <p class="page-eyebrow">
+              Project Control
+            </p>
+
+            <h2 class="page-title">
+              Project Details
+            </h2>
+
+            <p class="page-note">
+              Master project, contractual and governance information.
+            </p>
+
+          </div>
+
+
+          <div class="details-intro__actions">
+
+
+            <div
+              id="projectAuditIndicator"
+              class="details-audit"
+              tabindex="0"
+            >
+
+              <span class="details-audit__dot"></span>
+
+              <span id="projectAuditSummary">
+                Loading history
+              </span>
+
+
+              <div
+                id="projectAuditTooltip"
+                class="details-audit__tooltip"
+              >
+                Loading update information
+              </div>
+
+            </div>
+
+
+            <button
+              id="editProjectButton"
+              class="details-primary-action"
+              type="button"
+              hidden
+            >
+              Edit Project
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PROJECT IDENTITY
+        ================================================== -->
+
+        <section class="details-identity">
+
+          <div class="details-identity__top">
+
+
+            <div class="details-identity__main">
+
+              <span
+                id="detailProjectCodeDisplay"
+                class="details-identity__code"
+              >
+                —
+              </span>
+
+              <h3 id="detailProjectNameDisplay">
+                Loading project
+              </h3>
+
+              <p id="detailProjectMetaDisplay">
+                —
+              </p>
+
+            </div>
+
+
+            <span
+              id="detailProjectStatusDisplay"
+              class="details-status"
+            >
+              —
+            </span>
+
+
+          </div>
+
+
+          <div class="details-identity__bottom">
+
+
+            <div>
+
+              <span class="details-label">
+                Project Type
+              </span>
+
+              <strong id="detailProjectTypeDisplay">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span class="details-label">
+                Current Phase
+              </span>
+
+              <strong id="detailCurrentPhaseDisplay">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span class="details-label">
+                Start
+              </span>
+
+              <strong id="detailStartDateDisplay">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span class="details-label">
+                Target Finish
+              </span>
+
+              <strong id="detailTargetFinishDisplay">
+                —
+              </strong>
+
+            </div>
+
+
+            <div class="details-identity__roles">
+
+              <span class="details-label">
+                Colemans Role
+              </span>
+
+              <div id="detailRolesDisplay"></div>
+
+            </div>
+
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CONTRACT / GOVERNANCE
+        ================================================== -->
+
+        <div class="details-two-column">
+
+
+          <!-- CONTRACT -->
+
+          <section class="details-panel">
+
+            <header class="details-panel__header">
+
+              <div>
+
+                <p class="section-heading__eyebrow">
+                  Commercial Setup
+                </p>
+
+                <h3 class="section-heading__title">
+                  Contract
+                </h3>
+
+              </div>
+
+            </header>
+
+
+            <div
+              id="commercialSetupContent"
+              class="details-register"
+            >
+
+
+              <div class="details-register__row">
+
+                <span>
+                  Contract / PO Ref
+                </span>
+
+                <strong id="detailContractRefDisplay">
+                  —
+                </strong>
+
+              </div>
+
+
+              <div class="details-register__row">
+
+                <span>
+                  Original Quote
+                </span>
+
+                <strong id="detailOriginalQuoteRefDisplay">
+                  —
+                </strong>
+
+              </div>
+
+
+              <div class="details-register__row">
+
+                <span>
+                  Award Date
+                </span>
+
+                <strong id="detailContractAwardDisplay">
+                  —
+                </strong>
+
+              </div>
+
+
+              <div class="details-register__row">
+
+                <span>
+                  Original Value
+                </span>
+
+                <strong id="detailOriginalValueDisplay">
+                  —
+                </strong>
+
+              </div>
+
+
+              <div class="details-register__row">
+
+                <span>
+                  Current Value
+                </span>
+
+                <strong id="detailCurrentValueDisplay">
+                  —
+                </strong>
+
+              </div>
+
+
+              <div class="details-register__row">
+
+                <span>
+                  Payment Terms
+                </span>
+
+                <strong id="detailPaymentTermsDisplay">
+                  —
+                </strong>
+
+              </div>
+
+
+              <div class="details-register__row">
+
+                <span>
+                  Retention
+                </span>
+
+                <strong id="detailRetentionDisplay">
+                  —
+                </strong>
+
+              </div>
+
+
+            </div>
+
+
+            <div
+              id="commercialRestrictedState"
+              class="details-restricted"
+              hidden
+            >
+              Commercial information is restricted.
+            </div>
+
+          </section>
+
+
+          <!-- GOVERNANCE -->
+
+          <section class="details-panel">
+
+            <header class="details-panel__header">
+
+              <div>
+
+                <p class="section-heading__eyebrow">
+                  Management
+                </p>
+
+                <h3 class="section-heading__title">
+                  Project Governance
+                </h3>
+
+              </div>
+
+            </header>
+
+
+            <div class="details-register">
+
+
+              <div class="details-register__row">
+
+                <span>
+                  Project Director
+                </span>
+
+                <strong id="detailProjectDirectorDisplay">
+                  Not assigned
+                </strong>
+
+              </div>
+
+
+              <div class="details-register__row">
+
+                <span>
+                  Project Manager
+                </span>
+
+                <strong id="detailProjectManagerDisplay">
+                  Not assigned
+                </strong>
+
+              </div>
+
+
+              <div class="details-register__row">
+
+                <span>
+                  Site Manager
+                </span>
+
+                <strong id="detailSiteManagerDisplay">
+                  Not assigned
+                </strong>
+
+              </div>
+
+
+              <div class="details-register__row">
+
+                <span>
+                  Safety / Assurance
+                </span>
+
+                <strong id="detailSafetyLeadDisplay">
+                  Not assigned
+                </strong>
+
+              </div>
+
+
+              <div class="details-register__row">
+
+                <span>
+                  Commercial Lead
+                </span>
+
+                <strong id="detailCommercialLeadDisplay">
+                  Not assigned
+                </strong>
+
+              </div>
+
+
+              <div class="details-register__row">
+
+                <span>
+                  Planner
+                </span>
+
+                <strong id="detailPlannerDisplay">
+                  Not assigned
+                </strong>
+
+              </div>
+
+
+              <div class="details-register__row">
+
+                <span>
+                  TWC
+                </span>
+
+                <strong id="detailTwcDisplay">
+                  Not assigned
+                </strong>
+
+              </div>
+
+
+              <div class="details-register__row">
+
+                <span>
+                  Design Lead
+                </span>
+
+                <strong id="detailDesignLeadDisplay">
+                  Not assigned
+                </strong>
+
+              </div>
+
+
+            </div>
+
+          </section>
+
+
+        </div>
+
+
+        <!-- =================================================
+             SCOPE REGISTER
+        ================================================== -->
+
+        <section class="details-panel">
+
+          <header class="details-panel__header">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Delivery
+              </p>
+
+              <h3 class="section-heading__title">
+                Scope Register
+              </h3>
+
+            </div>
+
+
+            <button
+              id="addScopeButton"
+              class="details-small-action"
+              type="button"
+              hidden
+            >
+              + Add Scope
+            </button>
+
+          </header>
+
+
+          <div
+            id="scopeRegister"
+            class="details-table-wrap"
+          >
+
+            <div class="details-empty-state">
+              Loading scopes
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             QUOTATIONS & RFQs
+        ================================================== -->
+
+        <section
+          id="commercialRegisterPanel"
+          class="details-panel"
+        >
+
+          <header class="details-panel__header">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Commercial Register
+              </p>
+
+              <h3 class="section-heading__title">
+                Quotations & RFQs
+              </h3>
+
+            </div>
+
+
+            <button
+              id="addCommercialRecordButton"
+              class="details-small-action"
+              type="button"
+              hidden
+            >
+              + Add Record
+            </button>
+
+          </header>
+
+
+          <div
+            id="commercialRecordRegister"
+            class="details-table-wrap"
+          >
+
+            <div class="details-empty-state">
+              Loading commercial records
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             KEY INFORMATION
+        ================================================== -->
+
+        <section class="details-panel">
+
+          <header class="details-panel__header">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Project Setup
+              </p>
+
+              <h3 class="section-heading__title">
+                Key Project Information
+              </h3>
+
+            </div>
+
+          </header>
+
+
+          <div class="details-key-grid">
+
+
+            <div>
+
+              <span class="details-label">
+                Client Reference
+              </span>
+
+              <strong id="detailClientReferenceDisplay">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span class="details-label">
+                Work Order / CJR
+              </span>
+
+              <strong id="detailWorkOrderDisplay">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span class="details-label">
+                Principal Contractor
+              </span>
+
+              <strong id="detailPrincipalContractorDisplay">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span class="details-label">
+                Principal Designer
+              </span>
+
+              <strong id="detailPrincipalDesignerDisplay">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span class="details-label">
+                Working Hours
+              </span>
+
+              <strong id="detailWorkingHoursDisplay">
+                —
+              </strong>
+
+            </div>
+
+
+            <div class="details-key-grid__wide">
+
+              <span class="details-label">
+                Project Address
+              </span>
+
+              <strong id="detailProjectAddressDisplay">
+                —
+              </strong>
+
+            </div>
+
+
+            <div class="details-key-grid__wide">
+
+              <span class="details-label">
+                Site Access / Logistics
+              </span>
+
+              <strong id="detailSiteAccessDisplay">
+                —
+              </strong>
+
+            </div>
+
+
+            <div class="details-key-grid__wide">
+
+              <span class="details-label">
+                Project Description
+              </span>
+
+              <strong id="detailDescriptionDisplay">
+                —
+              </strong>
+
+            </div>
+
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             HISTORY
+        ================================================== -->
+
+        <section class="details-panel">
+
+          <header class="details-panel__header">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Audit
+              </p>
+
+              <h3 class="section-heading__title">
+                Recent Project History
+              </h3>
+
+            </div>
+
+          </header>
+
+
+          <div
+            id="projectHistory"
+            class="details-history"
+          >
+
+            <div class="details-empty-state">
+              Loading project history
+            </div>
+
+          </div>
+
+        </section>
+
+
+      </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         EDIT PROJECT MODAL
+    ====================================================== -->
+
+    <div
+      id="editProjectModal"
+      class="details-modal"
+      hidden
+    >
+
+      <div
+        id="editProjectBackdrop"
+        class="details-modal__backdrop"
+      ></div>
+
+
+      <section
+        class="details-modal__panel details-modal__panel--large"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="editProjectTitle"
+      >
+
+        <header class="details-modal__header">
+
+          <div>
+
+            <p class="section-heading__eyebrow">
+              Project Control
+            </p>
+
+            <h2
+              id="editProjectTitle"
+              class="details-modal__title"
+            >
+              Edit Project
+            </h2>
+
+          </div>
+
+
+          <button
+            id="closeEditProjectModal"
+            class="details-modal__close"
+            type="button"
+          >
+            ×
+          </button>
+
+        </header>
+
+
+        <form
+          id="editProjectForm"
+          class="details-modal__body"
+        >
+
+          <div class="details-form-grid">
+
+
+            <div class="details-field details-field--wide">
+
+              <label for="editName">
+                Project Name
+              </label>
+
+              <input
+                id="editName"
+                name="name"
+                type="text"
+                required
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editProjectCode">
+                Project Code
+              </label>
+
+              <input
+                id="editProjectCode"
+                name="projectCode"
+                type="text"
+                required
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editProjectType">
+                Project Type
+              </label>
+
+              <select
+                id="editProjectType"
+                name="projectType"
+              >
+
+                <option value="DEMOLITION">
+                  Demolition
+                </option>
+
+                <option value="CONSTRUCTION">
+                  Construction
+                </option>
+
+                <option value="STRIP_OUT">
+                  Strip Out
+                </option>
+
+                <option value="ENABLING">
+                  Enabling Works
+                </option>
+
+                <option value="REFURBISHMENT">
+                  Refurbishment
+                </option>
+
+                <option value="OTHER">
+                  Other
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editClientName">
+                Client
+              </label>
+
+              <input
+                id="editClientName"
+                name="clientName"
+                type="text"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editSiteName">
+                Site / Location
+              </label>
+
+              <input
+                id="editSiteName"
+                name="siteName"
+                type="text"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editStatus">
+                Status
+              </label>
+
+              <select
+                id="editStatus"
+                name="status"
+              >
+
+                <option value="PRE_CONSTRUCTION">
+                  Pre-Construction
+                </option>
+
+                <option value="LIVE">
+                  Live
+                </option>
+
+                <option value="ON_HOLD">
+                  On Hold
+                </option>
+
+                <option value="COMPLETE">
+                  Complete
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editCurrentPhase">
+                Current Phase
+              </label>
+
+              <input
+                id="editCurrentPhase"
+                name="currentPhase"
+                type="text"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editStartDate">
+                Start Date
+              </label>
+
+              <input
+                id="editStartDate"
+                name="startDate"
+                type="date"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editTargetFinish">
+                Target Finish
+              </label>
+
+              <input
+                id="editTargetFinish"
+                name="targetFinishDate"
+                type="date"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editActualFinish">
+                Actual Finish
+              </label>
+
+              <input
+                id="editActualFinish"
+                name="actualFinishDate"
+                type="date"
+              />
+
+            </div>
+
+
+            <fieldset class="details-role-field details-field--wide">
+
+              <legend>
+                Colemans Role
+              </legend>
+
+
+              <label>
+
+                <input
+                  type="checkbox"
+                  name="rolesOnProject"
+                  value="CONTRACTOR"
+                />
+
+                Contractor
+
+              </label>
+
+
+              <label>
+
+                <input
+                  type="checkbox"
+                  name="rolesOnProject"
+                  value="PRINCIPAL_CONTRACTOR"
+                />
+
+                Principal Contractor
+
+              </label>
+
+
+              <label>
+
+                <input
+                  type="checkbox"
+                  name="rolesOnProject"
+                  value="PRINCIPAL_DESIGNER"
+                />
+
+                Principal Designer
+
+              </label>
+
+
+              <label>
+
+                <input
+                  type="checkbox"
+                  name="rolesOnProject"
+                  value="CLIENT"
+                />
+
+                Client
+
+              </label>
+
+            </fieldset>
+
+
+            <div class="details-form-divider details-field--wide">
+              Contract
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editContractRef">
+                Contract / PO Ref
+              </label>
+
+              <input
+                id="editContractRef"
+                name="contractRef"
+                type="text"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editOriginalQuoteRef">
+                Original Quote Ref
+              </label>
+
+              <input
+                id="editOriginalQuoteRef"
+                name="originalQuoteRef"
+                type="text"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editContractAwardDate">
+                Contract Award Date
+              </label>
+
+              <input
+                id="editContractAwardDate"
+                name="contractAwardDate"
+                type="date"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editCurrency">
+                Currency
+              </label>
+
+              <select
+                id="editCurrency"
+                name="currency"
+              >
+
+                <option value="GBP">
+                  GBP
+                </option>
+
+                <option value="EUR">
+                  EUR
+                </option>
+
+                <option value="USD">
+                  USD
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editOriginalContractValue">
+                Original Contract Value
+              </label>
+
+              <input
+                id="editOriginalContractValue"
+                name="originalContractValue"
+                type="number"
+                min="0"
+                step="0.01"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editCurrentContractValue">
+                Current Contract Value
+              </label>
+
+              <input
+                id="editCurrentContractValue"
+                name="currentContractValue"
+                type="number"
+                min="0"
+                step="0.01"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editPaymentTerms">
+                Payment Terms
+              </label>
+
+              <input
+                id="editPaymentTerms"
+                name="paymentTerms"
+                type="text"
+                placeholder="e.g. 30 days"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editRetention">
+                Retention %
+              </label>
+
+              <input
+                id="editRetention"
+                name="retentionPercentage"
+                type="number"
+                min="0"
+                max="100"
+                step="0.01"
+              />
+
+            </div>
+
+
+            <div class="details-form-divider details-field--wide">
+              Project Information
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editClientReference">
+                Client Reference
+              </label>
+
+              <input
+                id="editClientReference"
+                name="clientReference"
+                type="text"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editWorkOrderReference">
+                Work Order / CJR
+              </label>
+
+              <input
+                id="editWorkOrderReference"
+                name="workOrderReference"
+                type="text"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editPrincipalContractor">
+                Principal Contractor
+              </label>
+
+              <input
+                id="editPrincipalContractor"
+                name="principalContractorName"
+                type="text"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editPrincipalDesigner">
+                Principal Designer
+              </label>
+
+              <input
+                id="editPrincipalDesigner"
+                name="principalDesignerName"
+                type="text"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="editWorkingHours">
+                Working Hours
+              </label>
+
+              <input
+                id="editWorkingHours"
+                name="workingHours"
+                type="text"
+              />
+
+            </div>
+
+
+            <div class="details-field details-field--wide">
+
+              <label for="editProjectAddress">
+                Project Address
+              </label>
+
+              <input
+                id="editProjectAddress"
+                name="projectAddress"
+                type="text"
+              />
+
+            </div>
+
+
+            <div class="details-field details-field--wide">
+
+              <label for="editSiteAccessNotes">
+                Site Access / Logistics
+              </label>
+
+              <textarea
+                id="editSiteAccessNotes"
+                name="siteAccessNotes"
+                rows="3"
+              ></textarea>
+
+            </div>
+
+
+            <div class="details-field details-field--wide">
+
+              <label for="editDescription">
+                Project Description
+              </label>
+
+              <textarea
+                id="editDescription"
+                name="description"
+                rows="4"
+              ></textarea>
+
+            </div>
+
+
+          </div>
+
+
+          <div
+            id="editProjectError"
+            class="details-message details-message--error"
+            hidden
+          ></div>
+
+
+          <footer class="details-modal__footer">
+
+            <button
+              id="cancelEditProject"
+              class="details-secondary-action"
+              type="button"
+            >
+              Cancel
+            </button>
+
+
+            <button
+              id="saveProjectButton"
+              class="details-primary-action"
+              type="submit"
+            >
+              Save Changes
+            </button>
+
+          </footer>
+
+        </form>
+
+      </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         ADD SCOPE MODAL
+    ====================================================== -->
+
+    <div
+      id="scopeModal"
+      class="details-modal"
+      hidden
+    >
+
+      <div
+        id="scopeBackdrop"
+        class="details-modal__backdrop"
+      ></div>
+
+
+      <section
+        class="details-modal__panel"
+        role="dialog"
+        aria-modal="true"
+      >
+
+        <header class="details-modal__header">
+
+          <div>
+
+            <p class="section-heading__eyebrow">
+              Delivery
+            </p>
+
+            <h2 class="details-modal__title">
+              Add Scope
+            </h2>
+
+          </div>
+
+
+          <button
+            id="closeScopeModal"
+            class="details-modal__close"
+            type="button"
+          >
+            ×
+          </button>
+
+        </header>
+
+
+        <form
+          id="scopeForm"
+          class="details-modal__body"
+        >
+
+          <div class="details-form-grid">
+
+
+            <div class="details-field">
+
+              <label for="scopeCode">
+                Scope Code
+              </label>
+
+              <input
+                id="scopeCode"
+                name="scopeCode"
+                type="text"
+                required
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="scopeStatus">
+                Status
+              </label>
+
+              <select
+                id="scopeStatus"
+                name="status"
+              >
+
+                <option value="PLANNED">
+                  Planned
+                </option>
+
+                <option value="PRE_START">
+                  Pre-Start
+                </option>
+
+                <option value="LIVE">
+                  Live
+                </option>
+
+                <option value="ON_HOLD">
+                  On Hold
+                </option>
+
+                <option value="COMPLETE">
+                  Complete
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="details-field details-field--wide">
+
+              <label for="scopeName">
+                Scope Name
+              </label>
+
+              <input
+                id="scopeName"
+                name="name"
+                type="text"
+                required
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="scopeStartDate">
+                Start
+              </label>
+
+              <input
+                id="scopeStartDate"
+                name="startDate"
+                type="date"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="scopeTargetFinish">
+                Target Finish
+              </label>
+
+              <input
+                id="scopeTargetFinish"
+                name="targetFinishDate"
+                type="date"
+              />
+
+            </div>
+
+
+            <div class="details-field details-field--wide">
+
+              <label for="scopeDescription">
+                Description
+              </label>
+
+              <textarea
+                id="scopeDescription"
+                name="description"
+                rows="4"
+              ></textarea>
+
+            </div>
+
+
+          </div>
+
+
+          <div
+            id="scopeError"
+            class="details-message details-message--error"
+            hidden
+          ></div>
+
+
+          <footer class="details-modal__footer">
+
+            <button
+              id="cancelScopeButton"
+              class="details-secondary-action"
+              type="button"
+            >
+              Cancel
+            </button>
+
+
+            <button
+              id="saveScopeButton"
+              class="details-primary-action"
+              type="submit"
+            >
+              Add Scope
+            </button>
+
+          </footer>
+
+        </form>
+
+      </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         COMMERCIAL RECORD MODAL
+    ====================================================== -->
+
+    <div
+      id="commercialModal"
+      class="details-modal"
+      hidden
+    >
+
+      <div
+        id="commercialBackdrop"
+        class="details-modal__backdrop"
+      ></div>
+
+
+      <section
+        class="details-modal__panel"
+        role="dialog"
+        aria-modal="true"
+      >
+
+        <header class="details-modal__header">
+
+          <div>
+
+            <p class="section-heading__eyebrow">
+              Commercial Register
+            </p>
+
+            <h2 class="details-modal__title">
+              Add Quotation / RFQ
+            </h2>
+
+          </div>
+
+
+          <button
+            id="closeCommercialModal"
+            class="details-modal__close"
+            type="button"
+          >
+            ×
+          </button>
+
+        </header>
+
+
+        <form
+          id="commercialRecordForm"
+          class="details-modal__body"
+        >
+
+          <div class="details-form-grid">
+
+
+            <div class="details-field">
+
+              <label for="commercialType">
+                Record Type
+              </label>
+
+              <select
+                id="commercialType"
+                name="type"
+              >
+
+                <option value="QUOTATION">
+                  Quotation
+                </option>
+
+                <option value="RFQ">
+                  RFQ
+                </option>
+
+                <option value="VARIATION_QUOTE">
+                  Variation Quote
+                </option>
+
+                <option value="SUPPLIER_RFQ">
+                  Supplier RFQ
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="commercialReference">
+                Reference
+              </label>
+
+              <input
+                id="commercialReference"
+                name="reference"
+                type="text"
+                required
+              />
+
+            </div>
+
+
+            <div class="details-field details-field--wide">
+
+              <label for="commercialDescription">
+                Description
+              </label>
+
+              <input
+                id="commercialDescription"
+                name="description"
+                type="text"
+                required
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="commercialCounterparty">
+                Client / Supplier
+              </label>
+
+              <input
+                id="commercialCounterparty"
+                name="counterparty"
+                type="text"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="commercialValue">
+                Value
+              </label>
+
+              <input
+                id="commercialValue"
+                name="value"
+                type="number"
+                min="0"
+                step="0.01"
+              />
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="commercialStatus">
+                Status
+              </label>
+
+              <select
+                id="commercialStatus"
+                name="status"
+              >
+
+                <option value="DRAFT">
+                  Draft
+                </option>
+
+                <option value="SENT">
+                  Sent
+                </option>
+
+                <option value="RETURNED">
+                  Returned
+                </option>
+
+                <option value="AWAITING_APPROVAL">
+                  Awaiting Approval
+                </option>
+
+                <option value="ACCEPTED">
+                  Accepted
+                </option>
+
+                <option value="REJECTED">
+                  Rejected
+                </option>
+
+                <option value="SUPERSEDED">
+                  Superseded
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="details-field">
+
+              <label for="commercialDate">
+                Record Date
+              </label>
+
+              <input
+                id="commercialDate"
+                name="recordDate"
+                type="date"
+              />
+
+            </div>
+
+
+          </div>
+
+
+          <div
+            id="commercialError"
+            class="details-message details-message--error"
+            hidden
+          ></div>
+
+
+          <footer class="details-modal__footer">
+
+            <button
+              id="cancelCommercialButton"
+              class="details-secondary-action"
+              type="button"
+            >
+              Cancel
+            </button>
+
+
+            <button
+              id="saveCommercialRecordButton"
+              class="details-primary-action"
+              type="submit"
+            >
+              Add Record
+            </button>
+
+          </footer>
+
+        </form>
+
+      </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="workspace-footer">
+
+      <div class="workspace-container">
+
+        <div class="workspace-footer__inner">
+
+          <span class="workspace-footer__brand">
+            <strong>NORMEX</strong>
+          </span>
+
+          <span
+            id="workspaceFooterOrganisation"
+            class="workspace-footer__context"
+          >
+            Colemans
+          </span>
+
+        </div>
+
+      </div>
+
+    </footer>
+
+
+  </div>
+
+
+  <!-- =====================================================
+       MOBILE NAV
+  ====================================================== -->
+
+  <aside
+    id="contractorMobileNav"
+    class="workspace-mobile-nav"
+    hidden
+  >
+
+    <div
+      id="mobileNavBackdrop"
+      class="workspace-mobile-nav__backdrop"
+    ></div>
+
+
+    <div class="workspace-mobile-nav__panel">
+
+      <header class="workspace-mobile-nav__header">
+
+        <div>
+
+          <span class="workspace-mobile-nav__eyebrow">
+            Colemans
+          </span>
+
+          <h2 class="workspace-mobile-nav__title">
+            Navigation
+          </h2>
+
+        </div>
+
+
+        <button
+          id="mobileNavClose"
+          class="workspace-mobile-nav__close"
+          type="button"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <nav
+        id="contractorMobileNavLinks"
+        class="workspace-mobile-nav__links"
+      ></nav>
+
+    </div>
+
+  </aside>
+
+
+  <script
+    src="/modules/contractor/shared/js/config.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/shared/js/shell.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/projects/project/details/details.js"
+  ></script>
+
+</body>
+
+</html>

@@ -1,0 +1,2596 @@
+rules_version = '2';
+
+service cloud.firestore {
+
+  match /databases/{database}/documents {
+
+
+    /* =====================================================
+       NORMEX PLATFORM
+       SECURITY FOUNDATION
+
+       accessLevel
+       = authority band
+
+       roleCode
+       = functional role
+
+       permissions
+       = organisation-level capabilities
+
+       project membership
+       = project-specific scope/capabilities
+
+       IMPORTANT
+
+       Numeric level alone must NOT grant unrelated
+       specialist management domains.
+
+       Plant visibility/request capability may use the
+       agreed authority bands.
+
+       Plant management itself remains permission / role
+       controlled.
+
+       Level 99 remains the deliberate platform override.
+    ===================================================== */
+
+
+    /* =====================================================
+       AUTH / PROFILE
+    ===================================================== */
+
+    function signedIn() {
+
+      return request.auth != null;
+
+    }
+
+
+    function currentUserPath() {
+
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+
+    }
+
+
+    function currentProfileExists() {
+
+      return signedIn() &&
+        exists(
+          currentUserPath()
+        );
+
+    }
+
+
+    function currentProfile() {
+
+      return get(
+        currentUserPath()
+      ).data;
+
+    }
+
+
+    function currentLevel() {
+
+      return currentProfileExists()
+        ? currentProfile().accessLevel
+        : 0;
+
+    }
+
+
+    function currentOrganisationId() {
+
+      return currentProfileExists()
+        ? currentProfile().organisationId
+        : "";
+
+    }
+
+
+    function currentRoleCode() {
+
+      return currentProfileExists() &&
+        currentProfile().keys().hasAny([
+          "roleCode"
+        ])
+          ? currentProfile().roleCode
+          : (
+              currentProfileExists() &&
+              currentProfile().keys().hasAny([
+                "role"
+              ])
+                ? currentProfile().role
+                : ""
+            );
+
+    }
+
+
+    function isActiveUser() {
+
+      return currentProfileExists() &&
+        currentProfile().status == "ACTIVE";
+
+    }
+
+
+    function isPlatformAdmin() {
+
+      return isActiveUser() &&
+        currentLevel() >= 99;
+
+    }
+
+
+    /* =====================================================
+       PERMISSION MAP HELPERS
+    ===================================================== */
+
+    function hasPermissionMap() {
+
+      return currentProfileExists() &&
+        currentProfile().keys().hasAny([
+          "permissions"
+        ]);
+
+    }
+
+
+    function canViewAllProjectsPermission() {
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canViewAllProjects"
+        ]) &&
+
+        currentProfile().permissions.canViewAllProjects == true;
+
+    }
+
+
+    function canCreateProjectsPermission() {
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canCreateProjects"
+        ]) &&
+
+        currentProfile().permissions.canCreateProjects == true;
+
+    }
+
+
+    function canManageOrganisationPermission() {
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canManageOrganisation"
+        ]) &&
+
+        currentProfile().permissions.canManageOrganisation == true;
+
+    }
+
+
+    function canManageUsersPermission() {
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canManageUsers"
+        ]) &&
+
+        currentProfile().permissions.canManageUsers == true;
+
+    }
+
+
+    function canManageAssurancePermission() {
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canManageAssurance"
+        ]) &&
+
+        currentProfile().permissions.canManageAssurance == true;
+
+    }
+
+
+    function canViewCommercialPermission() {
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canViewCommercial"
+        ]) &&
+
+        currentProfile().permissions.canViewCommercial == true;
+
+    }
+
+
+    function canManageCommercialPermission() {
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canManageCommercial"
+        ]) &&
+
+        currentProfile().permissions.canManageCommercial == true;
+
+    }
+
+
+    function canViewPlantPermission() {
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canViewPlant"
+        ]) &&
+
+        currentProfile().permissions.canViewPlant == true;
+
+    }
+
+
+    function canRequestPlantPermission() {
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canRequestPlant"
+        ]) &&
+
+        currentProfile().permissions.canRequestPlant == true;
+
+    }
+
+
+    function canManagePlantPermission() {
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canManagePlant"
+        ]) &&
+
+        currentProfile().permissions.canManagePlant == true;
+
+    }
+
+
+    function canManageTransportPermission() {
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canManageTransport"
+        ]) &&
+
+        currentProfile().permissions.canManageTransport == true;
+
+    }
+
+
+    /* =====================================================
+       ORGANISATION
+    ===================================================== */
+
+    function sameOrganisation(
+      organisationId
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          organisationId ==
+            currentOrganisationId()
+        );
+
+    }
+
+
+    /* =====================================================
+       PLANT ROLE / ACCESS HELPERS
+    ===================================================== */
+
+    function isPlantTransportManager() {
+
+      return isActiveUser() &&
+        currentRoleCode() ==
+          "PLANT_TRANSPORT_MANAGER";
+
+    }
+
+
+    function isOrganisationManager() {
+
+      return isActiveUser() &&
+        currentRoleCode() ==
+          "ORGANISATION_MANAGER";
+
+    }
+
+
+    function canViewPlant(
+      organisationId
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          sameOrganisation(
+            organisationId
+          ) &&
+
+          (
+            canViewPlantPermission() ||
+
+            canRequestPlantPermission() ||
+
+            canManagePlantPermission() ||
+
+            canManageTransportPermission() ||
+
+            isPlantTransportManager() ||
+
+            isOrganisationManager() ||
+
+            currentLevel() >= 1
+          )
+        );
+
+    }
+
+
+    function canRequestPlant(
+      organisationId
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          sameOrganisation(
+            organisationId
+          ) &&
+
+          (
+            canRequestPlantPermission() ||
+
+            canManagePlantPermission() ||
+
+            canManageTransportPermission() ||
+
+            isPlantTransportManager() ||
+
+            isOrganisationManager() ||
+
+            currentLevel() >= 2
+          )
+        );
+
+    }
+
+
+    function canManagePlant(
+      organisationId
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          sameOrganisation(
+            organisationId
+          ) &&
+
+          (
+            canManagePlantPermission() ||
+
+            canManageOrganisationPermission() ||
+
+            isPlantTransportManager() ||
+
+            isOrganisationManager()
+          )
+        );
+
+    }
+
+
+    function canManageTransport(
+      organisationId
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          sameOrganisation(
+            organisationId
+          ) &&
+
+          (
+            canManageTransportPermission() ||
+
+            canManagePlantPermission() ||
+
+            canManageOrganisationPermission() ||
+
+            isPlantTransportManager() ||
+
+            isOrganisationManager()
+          )
+        );
+
+    }
+
+
+    function canViewPlantCosts(
+      organisationId
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          sameOrganisation(
+            organisationId
+          ) &&
+
+          (
+            canViewCommercialPermission() ||
+
+            canManageCommercialPermission() ||
+
+            canManagePlantPermission() ||
+
+            canManageTransportPermission() ||
+
+            canManageOrganisationPermission() ||
+
+            isPlantTransportManager() ||
+
+            isOrganisationManager()
+          )
+        );
+
+    }
+
+
+    /* =====================================================
+       PROJECT
+    ===================================================== */
+
+    function projectPath(
+      projectId
+    ) {
+
+      return /databases/$(database)/documents/projects/$(projectId);
+
+    }
+
+
+    function projectExists(
+      projectId
+    ) {
+
+      return exists(
+        projectPath(
+          projectId
+        )
+      );
+
+    }
+
+
+    function projectData(
+      projectId
+    ) {
+
+      return get(
+        projectPath(
+          projectId
+        )
+      ).data;
+
+    }
+
+
+    function projectOrganisationMatches(
+      projectId
+    ) {
+
+      return projectExists(
+        projectId
+      ) &&
+
+      sameOrganisation(
+        projectData(
+          projectId
+        ).organisationId
+      );
+
+    }
+
+
+    /* =====================================================
+       OPTIONAL PROJECT LINK
+
+       Plant records may be organisation-wide and not yet
+       assigned to a project.
+
+       If projectId exists, it must belong to the same
+       organisation.
+    ===================================================== */
+
+    function optionalProjectValid(
+      data
+    ) {
+
+      return
+
+        !data.keys().hasAny([
+          "projectId"
+        ])
+
+        ||
+
+        data.projectId == null
+
+        ||
+
+        data.projectId == ""
+
+        ||
+
+        (
+          projectExists(
+            data.projectId
+          ) &&
+
+          projectData(
+            data.projectId
+          ).organisationId ==
+            data.organisationId
+        );
+
+    }
+
+
+    /* =====================================================
+       PROJECT MEMBERSHIP
+    ===================================================== */
+
+    function projectMemberPath(
+      projectId
+    ) {
+
+      return /databases/$(database)/documents/projects/$(projectId)/members/$(request.auth.uid);
+
+    }
+
+
+    function projectMemberExists(
+      projectId
+    ) {
+
+      return signedIn() &&
+
+        exists(
+          projectMemberPath(
+            projectId
+          )
+        );
+
+    }
+
+
+    function projectMember(
+      projectId
+    ) {
+
+      return get(
+        projectMemberPath(
+          projectId
+        )
+      ).data;
+
+    }
+
+
+    function isProjectMember(
+      projectId
+    ) {
+
+      return projectMemberExists(
+        projectId
+      ) &&
+
+      projectMember(
+        projectId
+      ).active == true;
+
+    }
+
+
+    function memberHasField(
+      projectId,
+      fieldName
+    ) {
+
+      return isProjectMember(
+        projectId
+      ) &&
+
+      projectMember(
+        projectId
+      ).keys().hasAny([
+        fieldName
+      ]);
+
+    }
+
+
+    function projectMemberCanManage(
+      projectId
+    ) {
+
+      return memberHasField(
+        projectId,
+        "canManageProject"
+      ) &&
+
+      projectMember(
+        projectId
+      ).canManageProject == true;
+
+    }
+
+
+    function projectMemberCanManageScopeProgress(
+      projectId
+    ) {
+
+      return memberHasField(
+        projectId,
+        "canManageScopeProgress"
+      ) &&
+
+      projectMember(
+        projectId
+      ).canManageScopeProgress == true;
+
+    }
+
+
+    function projectMemberCanManageAssurance(
+      projectId
+    ) {
+
+      return memberHasField(
+        projectId,
+        "canManageAssurance"
+      ) &&
+
+      projectMember(
+        projectId
+      ).canManageAssurance == true;
+
+    }
+
+
+    function projectMemberCanViewCommercial(
+      projectId
+    ) {
+
+      return memberHasField(
+        projectId,
+        "canViewCommercial"
+      ) &&
+
+      projectMember(
+        projectId
+      ).canViewCommercial == true;
+
+    }
+
+
+    function projectMemberCanManageCommercial(
+      projectId
+    ) {
+
+      return memberHasField(
+        projectId,
+        "canManageCommercial"
+      ) &&
+
+      projectMember(
+        projectId
+      ).canManageCommercial == true;
+
+    }
+
+
+    /* =====================================================
+       PROJECT VISIBILITY
+    ===================================================== */
+
+    function canReadProject(
+      projectId
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          projectOrganisationMatches(
+            projectId
+          ) &&
+
+          (
+            canViewAllProjectsPermission() ||
+
+            isProjectMember(
+              projectId
+            )
+          )
+        );
+
+    }
+
+
+    function canReadOptionalPlantProject(
+      data
+    ) {
+
+      return canViewPlant(
+        data.organisationId
+      )
+
+      ||
+
+      (
+        data.keys().hasAny([
+          "projectId"
+        ]) &&
+
+        data.projectId != null &&
+
+        data.projectId != "" &&
+
+        canReadProject(
+          data.projectId
+        )
+      );
+
+    }
+
+
+    /* =====================================================
+       PROJECT MANAGEMENT
+    ===================================================== */
+
+    function canManageProject(
+      projectId
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          projectOrganisationMatches(
+            projectId
+          ) &&
+
+          (
+            canManageOrganisationPermission() ||
+
+            projectMemberCanManage(
+              projectId
+            )
+          )
+        );
+
+    }
+
+
+    /* =====================================================
+       ASSURANCE
+    ===================================================== */
+
+    function canManageAssurance(
+      projectId
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          projectOrganisationMatches(
+            projectId
+          ) &&
+
+          (
+            canManageAssurancePermission() ||
+
+            projectMemberCanManageAssurance(
+              projectId
+            )
+          )
+        );
+
+    }
+
+
+    /* =====================================================
+       COMMERCIAL
+    ===================================================== */
+
+    function canReadCommercial(
+      projectId
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          projectOrganisationMatches(
+            projectId
+          ) &&
+
+          (
+            canViewCommercialPermission() ||
+
+            canManageCommercialPermission() ||
+
+            projectMemberCanViewCommercial(
+              projectId
+            ) ||
+
+            projectMemberCanManageCommercial(
+              projectId
+            )
+          )
+        );
+
+    }
+
+
+    function canManageCommercial(
+      projectId
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          projectOrganisationMatches(
+            projectId
+          ) &&
+
+          (
+            canManageCommercialPermission() ||
+
+            projectMemberCanManageCommercial(
+              projectId
+            )
+          )
+        );
+
+    }
+
+
+    /* =====================================================
+       USERS
+    ===================================================== */
+
+    match /users/{userId} {
+
+
+      allow get: if
+        signedIn() &&
+
+        (
+          request.auth.uid ==
+            userId ||
+
+          isPlatformAdmin() ||
+
+          (
+            sameOrganisation(
+              resource.data.organisationId
+            ) &&
+
+            (
+              canManageUsersPermission() ||
+
+              canManageAssurancePermission()
+            )
+          )
+        );
+
+
+      allow list: if
+        isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          resource.data.organisationId ==
+            currentOrganisationId() &&
+
+          (
+            canManageUsersPermission() ||
+
+            canManageAssurancePermission()
+          )
+        );
+
+
+      allow create, update, delete: if
+        isPlatformAdmin() ||
+
+        (
+          canManageUsersPermission() &&
+
+          (
+            request.method == "create"
+              ? request.resource.data.organisationId ==
+                  currentOrganisationId()
+              : resource.data.organisationId ==
+                  currentOrganisationId()
+          )
+        );
+
+    }
+
+
+    /* =====================================================
+       ORGANISATIONS
+    ===================================================== */
+
+    match /organisations/{organisationId} {
+
+
+      allow read: if
+        sameOrganisation(
+          organisationId
+        );
+
+
+      allow create:
+        if isPlatformAdmin();
+
+
+      allow update: if
+        isPlatformAdmin() ||
+
+        (
+          sameOrganisation(
+            organisationId
+          ) &&
+
+          canManageOrganisationPermission()
+        );
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       SITES
+    ===================================================== */
+
+    match /sites/{siteId} {
+
+
+      allow read: if
+        isActiveUser() &&
+        sameOrganisation(
+          resource.data.organisationId
+        );
+
+
+      allow create: if
+        (
+          isPlatformAdmin() ||
+
+          canManageOrganisationPermission()
+        ) &&
+
+        sameOrganisation(
+          request.resource.data.organisationId
+        );
+
+
+      allow update: if
+        (
+          isPlatformAdmin() ||
+
+          canManageOrganisationPermission()
+        ) &&
+
+        sameOrganisation(
+          resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId;
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       PROJECTS
+    ===================================================== */
+
+    match /projects/{projectId} {
+
+
+      allow get: if
+        isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          sameOrganisation(
+            resource.data.organisationId
+          ) &&
+
+          (
+            canViewAllProjectsPermission() ||
+
+            isProjectMember(
+              projectId
+            )
+          )
+        );
+
+
+      allow list: if
+        isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          resource.data.organisationId ==
+            currentOrganisationId() &&
+
+          canViewAllProjectsPermission()
+        );
+
+
+      allow create: if
+        (
+          isPlatformAdmin() ||
+
+          canCreateProjectsPermission() ||
+
+          canManageOrganisationPermission()
+        ) &&
+
+        sameOrganisation(
+          request.resource.data.organisationId
+        ) &&
+
+        request.resource.data.keys().hasAll([
+          "organisationId",
+          "projectCode",
+          "name",
+          "status",
+          "rolesOnProject",
+          "createdByUid",
+          "createdAt",
+          "updatedByUid",
+          "updatedAt"
+        ]) &&
+
+        request.resource.data.name is string &&
+
+        request.resource.data.projectCode is string &&
+
+        request.resource.data.rolesOnProject is list &&
+
+        request.resource.data.status in [
+          "PRE_CONSTRUCTION",
+          "LIVE",
+          "ON_HOLD",
+          "COMPLETE"
+        ] &&
+
+        request.resource.data.createdByUid ==
+          request.auth.uid &&
+
+        request.resource.data.updatedByUid ==
+          request.auth.uid;
+
+
+      allow update: if
+        canManageProject(
+          projectId
+        ) &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+
+        request.resource.data.createdByUid ==
+          resource.data.createdByUid &&
+
+        request.resource.data.createdAt ==
+          resource.data.createdAt;
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+
+      /* ===================================================
+         MEMBERS
+      =================================================== */
+
+      match /members/{memberUid} {
+
+
+        allow read: if
+          canReadProject(
+            projectId
+          );
+
+
+        allow create, update, delete: if
+          isPlatformAdmin() ||
+
+          (
+            projectOrganisationMatches(
+              projectId
+            ) &&
+
+            canManageOrganisationPermission()
+          ) ||
+
+          canManageProject(
+            projectId
+          );
+
+      }
+
+
+      /* ===================================================
+         ACTIVITY
+      =================================================== */
+
+      match /activity/{activityId} {
+
+
+        allow read: if
+          canReadProject(
+            projectId
+          );
+
+
+        allow create: if
+          canReadProject(
+            projectId
+          ) &&
+
+          request.resource.data.projectId ==
+            projectId &&
+
+          request.resource.data.organisationId ==
+            projectData(
+              projectId
+            ).organisationId &&
+
+          request.resource.data.createdByUid ==
+            request.auth.uid;
+
+
+        allow update, delete:
+          if false;
+
+      }
+
+    }
+
+
+    /* =====================================================
+       PROJECT PHASES
+    ===================================================== */
+
+    match /projectPhases/{phaseId} {
+
+
+      allow read: if
+        canReadProject(
+          resource.data.projectId
+        );
+
+
+      allow create: if
+        canManageProject(
+          request.resource.data.projectId
+        ) &&
+
+        request.resource.data.organisationId ==
+          projectData(
+            request.resource.data.projectId
+          ).organisationId &&
+
+        request.resource.data.createdByUid ==
+          request.auth.uid;
+
+
+      allow update: if
+        canManageProject(
+          resource.data.projectId
+        ) &&
+
+        request.resource.data.projectId ==
+          resource.data.projectId &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+
+        request.resource.data.createdByUid ==
+          resource.data.createdByUid &&
+
+        request.resource.data.createdAt ==
+          resource.data.createdAt;
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       PROJECT SCOPES
+    ===================================================== */
+
+    match /projectScopes/{scopeId} {
+
+
+      allow read: if
+        canReadProject(
+          resource.data.projectId
+        );
+
+
+      allow create: if
+        canManageProject(
+          request.resource.data.projectId
+        ) &&
+
+        request.resource.data.organisationId ==
+          projectData(
+            request.resource.data.projectId
+          ).organisationId &&
+
+        request.resource.data.createdByUid ==
+          request.auth.uid;
+
+
+      allow update: if
+
+        (
+          canManageProject(
+            resource.data.projectId
+          ) &&
+
+          request.resource.data.projectId ==
+            resource.data.projectId &&
+
+          request.resource.data.organisationId ==
+            resource.data.organisationId &&
+
+          request.resource.data.createdByUid ==
+            resource.data.createdByUid &&
+
+          request.resource.data.createdAt ==
+            resource.data.createdAt
+        )
+
+        ||
+
+        (
+          isActiveUser() &&
+
+          projectOrganisationMatches(
+            resource.data.projectId
+          ) &&
+
+          projectMemberCanManageScopeProgress(
+            resource.data.projectId
+          ) &&
+
+          request.resource.data.diff(
+            resource.data
+          ).affectedKeys().hasOnly([
+            "status",
+            "actualStart",
+            "actualFinish",
+            "updatedByUid",
+            "updatedAt"
+          ]) &&
+
+          request.resource.data.updatedByUid ==
+            request.auth.uid
+        );
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       COMMERCIAL RECORDS
+    ===================================================== */
+
+    match /commercialRecords/{recordId} {
+
+
+      allow read: if
+        canReadCommercial(
+          resource.data.projectId
+        );
+
+
+      allow create: if
+        canManageCommercial(
+          request.resource.data.projectId
+        ) &&
+
+        request.resource.data.organisationId ==
+          projectData(
+            request.resource.data.projectId
+          ).organisationId &&
+
+        request.resource.data.type in [
+          "QUOTATION",
+          "RFQ",
+          "SUPPLIER_RFQ",
+          "VARIATION_QUOTE",
+          "VARIATION",
+          "PURCHASE_ORDER",
+          "OTHER"
+        ] &&
+
+        request.resource.data.createdByUid ==
+          request.auth.uid;
+
+
+      allow update: if
+        canManageCommercial(
+          resource.data.projectId
+        ) &&
+
+        request.resource.data.projectId ==
+          resource.data.projectId &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+
+        request.resource.data.createdByUid ==
+          resource.data.createdByUid &&
+
+        request.resource.data.createdAt ==
+          resource.data.createdAt;
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       PLANT ASSETS
+
+       Master plant identity.
+
+       Read:
+       Plant viewers.
+
+       Manage:
+       Plant / Transport Manager
+       Organisation Manager
+       explicit permission
+       Level 99
+    ===================================================== */
+
+    match /plantAssets/{plantId} {
+
+
+      allow read: if
+        canViewPlant(
+          resource.data.organisationId
+        );
+
+
+      allow create: if
+        canManagePlant(
+          request.resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          currentOrganisationId() &&
+
+        request.resource.data.keys().hasAll([
+          "organisationId",
+          "plantId",
+          "plantReference",
+          "plantType",
+          "ownershipType",
+          "status",
+          "active",
+          "createdByUid",
+          "createdAt",
+          "updatedByUid",
+          "updatedAt"
+        ]) &&
+
+        request.resource.data.plantId ==
+          plantId &&
+
+        request.resource.data.plantReference ==
+          plantId &&
+
+        request.resource.data.createdByUid ==
+          request.auth.uid &&
+
+        request.resource.data.updatedByUid ==
+          request.auth.uid;
+
+
+      allow update: if
+        canManagePlant(
+          resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+
+        request.resource.data.plantId ==
+          resource.data.plantId &&
+
+        request.resource.data.plantReference ==
+          resource.data.plantReference &&
+
+        request.resource.data.createdByUid ==
+          resource.data.createdByUid &&
+
+        request.resource.data.createdAt ==
+          resource.data.createdAt;
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       PLANT COUNTERS
+
+       Used to allocate readable Plant IDs.
+
+       Example:
+       colemans_HRE
+    ===================================================== */
+
+    match /plantCounters/{counterId} {
+
+
+      allow read: if
+        canManagePlant(
+          resource.data.organisationId
+        );
+
+
+      allow create: if
+        canManagePlant(
+          request.resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          currentOrganisationId() &&
+
+        request.resource.data.nextNumber is number;
+
+
+      allow update: if
+        canManagePlant(
+          resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+
+        request.resource.data.nextNumber is number;
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       PLANT HIRE RECORDS
+
+       Contains commercially sensitive rates / charges.
+
+       Read is deliberately narrower than general Fleet read.
+    ===================================================== */
+
+    match /plantHireRecords/{hireId} {
+
+
+      allow read: if
+        canViewPlantCosts(
+          resource.data.organisationId
+        );
+
+
+      allow create: if
+        canManagePlant(
+          request.resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          currentOrganisationId() &&
+
+        request.resource.data.keys().hasAll([
+          "organisationId",
+          "plantId",
+          "plantReference",
+          "status",
+          "createdByUid",
+          "createdAt",
+          "updatedByUid",
+          "updatedAt"
+        ]) &&
+
+        request.resource.data.createdByUid ==
+          request.auth.uid;
+
+
+      allow update: if
+        canManagePlant(
+          resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+
+        request.resource.data.plantId ==
+          resource.data.plantId &&
+
+        request.resource.data.plantReference ==
+          resource.data.plantReference &&
+
+        request.resource.data.createdByUid ==
+          resource.data.createdByUid &&
+
+        request.resource.data.createdAt ==
+          resource.data.createdAt;
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       PLANT ASSIGNMENTS
+
+       Project commitment / deployment truth.
+    ===================================================== */
+
+    match /plantAssignments/{assignmentId} {
+
+
+      allow read: if
+        canReadOptionalPlantProject(
+          resource.data
+        );
+
+
+      allow create: if
+        canManagePlant(
+          request.resource.data.organisationId
+        ) &&
+
+        optionalProjectValid(
+          request.resource.data
+        ) &&
+
+        request.resource.data.createdByUid ==
+          request.auth.uid;
+
+
+      allow update: if
+        canManagePlant(
+          resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+
+        request.resource.data.plantId ==
+          resource.data.plantId &&
+
+        optionalProjectValid(
+          request.resource.data
+        ) &&
+
+        request.resource.data.createdByUid ==
+          resource.data.createdByUid &&
+
+        request.resource.data.createdAt ==
+          resource.data.createdAt;
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       PLANT MOVEMENTS
+
+       Physical plant logistics / location evidence.
+    ===================================================== */
+
+    match /plantMovements/{movementId} {
+
+
+      allow read: if
+        canReadOptionalPlantProject(
+          resource.data
+        );
+
+
+      allow create: if
+        canManageTransport(
+          request.resource.data.organisationId
+        ) &&
+
+        optionalProjectValid(
+          request.resource.data
+        ) &&
+
+        request.resource.data.createdByUid ==
+          request.auth.uid;
+
+
+      allow update: if
+        canManageTransport(
+          resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+
+        request.resource.data.plantId ==
+          resource.data.plantId &&
+
+        optionalProjectValid(
+          request.resource.data
+        ) &&
+
+        request.resource.data.createdByUid ==
+          resource.data.createdByUid &&
+
+        request.resource.data.createdAt ==
+          resource.data.createdAt;
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       PLANT REQUESTS
+
+       Incoming demand:
+       PLANT
+       REPAIR
+       TRANSPORT
+       MATERIAL_TRANSPORT
+       REPLACEMENT
+       COLLECTION
+       OTHER
+
+       L2+ / authorised users can submit.
+
+       Plant management owns fulfilment / status control.
+    ===================================================== */
+
+    match /plantRequests/{requestId} {
+
+
+      allow read: if
+
+        canManagePlant(
+          resource.data.organisationId
+        )
+
+        ||
+
+        canManageTransport(
+          resource.data.organisationId
+        )
+
+        ||
+
+        (
+          signedIn() &&
+
+          sameOrganisation(
+            resource.data.organisationId
+          ) &&
+
+          resource.data.createdByUid ==
+            request.auth.uid
+        )
+
+        ||
+
+        (
+          resource.data.keys().hasAny([
+            "projectId"
+          ]) &&
+
+          resource.data.projectId != null &&
+
+          resource.data.projectId != "" &&
+
+          canReadProject(
+            resource.data.projectId
+          )
+        );
+
+
+      allow create: if
+        canRequestPlant(
+          request.resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          currentOrganisationId() &&
+
+        optionalProjectValid(
+          request.resource.data
+        ) &&
+
+        request.resource.data.createdByUid ==
+          request.auth.uid &&
+
+        request.resource.data.requestType in [
+          "PLANT",
+          "REPAIR",
+          "TRANSPORT",
+          "MATERIAL_TRANSPORT",
+          "REPLACEMENT",
+          "COLLECTION",
+          "OTHER"
+        ];
+
+
+      allow update: if
+        (
+          canManagePlant(
+            resource.data.organisationId
+          )
+
+          ||
+
+          canManageTransport(
+            resource.data.organisationId
+          )
+        ) &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+
+        request.resource.data.createdByUid ==
+          resource.data.createdByUid &&
+
+        request.resource.data.createdAt ==
+          resource.data.createdAt &&
+
+        optionalProjectValid(
+          request.resource.data
+        );
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       PLANT ISSUES
+
+       Operational exception-management layer.
+
+       Examples:
+       sourcing blocker
+       breakdown delay
+       part delay
+       transport blocker
+       replacement problem
+       idle hire exposure
+    ===================================================== */
+
+    match /plantIssues/{issueId} {
+
+
+      allow read: if
+        canReadOptionalPlantProject(
+          resource.data
+        );
+
+
+      allow create: if
+        (
+          canManagePlant(
+            request.resource.data.organisationId
+          )
+
+          ||
+
+          canManageTransport(
+            request.resource.data.organisationId
+          )
+        ) &&
+
+        optionalProjectValid(
+          request.resource.data
+        ) &&
+
+        request.resource.data.createdByUid ==
+          request.auth.uid;
+
+
+      allow update: if
+        (
+          canManagePlant(
+            resource.data.organisationId
+          )
+
+          ||
+
+          canManageTransport(
+            resource.data.organisationId
+          )
+        ) &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+
+        request.resource.data.createdByUid ==
+          resource.data.createdByUid &&
+
+        request.resource.data.createdAt ==
+          resource.data.createdAt &&
+
+        optionalProjectValid(
+          request.resource.data
+        );
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       PLANT INSPECTIONS
+
+       Operational inspection evidence.
+
+       Project users may create inspection records against
+       plant relevant to their project.
+
+       Plant managers retain organisation-wide visibility.
+    ===================================================== */
+
+    match /plantInspections/{inspectionId} {
+
+
+      allow read: if
+        canReadOptionalPlantProject(
+          resource.data
+        );
+
+
+      allow create: if
+        isActiveUser() &&
+
+        sameOrganisation(
+          request.resource.data.organisationId
+        ) &&
+
+        optionalProjectValid(
+          request.resource.data
+        ) &&
+
+        request.resource.data.createdByUid ==
+          request.auth.uid &&
+
+        (
+          canViewPlant(
+            request.resource.data.organisationId
+          )
+
+          ||
+
+          (
+            request.resource.data.keys().hasAny([
+              "projectId"
+            ]) &&
+
+            request.resource.data.projectId != null &&
+
+            request.resource.data.projectId != "" &&
+
+            canReadProject(
+              request.resource.data.projectId
+            )
+          )
+        );
+
+
+      allow update: if
+        canManagePlant(
+          resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+
+        request.resource.data.plantId ==
+          resource.data.plantId &&
+
+        request.resource.data.createdByUid ==
+          resource.data.createdByUid &&
+
+        request.resource.data.createdAt ==
+          resource.data.createdAt;
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       PLANT DEFECTS
+
+       Operational users may report defects.
+
+       Plant management controls repair lifecycle.
+    ===================================================== */
+
+    match /plantDefects/{defectId} {
+
+
+      allow read: if
+        canReadOptionalPlantProject(
+          resource.data
+        );
+
+
+      allow create: if
+        isActiveUser() &&
+
+        sameOrganisation(
+          request.resource.data.organisationId
+        ) &&
+
+        optionalProjectValid(
+          request.resource.data
+        ) &&
+
+        request.resource.data.createdByUid ==
+          request.auth.uid &&
+
+        (
+          canViewPlant(
+            request.resource.data.organisationId
+          )
+
+          ||
+
+          (
+            request.resource.data.keys().hasAny([
+              "projectId"
+            ]) &&
+
+            request.resource.data.projectId != null &&
+
+            request.resource.data.projectId != "" &&
+
+            canReadProject(
+              request.resource.data.projectId
+            )
+          )
+        );
+
+
+      allow update: if
+        canManagePlant(
+          resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+
+        request.resource.data.plantId ==
+          resource.data.plantId &&
+
+        request.resource.data.createdByUid ==
+          resource.data.createdByUid &&
+
+        request.resource.data.createdAt ==
+          resource.data.createdAt;
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       PLANT MAINTENANCE
+    ===================================================== */
+
+    match /plantMaintenance/{maintenanceId} {
+
+
+      allow read: if
+        canViewPlant(
+          resource.data.organisationId
+        );
+
+
+      allow create: if
+        canManagePlant(
+          request.resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          currentOrganisationId() &&
+
+        optionalProjectValid(
+          request.resource.data
+        ) &&
+
+        request.resource.data.createdByUid ==
+          request.auth.uid;
+
+
+      allow update: if
+        canManagePlant(
+          resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+
+        request.resource.data.plantId ==
+          resource.data.plantId &&
+
+        request.resource.data.createdByUid ==
+          resource.data.createdByUid &&
+
+        request.resource.data.createdAt ==
+          resource.data.createdAt;
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       PLANT SUPPLIERS
+    ===================================================== */
+
+    match /plantSuppliers/{supplierId} {
+
+
+      allow read: if
+        canViewPlant(
+          resource.data.organisationId
+        );
+
+
+      allow create: if
+        canManagePlant(
+          request.resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          currentOrganisationId() &&
+
+        request.resource.data.createdByUid ==
+          request.auth.uid;
+
+
+      allow update: if
+        canManagePlant(
+          resource.data.organisationId
+        ) &&
+
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+
+        request.resource.data.createdByUid ==
+          resource.data.createdByUid &&
+
+        request.resource.data.createdAt ==
+          resource.data.createdAt;
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       DOCUMENT HELPERS
+    ===================================================== */
+
+    function isPlantDocument(
+      data
+    ) {
+
+      return data.keys().hasAny([
+        "entityType"
+      ]) &&
+
+      data.keys().hasAny([
+        "entityId"
+      ]) &&
+
+      data.entityType ==
+        "PLANT";
+
+    }
+
+
+    function canReadPlantDocument(
+      data
+    ) {
+
+      return isPlantDocument(
+        data
+      ) &&
+
+      (
+        data.category ==
+          "COMMERCIAL"
+          ? canViewPlantCosts(
+              data.organisationId
+            )
+          : canViewPlant(
+              data.organisationId
+            )
+      );
+
+    }
+
+
+    function canCreatePlantDocument(
+      data
+    ) {
+
+      return isPlantDocument(
+        data
+      ) &&
+
+      sameOrganisation(
+        data.organisationId
+      ) &&
+
+      (
+        canManagePlant(
+          data.organisationId
+        )
+
+        ||
+
+        (
+          data.category ==
+            "ASSURANCE" &&
+
+          canManageAssurancePermission()
+        )
+      );
+
+    }
+
+
+    function canUpdatePlantDocument(
+      data
+    ) {
+
+      return isPlantDocument(
+        data
+      ) &&
+
+      sameOrganisation(
+        data.organisationId
+      ) &&
+
+      (
+        canManagePlant(
+          data.organisationId
+        )
+
+        ||
+
+        (
+          data.category ==
+            "ASSURANCE" &&
+
+          canManageAssurancePermission()
+        )
+      );
+
+    }
+
+
+    /* =====================================================
+       DOCUMENTS
+
+       Supports BOTH:
+
+       1. Project documents
+       2. Plant-linked documents
+
+       Plant records use:
+       entityType = "PLANT"
+       entityId   = Plant ID
+    ===================================================== */
+
+match /documents/{documentId} {
+
+
+  allow read: if
+
+    isPlatformAdmin()
+
+    ||
+
+    canReadPlantDocument(
+      resource.data
+    )
+
+    ||
+
+        (
+          !isPlantDocument(
+            resource.data
+          ) &&
+
+          resource.data.category ==
+            "COMMERCIAL" &&
+
+          canReadCommercial(
+            resource.data.projectId
+          )
+        )
+
+        ||
+
+        (
+          !isPlantDocument(
+            resource.data
+          ) &&
+
+          resource.data.category !=
+            "COMMERCIAL" &&
+
+          canReadProject(
+            resource.data.projectId
+          )
+        );
+
+
+      allow create: if
+
+        (
+          isPlantDocument(
+            request.resource.data
+          ) &&
+
+          request.resource.data.keys().hasAll([
+            "organisationId",
+            "entityType",
+            "entityId",
+            "category",
+            "documentType",
+            "title",
+            "storagePath",
+            "fileName",
+            "mimeType",
+            "fileSize",
+            "uploadedByUid",
+            "uploadedAt"
+          ]) &&
+
+          request.resource.data.uploadedByUid ==
+            request.auth.uid &&
+
+          request.resource.data.category in [
+            "PROJECT",
+            "SCOPE",
+            "COMMERCIAL",
+            "ASSURANCE",
+            "DRAWING",
+            "PROGRAMME",
+            "GENERAL",
+            "PLANT",
+            "HIRE",
+            "CONDITION",
+            "REPAIR",
+            "TRANSPORT",
+            "MANUAL"
+          ] &&
+
+          canCreatePlantDocument(
+            request.resource.data
+          )
+        )
+
+        ||
+
+        (
+          !isPlantDocument(
+            request.resource.data
+          ) &&
+
+          request.resource.data.keys().hasAll([
+            "organisationId",
+            "projectId",
+            "category",
+            "documentType",
+            "title",
+            "storagePath",
+            "fileName",
+            "mimeType",
+            "fileSize",
+            "uploadedByUid",
+            "uploadedAt"
+          ]) &&
+
+          request.resource.data.organisationId ==
+            projectData(
+              request.resource.data.projectId
+            ).organisationId &&
+
+          request.resource.data.uploadedByUid ==
+            request.auth.uid &&
+
+          request.resource.data.category in [
+            "PROJECT",
+            "SCOPE",
+            "COMMERCIAL",
+            "ASSURANCE",
+            "DRAWING",
+            "PROGRAMME",
+            "GENERAL"
+          ] &&
+
+          (
+            (
+              request.resource.data.category ==
+                "COMMERCIAL" &&
+
+              canManageCommercial(
+                request.resource.data.projectId
+              )
+            )
+
+            ||
+
+            (
+              request.resource.data.category ==
+                "ASSURANCE" &&
+
+              canManageAssurance(
+                request.resource.data.projectId
+              )
+            )
+
+            ||
+
+            (
+              request.resource.data.category !=
+                "COMMERCIAL" &&
+
+              request.resource.data.category !=
+                "ASSURANCE" &&
+
+              canManageProject(
+                request.resource.data.projectId
+              )
+            )
+          )
+        );
+
+
+      allow update: if
+
+        (
+          isPlantDocument(
+            resource.data
+          ) &&
+
+          canUpdatePlantDocument(
+            resource.data
+          ) &&
+
+          request.resource.data.organisationId ==
+            resource.data.organisationId &&
+
+          request.resource.data.entityType ==
+            resource.data.entityType &&
+
+          request.resource.data.entityId ==
+            resource.data.entityId &&
+
+          request.resource.data.storagePath ==
+            resource.data.storagePath &&
+
+          request.resource.data.fileName ==
+            resource.data.fileName &&
+
+          request.resource.data.mimeType ==
+            resource.data.mimeType &&
+
+          request.resource.data.fileSize ==
+            resource.data.fileSize &&
+
+          request.resource.data.uploadedByUid ==
+            resource.data.uploadedByUid &&
+
+          request.resource.data.uploadedAt ==
+            resource.data.uploadedAt
+        )
+
+        ||
+
+        (
+          !isPlantDocument(
+            resource.data
+          ) &&
+
+          (
+            (
+              resource.data.category ==
+                "COMMERCIAL" &&
+
+              canManageCommercial(
+                resource.data.projectId
+              )
+            )
+
+            ||
+
+            (
+              resource.data.category ==
+                "ASSURANCE" &&
+
+              canManageAssurance(
+                resource.data.projectId
+              )
+            )
+
+            ||
+
+            (
+              resource.data.category !=
+                "COMMERCIAL" &&
+
+              resource.data.category !=
+                "ASSURANCE" &&
+
+              canManageProject(
+                resource.data.projectId
+              )
+            )
+          ) &&
+
+          request.resource.data.organisationId ==
+            resource.data.organisationId &&
+
+          request.resource.data.projectId ==
+            resource.data.projectId &&
+
+          request.resource.data.category ==
+            resource.data.category &&
+
+          request.resource.data.storagePath ==
+            resource.data.storagePath &&
+
+          request.resource.data.fileName ==
+            resource.data.fileName &&
+
+          request.resource.data.mimeType ==
+            resource.data.mimeType &&
+
+          request.resource.data.fileSize ==
+            resource.data.fileSize &&
+
+          request.resource.data.uploadedByUid ==
+            resource.data.uploadedByUid &&
+
+          request.resource.data.uploadedAt ==
+            resource.data.uploadedAt
+        );
+
+
+      allow delete:
+        if isPlatformAdmin();
+
+    }
+
+
+    /* =====================================================
+       DEFAULT DENY
+
+       EVERYTHING NOT EXPLICITLY OPENED ABOVE
+       REMAINS DENIED.
+    ===================================================== */
+
+    match /{document=**} {
+
+      allow read, write:
+        if false;
+
+    }
+
+  }
+
+}

@@ -1,0 +1,1662 @@
+/* Scope page styles */
+/* =========================================================
+   NORMEX
+   PROJECT SCOPE
+========================================================= */
+
+
+/* =========================================================
+   COMMON SURFACES
+========================================================= */
+
+.scope-intro,
+.scope-summary,
+.scope-panel {
+  margin-bottom: 16px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.82);
+
+  border-radius:
+    24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.99),
+      rgba(248, 251, 249, 0.98)
+    );
+
+  box-shadow:
+    0 16px 42px
+    rgba(14, 29, 20, 0.06);
+}
+
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+.scope-intro {
+  min-height: 120px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  padding:
+    25px 28px;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.scope-primary-action,
+.scope-secondary-action,
+.scope-small-action {
+  min-height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    0 16px;
+
+  border-radius:
+    12px;
+
+  font-size:
+    var(--font-size-body-small);
+
+  font-weight:
+    var(--font-weight-bold);
+
+  cursor: pointer;
+
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    background 140ms ease;
+}
+
+
+.scope-primary-action {
+  border: 0;
+
+  background:
+    linear-gradient(
+      135deg,
+      #365144,
+      #20362b
+    );
+
+  color:
+    #ffffff;
+
+  box-shadow:
+    0 10px 24px
+    rgba(21, 39, 29, 0.17);
+}
+
+
+.scope-primary-action:hover {
+  transform:
+    translateY(-1px);
+}
+
+
+.scope-primary-action:disabled {
+  opacity: 0.55;
+
+  cursor: wait;
+
+  transform:
+    none;
+}
+
+
+.scope-secondary-action,
+.scope-small-action {
+  border:
+    1px solid
+    rgba(34, 53, 42, 0.10);
+
+  background:
+    #ffffff;
+
+  color:
+    #4f5e55;
+}
+
+
+.scope-small-action {
+  min-height: 33px;
+
+  padding:
+    0 11px;
+
+  font-size:
+    0.59rem;
+}
+
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.scope-summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      5,
+      minmax(0, 1fr)
+    );
+
+  overflow: hidden;
+}
+
+
+.scope-summary__item {
+  min-width: 0;
+
+  padding:
+    18px 20px;
+
+  border-right:
+    1px solid
+    rgba(36, 55, 44, 0.07);
+}
+
+
+.scope-summary__item:last-child {
+  border-right: 0;
+}
+
+
+.scope-summary__item span {
+  display: block;
+
+  color:
+    #859087;
+
+  font-size:
+    var(--font-size-label);
+
+  font-weight:
+    var(--font-weight-heavy);
+
+  letter-spacing:
+    0.07em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.scope-summary__item strong {
+  display: block;
+
+  margin-top: 8px;
+
+  color:
+    #25342b;
+
+  font-size:
+    1.22rem;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    -0.035em;
+}
+
+
+/* =========================================================
+   PANEL
+========================================================= */
+
+.scope-panel {
+  padding:
+    22px 24px;
+}
+
+
+.scope-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 22px;
+
+  margin-bottom: 17px;
+
+  padding-bottom: 16px;
+
+  border-bottom:
+    1px solid
+    var(--border);
+}
+
+
+.scope-controls {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+}
+
+
+.scope-search,
+.scope-filter {
+  min-height: 38px;
+
+  border:
+    1px solid
+    rgba(35, 54, 43, 0.09);
+
+  border-radius:
+    10px;
+
+  background:
+    #ffffff;
+
+  color:
+    #344239;
+
+  outline: none;
+
+  font-size:
+    0.65rem;
+
+  font-weight:
+    600;
+}
+
+
+.scope-search {
+  width: 210px;
+
+  padding:
+    0 11px;
+}
+
+
+.scope-filter {
+  min-width: 130px;
+
+  padding:
+    0 10px;
+}
+
+
+/* =========================================================
+   REGISTER
+========================================================= */
+
+.scope-register {
+  width: 100%;
+
+  overflow-x: auto;
+}
+
+
+.scope-table {
+  width: 100%;
+
+  min-width: 860px;
+
+  border-collapse:
+    collapse;
+}
+
+
+.scope-table th {
+  padding:
+    10px 12px;
+
+  border-bottom:
+    1px solid
+    rgba(36, 55, 44, 0.10);
+
+  color:
+    #839087;
+
+  text-align: left;
+
+  font-size:
+    0.52rem;
+
+  font-weight:
+    var(--font-weight-heavy);
+
+  letter-spacing:
+    0.08em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.scope-table td {
+  padding:
+    14px 12px;
+
+  border-bottom:
+    1px solid
+    rgba(36, 55, 44, 0.06);
+
+  color:
+    #536058;
+
+  font-size:
+    0.66rem;
+
+  font-weight:
+    600;
+
+  vertical-align: middle;
+}
+
+
+.scope-table tr:last-child td {
+  border-bottom: 0;
+}
+
+
+.scope-table__code {
+  color:
+    #7d8982;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    0.05em;
+}
+
+
+.scope-table__name {
+  max-width: 320px;
+}
+
+
+.scope-table__name strong {
+  display: block;
+
+  color:
+    #27362d;
+
+  font-size:
+    0.72rem;
+
+  font-weight:
+    750;
+}
+
+
+.scope-table__name span {
+  display: block;
+
+  margin-top: 4px;
+
+  overflow: hidden;
+
+  color:
+    #8a958e;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+.scope-table__actions {
+  text-align: right;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.scope-chip {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 25px;
+
+  padding:
+    0 8px;
+
+  border-radius:
+    999px;
+
+  background:
+    var(--status-neutral-bg);
+
+  color:
+    var(--status-neutral);
+
+  font-size:
+    0.51rem;
+
+  font-weight:
+    var(--font-weight-heavy);
+
+  letter-spacing:
+    0.05em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.scope-chip.is-live,
+.scope-chip.is-complete {
+  background:
+    var(--status-good-bg);
+
+  color:
+    var(--status-good);
+}
+
+
+.scope-chip.is-pre {
+  background:
+    var(--status-warning-bg);
+
+  color:
+    var(--status-warning);
+}
+
+
+.scope-chip.is-hold {
+  background:
+    var(--status-danger-bg);
+
+  color:
+    var(--status-danger);
+}
+
+
+.scope-evidence {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  color:
+    #52655a;
+
+  font-size:
+    0.61rem;
+
+  font-weight:
+    700;
+}
+
+
+.scope-evidence__dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background:
+    var(--status-good);
+}
+
+
+.scope-evidence.is-pending
+.scope-evidence__dot {
+  background:
+    var(--status-warning);
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.scope-empty {
+  min-height: 170px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    24px;
+
+  border:
+    1px dashed
+    rgba(35, 55, 43, 0.12);
+
+  border-radius:
+    14px;
+
+  background:
+    #fafbfa;
+
+  color:
+    #87938c;
+
+  text-align: center;
+
+  font-size:
+    var(--font-size-body-small);
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.scope-modal {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 300;
+}
+
+
+.scope-modal__backdrop {
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    rgba(10, 21, 14, 0.58);
+
+  backdrop-filter:
+    blur(5px);
+}
+
+
+.scope-modal__panel {
+  position: relative;
+
+  width:
+    min(
+      770px,
+      calc(100% - 30px)
+    );
+
+  max-height:
+    calc(100vh - 30px);
+
+  margin:
+    15px auto;
+
+  overflow-y:
+    auto;
+
+  border-radius:
+    22px;
+
+  background:
+    #fbfcfb;
+
+  box-shadow:
+    0 40px 100px
+    rgba(6, 17, 10, 0.3);
+}
+
+
+.scope-modal__header {
+  position: sticky;
+
+  top: 0;
+
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding:
+    21px 23px;
+
+  border-bottom:
+    1px solid
+    var(--border);
+
+  background:
+    rgba(251, 252, 251, 0.97);
+
+  backdrop-filter:
+    blur(15px);
+}
+
+
+.scope-modal__title {
+  margin: 0;
+
+  color:
+    #1e2c24;
+
+  font-size:
+    1.25rem;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    -0.035em;
+}
+
+
+.scope-modal__close {
+  width: 39px;
+  height: 39px;
+
+  display: grid;
+  place-items: center;
+
+  border:
+    1px solid
+    var(--border);
+
+  border-radius:
+    11px;
+
+  background:
+    #ffffff;
+
+  color:
+    #56635b;
+
+  font-size:
+    1.15rem;
+
+  cursor: pointer;
+}
+
+
+.scope-modal__body {
+  padding:
+    22px 23px;
+}
+
+
+.scope-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 9px;
+
+  margin-top: 22px;
+
+  padding-top: 18px;
+
+  border-top:
+    1px solid
+    var(--border);
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.scope-form-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap:
+    16px 14px;
+}
+
+
+.scope-field {
+  min-width: 0;
+}
+
+
+.scope-field--wide {
+  grid-column:
+    1 / -1;
+}
+
+
+.scope-field label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color:
+    #647169;
+
+  font-size:
+    var(--font-size-label);
+
+  font-weight:
+    var(--font-weight-heavy);
+
+  letter-spacing:
+    0.08em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.scope-field input,
+.scope-field select,
+.scope-field textarea {
+  width: 100%;
+
+  border:
+    1px solid
+    rgba(33, 51, 41, 0.11);
+
+  border-radius:
+    11px;
+
+  background:
+    #ffffff;
+
+  color:
+    #28362e;
+
+  outline: none;
+
+  font-size:
+    var(--font-size-body);
+
+  font-weight:
+    600;
+}
+
+
+.scope-field input,
+.scope-field select {
+  min-height: 43px;
+
+  padding:
+    0 12px;
+}
+
+
+.scope-field textarea {
+  padding:
+    11px 12px;
+
+  line-height: 1.5;
+
+  resize: vertical;
+}
+
+
+.scope-field input:focus,
+.scope-field select:focus,
+.scope-field textarea:focus {
+  border-color:
+    rgba(48, 78, 61, 0.34);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(48, 78, 61, 0.06);
+}
+
+
+/* =========================================================
+   UPLOAD
+========================================================= */
+
+.scope-upload-section {
+  margin-top: 20px;
+
+  padding-top: 19px;
+
+  border-top:
+    1px solid
+    var(--border);
+}
+
+
+.scope-upload-section__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  margin-bottom: 11px;
+}
+
+
+.scope-upload-section__heading > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+
+.scope-upload-section__eyebrow {
+  color:
+    #839087;
+
+  font-size:
+    0.53rem;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    0.08em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.scope-upload-section__heading strong {
+  color:
+    #304038;
+
+  font-size:
+    0.76rem;
+}
+
+
+.scope-upload-section__heading > span {
+  color:
+    #8b968f;
+
+  font-size:
+    0.59rem;
+}
+
+
+.scope-file-picker {
+  min-height: 80px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 13px;
+
+  padding:
+    14px 16px;
+
+  border:
+    1px dashed
+    rgba(48, 70, 57, 0.20);
+
+  border-radius:
+    13px;
+
+  background:
+    #f8faf9;
+
+  cursor: pointer;
+
+  transition:
+    border-color 140ms ease,
+    background 140ms ease;
+}
+
+
+.scope-file-picker:hover {
+  border-color:
+    rgba(48, 70, 57, 0.38);
+
+  background:
+    #f4f7f5;
+}
+
+
+.scope-file-picker input {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  overflow: hidden;
+
+  opacity: 0;
+}
+
+
+.scope-file-picker__icon {
+  width: 37px;
+  height: 37px;
+
+  flex: 0 0 auto;
+
+  display: grid;
+  place-items: center;
+
+  border-radius:
+    10px;
+
+  background:
+    var(--brand-surface);
+
+  color:
+    var(--brand-primary);
+
+  font-size:
+    1.1rem;
+
+  font-weight:
+    800;
+}
+
+
+.scope-file-picker strong {
+  display: block;
+
+  color:
+    #344239;
+
+  font-size:
+    0.69rem;
+}
+
+
+.scope-file-picker small {
+  display: block;
+
+  margin-top: 4px;
+
+  color:
+    #87938c;
+
+  font-size:
+    0.59rem;
+}
+
+
+/* =========================================================
+   UPLOAD PROGRESS
+========================================================= */
+
+.scope-upload-progress {
+  margin-top: 12px;
+}
+
+
+.scope-upload-progress__track {
+  width: 100%;
+  height: 6px;
+
+  overflow: hidden;
+
+  border-radius:
+    999px;
+
+  background:
+    #e7ece8;
+}
+
+
+.scope-upload-progress__bar {
+  display: block;
+
+  width: 0;
+  height: 100%;
+
+  border-radius:
+    inherit;
+
+  background:
+    var(--brand-primary);
+
+  transition:
+    width 160ms ease;
+}
+
+
+.scope-upload-progress > span {
+  display: block;
+
+  margin-top: 6px;
+
+  color:
+    #7b8880;
+
+  font-size:
+    0.58rem;
+}
+
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.scope-message {
+  margin-top: 14px;
+
+  padding:
+    11px 13px;
+
+  border-radius:
+    10px;
+
+  font-size:
+    0.63rem;
+
+  font-weight:
+    650;
+}
+
+
+.scope-message--error {
+  background:
+    var(--status-danger-bg);
+
+  color:
+    var(--status-danger);
+}
+
+
+.scope-message--warning {
+  background:
+    var(--status-warning-bg);
+
+  color:
+    var(--status-warning);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 960px) {
+
+  .scope-summary {
+    grid-template-columns:
+      repeat(
+        3,
+        minmax(0, 1fr)
+      );
+  }
+
+
+  .scope-summary__item {
+    border-bottom:
+      1px solid
+      rgba(36, 55, 44, 0.07);
+  }
+
+}
+
+
+@media (max-width: 720px) {
+
+  .scope-intro {
+    min-height: auto;
+
+    align-items: flex-start;
+    flex-direction: column;
+
+    padding:
+      21px;
+  }
+
+
+  .scope-primary-action {
+    width: 100%;
+  }
+
+
+  .scope-panel__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+
+  .scope-controls {
+    width: 100%;
+  }
+
+
+  .scope-search,
+  .scope-filter {
+    flex: 1;
+
+    width: auto;
+  }
+
+
+  .scope-summary {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+}
+
+
+@media (max-width: 560px) {
+
+  .scope-form-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .scope-field--wide {
+    grid-column:
+      auto;
+  }
+
+
+  .scope-summary {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .scope-controls {
+    flex-direction: column;
+  }
+
+
+  .scope-search,
+  .scope-filter {
+    width: 100%;
+  }
+
+
+  .scope-modal__footer {
+    flex-direction: column-reverse;
+  }
+
+
+  .scope-modal__footer button {
+    width: 100%;
+  }
+
+}
+
+/* =========================================================
+   SCOPE LIFECYCLE
+========================================================= */
+
+.scope-table tr.is-completed {
+  background:
+    rgba(236, 239, 237, 0.72);
+}
+
+
+.scope-table tr.is-completed td {
+  color:
+    #8b948e;
+}
+
+
+.scope-table tr.is-completed
+.scope-table__name strong {
+  color:
+    #68736c;
+}
+
+
+.scope-table tr.is-completed
+.scope-table__name span {
+  color:
+    #9aa29d;
+}
+
+
+.scope-table tr.is-completed
+.scope-table__code {
+  color:
+    #969f99;
+}
+
+
+.scope-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 6px;
+
+  white-space: nowrap;
+}
+
+
+.scope-complete-action {
+  min-height: 33px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding:
+    0 11px;
+
+  border: 0;
+
+  border-radius:
+    9px;
+
+  background:
+    var(--brand-primary);
+
+  color:
+    #ffffff;
+
+  font-size:
+    0.59rem;
+
+  font-weight:
+    750;
+
+  cursor: pointer;
+}
+
+
+.scope-completion {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+
+.scope-completion__date {
+  color:
+    #6f7b73;
+
+  font-size:
+    0.61rem;
+
+  font-weight:
+    700;
+}
+
+
+.scope-completion__variance {
+  font-size:
+    0.57rem;
+
+  font-weight:
+    800;
+}
+
+
+.scope-completion__variance.is-early {
+  color:
+    var(--status-good);
+}
+
+
+.scope-completion__variance.is-late {
+  color:
+    var(--status-danger);
+}
+
+
+.scope-completion__variance.is-on-time {
+  color:
+    var(--status-neutral);
+}
+
+
+.scope-modal__panel--compact {
+  width:
+    min(
+      560px,
+      calc(100% - 30px)
+    );
+}
+
+
+.scope-complete-copy {
+  margin:
+    0 0 17px;
+
+  color:
+    #68756d;
+
+  font-size:
+    var(--font-size-body);
+
+  line-height:
+    1.5;
+}
+
+
+.scope-complete-summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 9px;
+}
+
+
+.scope-complete-summary > div {
+  padding:
+    13px 14px;
+
+  border:
+    1px solid
+    rgba(35, 54, 43, 0.07);
+
+  border-radius:
+    11px;
+
+  background:
+    #f8faf9;
+}
+
+
+.scope-complete-summary span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color:
+    #87928b;
+
+  font-size:
+    0.52rem;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    0.07em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.scope-complete-summary strong {
+  color:
+    #344239;
+
+  font-size:
+    0.68rem;
+
+  font-weight:
+    750;
+}
+
+
+@media (max-width: 560px) {
+
+  .scope-complete-summary {
+    grid-template-columns:
+      1fr;
+  }
+
+}
+
+
+/* =========================================================
+   MULTIPLE SCOPE DOCUMENTS
+========================================================= */
+
+.scope-modal__panel--documents {
+  width:
+    min(
+      760px,
+      calc(100% - 30px)
+    );
+}
+
+
+.scope-documents__subtitle {
+  margin:
+    5px 0 0;
+
+  color:
+    #7c8981;
+
+  font-size:
+    0.64rem;
+
+  font-weight:
+    600;
+}
+
+
+/* =========================================================
+   DOCUMENT LIST
+========================================================= */
+
+.scope-documents__list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+
+.scope-document-row {
+  min-height: 72px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  gap: 18px;
+
+  padding:
+    13px 14px;
+
+  border:
+    1px solid
+    rgba(35, 54, 43, 0.07);
+
+  border-radius:
+    12px;
+
+  background:
+    #fafbfa;
+}
+
+
+.scope-document-row__main {
+  min-width: 0;
+}
+
+
+.scope-document-row__type {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color:
+    #859087;
+
+  font-size:
+    0.51rem;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    0.075em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.scope-document-row__title {
+  display: block;
+
+  overflow: hidden;
+
+  color:
+    #29372f;
+
+  font-size:
+    0.7rem;
+
+  font-weight:
+    750;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+
+.scope-document-row__meta {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap:
+    4px 10px;
+
+  margin-top: 5px;
+
+  color:
+    #89948d;
+
+  font-size:
+    0.57rem;
+
+  font-weight:
+    600;
+}
+
+
+.scope-document-row__actions {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+/* =========================================================
+   DOCUMENT COUNT
+========================================================= */
+
+.scope-document-count {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 6px;
+
+  color:
+    #53655a;
+
+  font-size:
+    0.61rem;
+
+  font-weight:
+    750;
+}
+
+
+.scope-document-count__dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background:
+    var(--status-good);
+}
+
+
+/* =========================================================
+   ADD DOCUMENT
+========================================================= */
+
+.scope-document-upload {
+  margin-top: 20px;
+
+  padding-top: 19px;
+
+  border-top:
+    1px solid
+    var(--border);
+}
+
+
+.scope-document-upload__header {
+  margin-bottom: 14px;
+}
+
+
+.scope-document-upload__header > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+
+.scope-document-upload__header strong {
+  color:
+    #304038;
+
+  font-size:
+    0.76rem;
+}
+
+
+.scope-document-upload__actions {
+  display: flex;
+  justify-content: flex-end;
+
+  margin-top: 14px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 560px) {
+
+  .scope-document-row {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .scope-document-row__actions {
+    justify-content: flex-start;
+  }
+
+
+  .scope-document-upload__actions
+  .scope-primary-action {
+    width: 100%;
+  }
+
+}

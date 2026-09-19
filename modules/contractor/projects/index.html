@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>Projects | Colemans | NORMEX</title>
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/projects/projects.css"
+  />
+</head>
+
+
+<body>
+
+  <div class="workspace">
+
+
+    <!-- =====================================================
+         ORGANISATION HEADER
+    ====================================================== -->
+
+    <header class="workspace-header">
+
+      <div class="workspace-container">
+
+        <div class="workspace-header__surface">
+
+
+          <div class="workspace-brand">
+
+            <p class="workspace-brand__product">
+              NORMEX · Contractor Workspace
+            </p>
+
+            <h1
+              id="workspaceOrganisationName"
+              class="workspace-brand__name"
+            >
+              Colemans
+            </h1>
+
+            <p class="workspace-brand__tagline">
+              Projects, resources and operational control
+            </p>
+
+          </div>
+
+
+          <div class="workspace-header-actions">
+
+            <div class="workspace-status">
+
+              <span
+                class="workspace-status__pulse"
+                aria-hidden="true"
+              ></span>
+
+              <span class="workspace-status__label">
+                Organisation Workspace
+              </span>
+
+            </div>
+
+
+            <div class="workspace-user">
+
+              <div class="workspace-user__details">
+
+                <span
+                  id="workspaceUserName"
+                  class="workspace-user__name"
+                >
+                  User
+                </span>
+
+                <span
+                  id="workspaceUserRole"
+                  class="workspace-user__role"
+                >
+                  Loading
+                </span>
+
+              </div>
+
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         PRIMARY NAVIGATION
+    ====================================================== -->
+
+    <nav
+      class="workspace-nav"
+      aria-label="Organisation navigation"
+    >
+
+      <div class="workspace-container">
+
+        <div
+          id="contractorNavSurface"
+          class="workspace-nav__surface"
+        >
+
+          <div
+            id="contractorNavLinks"
+            class="workspace-nav__links"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         PROJECTS
+    ====================================================== -->
+
+    <main class="workspace-main">
+
+      <div class="workspace-container">
+
+
+        <!-- PAGE INTRO -->
+
+        <section class="projects-intro">
+
+          <div>
+
+            <p class="page-eyebrow">
+              Project Control
+            </p>
+
+            <h2 class="page-title">
+              Projects
+            </h2>
+
+            <p class="page-note">
+              Portfolio position and project readiness.
+            </p>
+
+          </div>
+
+
+          <div class="projects-intro__actions">
+
+            <button
+              id="newProjectButton"
+              class="projects-primary-action"
+              type="button"
+              hidden
+            >
+              <span>+</span>
+              New Project
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PORTFOLIO POSITION
+        ================================================== -->
+
+        <section class="projects-overview">
+
+          <div class="projects-section-heading">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Portfolio
+              </p>
+
+              <h3 class="section-heading__title">
+                Current Position
+              </h3>
+
+            </div>
+
+          </div>
+
+
+          <div class="projects-kpi-grid">
+
+            <article class="projects-kpi">
+
+              <span class="projects-kpi__label">
+                Live Projects
+              </span>
+
+              <strong id="kpiLiveProjects">
+                0
+              </strong>
+
+              <span class="projects-kpi__note">
+                Currently active
+              </span>
+
+            </article>
+
+
+            <article class="projects-kpi">
+
+              <span class="projects-kpi__label">
+                Pre-Construction
+              </span>
+
+              <strong id="kpiPreConstruction">
+                0
+              </strong>
+
+              <span class="projects-kpi__note">
+                Preparing to commence
+              </span>
+
+            </article>
+
+
+            <article class="projects-kpi projects-kpi--attention">
+
+              <span class="projects-kpi__label">
+                Requiring Attention
+              </span>
+
+              <strong id="kpiAttention">
+                0
+              </strong>
+
+              <span class="projects-kpi__note">
+                Portfolio exceptions
+              </span>
+
+            </article>
+
+
+            <article class="projects-kpi">
+
+              <span class="projects-kpi__label">
+                Average Readiness
+              </span>
+
+              <strong id="kpiReadiness">
+                —
+              </strong>
+
+              <span class="projects-kpi__note">
+                Across applicable projects
+              </span>
+
+            </article>
+
+
+            <article class="projects-kpi">
+
+              <span class="projects-kpi__label">
+                Portfolio
+              </span>
+
+              <strong
+                id="kpiPortfolioStatus"
+                class="projects-kpi__status-value"
+              >
+                —
+              </strong>
+
+              <span class="projects-kpi__note">
+                Overall position
+              </span>
+
+            </article>
+
+          </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SEARCH / FILTERS
+        ================================================== -->
+
+        <section class="projects-toolbar">
+
+          <div class="projects-search">
+
+            <label for="projectSearch">
+              Search
+            </label>
+
+            <input
+              id="projectSearch"
+              type="search"
+              placeholder="Project, client, site or code..."
+              autocomplete="off"
+            />
+
+          </div>
+
+
+          <div class="projects-filter">
+
+            <label for="projectStatusFilter">
+              Status
+            </label>
+
+            <select id="projectStatusFilter">
+
+              <option value="ALL">
+                All statuses
+              </option>
+
+              <option value="LIVE">
+                Live
+              </option>
+
+              <option value="PRE_CONSTRUCTION">
+                Pre-Construction
+              </option>
+
+              <option value="ON_HOLD">
+                On Hold
+              </option>
+
+              <option value="COMPLETE">
+                Complete
+              </option>
+
+              <option value="ARCHIVED">
+                Archived
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <button
+            id="clearProjectFilters"
+            class="projects-clear-filter"
+            type="button"
+          >
+            Clear
+          </button>
+
+        </section>
+
+
+        <!-- =================================================
+             PROJECT PORTFOLIO
+        ================================================== -->
+
+        <section class="projects-list-section">
+
+          <div class="projects-list-heading">
+
+            <div>
+
+              <p class="section-heading__eyebrow">
+                Projects
+              </p>
+
+              <h3 class="section-heading__title">
+                Portfolio
+              </h3>
+
+            </div>
+
+
+            <span
+              id="projectResultCount"
+              class="projects-result-count"
+            >
+              0 projects
+            </span>
+
+          </div>
+
+
+          <div
+            id="projectsLoading"
+            class="projects-state"
+          >
+
+            <div class="projects-state__mark">
+              N
+            </div>
+
+            <strong>
+              Loading projects
+            </strong>
+
+          </div>
+
+
+          <div
+            id="projectsEmpty"
+            class="projects-state"
+            hidden
+          >
+
+            <div class="projects-state__mark">
+              P
+            </div>
+
+            <strong>
+              No projects yet
+            </strong>
+
+            <p>
+              Create the first project when the organisation is ready.
+            </p>
+
+          </div>
+
+
+          <div
+            id="projectsNoResults"
+            class="projects-state"
+            hidden
+          >
+
+            <div class="projects-state__mark">
+              0
+            </div>
+
+            <strong>
+              No matching projects
+            </strong>
+
+            <p>
+              Adjust the current search or status filter.
+            </p>
+
+          </div>
+
+
+          <div
+            id="projectCardGrid"
+            class="project-card-grid"
+            hidden
+          ></div>
+
+        </section>
+
+
+      </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="workspace-footer">
+
+      <div class="workspace-container">
+
+        <div class="workspace-footer__inner">
+
+          <span class="workspace-footer__brand">
+            <strong>NORMEX</strong>
+          </span>
+
+          <span
+            id="workspaceFooterOrganisation"
+            class="workspace-footer__context"
+          >
+            Colemans
+          </span>
+
+        </div>
+
+      </div>
+
+    </footer>
+
+
+  </div>
+
+
+  <!-- =====================================================
+       NEW PROJECT MODAL
+  ====================================================== -->
+
+  <div
+    id="newProjectModal"
+    class="project-modal"
+    hidden
+  >
+
+    <div
+      id="newProjectBackdrop"
+      class="project-modal__backdrop"
+    ></div>
+
+
+    <section
+      class="project-modal__panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="newProjectModalTitle"
+    >
+
+      <header class="project-modal__header">
+
+        <div>
+
+          <p class="section-heading__eyebrow">
+            New Project
+          </p>
+
+          <h2
+            id="newProjectModalTitle"
+            class="project-modal__title"
+          >
+            Create Project
+          </h2>
+
+        </div>
+
+
+        <button
+          id="closeProjectModal"
+          class="project-modal__close"
+          type="button"
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <form
+        id="newProjectForm"
+        class="project-form"
+      >
+
+        <div class="project-form__grid">
+
+
+          <div class="project-field project-field--wide">
+
+            <label for="projectName">
+              Project name
+            </label>
+
+            <input
+              id="projectName"
+              name="name"
+              type="text"
+              maxlength="120"
+              required
+            />
+
+          </div>
+
+
+          <div class="project-field">
+
+            <label for="projectCode">
+              Project code
+            </label>
+
+            <input
+              id="projectCode"
+              name="projectCode"
+              type="text"
+              maxlength="40"
+              required
+            />
+
+          </div>
+
+
+          <div class="project-field">
+
+            <label for="projectStatus">
+              Status
+            </label>
+
+            <select
+              id="projectStatus"
+              name="status"
+              required
+            >
+
+              <option value="PRE_CONSTRUCTION">
+                Pre-Construction
+              </option>
+
+              <option value="LIVE">
+                Live
+              </option>
+
+              <option value="ON_HOLD">
+                On Hold
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="project-field">
+
+            <label for="projectClient">
+              Client
+            </label>
+
+            <input
+              id="projectClient"
+              name="clientName"
+              type="text"
+              maxlength="100"
+            />
+
+          </div>
+
+
+          <div class="project-field">
+
+            <label for="projectSite">
+              Site / location
+            </label>
+
+            <input
+              id="projectSite"
+              name="siteName"
+              type="text"
+              maxlength="100"
+            />
+
+          </div>
+
+
+          <div class="project-field">
+
+            <label for="projectStartDate">
+              Start date
+            </label>
+
+            <input
+              id="projectStartDate"
+              name="startDate"
+              type="date"
+            />
+
+          </div>
+
+
+          <div class="project-field">
+
+            <label for="projectFinishDate">
+              Target finish
+            </label>
+
+            <input
+              id="projectFinishDate"
+              name="targetFinishDate"
+              type="date"
+            />
+
+          </div>
+
+
+          <div class="project-field project-field--wide">
+
+            <label for="projectPhase">
+              Current phase
+            </label>
+
+            <input
+              id="projectPhase"
+              name="currentPhase"
+              type="text"
+              maxlength="100"
+              placeholder="e.g. Pre-Start, B Block Stripout"
+            />
+
+          </div>
+
+
+          <fieldset class="project-field project-field--wide project-role-field">
+
+            <legend>
+              Colemans role on project
+            </legend>
+
+
+            <label class="project-checkbox">
+
+              <input
+                type="checkbox"
+                name="rolesOnProject"
+                value="CONTRACTOR"
+                checked
+              />
+
+              <span>
+                Contractor
+              </span>
+
+            </label>
+
+
+            <label class="project-checkbox">
+
+              <input
+                type="checkbox"
+                name="rolesOnProject"
+                value="PRINCIPAL_CONTRACTOR"
+              />
+
+              <span>
+                Principal Contractor
+              </span>
+
+            </label>
+
+
+            <label class="project-checkbox">
+
+              <input
+                type="checkbox"
+                name="rolesOnProject"
+                value="PRINCIPAL_DESIGNER"
+              />
+
+              <span>
+                Principal Designer
+              </span>
+
+            </label>
+
+
+            <label class="project-checkbox">
+
+              <input
+                type="checkbox"
+                name="rolesOnProject"
+                value="CLIENT"
+              />
+
+              <span>
+                Client
+              </span>
+
+            </label>
+
+          </fieldset>
+
+
+          <div class="project-field project-field--wide">
+
+            <label for="projectDescription">
+              Description
+            </label>
+
+            <textarea
+              id="projectDescription"
+              name="description"
+              rows="4"
+              maxlength="800"
+            ></textarea>
+
+          </div>
+
+
+        </div>
+
+
+        <div
+          id="newProjectError"
+          class="project-form__error"
+          hidden
+        ></div>
+
+
+        <footer class="project-form__footer">
+
+          <button
+            id="cancelProjectButton"
+            class="project-secondary-action"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="saveProjectButton"
+            class="projects-primary-action"
+            type="submit"
+          >
+            Create Project
+          </button>
+
+        </footer>
+
+      </form>
+
+    </section>
+
+  </div>
+
+
+  <!-- =====================================================
+       MOBILE NAVIGATION
+  ====================================================== -->
+
+  <aside
+    id="contractorMobileNav"
+    class="workspace-mobile-nav"
+    hidden
+  >
+
+    <div
+      id="mobileNavBackdrop"
+      class="workspace-mobile-nav__backdrop"
+    ></div>
+
+
+    <div class="workspace-mobile-nav__panel">
+
+      <header class="workspace-mobile-nav__header">
+
+        <div>
+
+          <span class="workspace-mobile-nav__eyebrow">
+            Colemans
+          </span>
+
+          <h2 class="workspace-mobile-nav__title">
+            Navigation
+          </h2>
+
+        </div>
+
+
+        <button
+          id="mobileNavClose"
+          class="workspace-mobile-nav__close"
+          type="button"
+          aria-label="Close navigation"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <nav
+        id="contractorMobileNavLinks"
+        class="workspace-mobile-nav__links"
+        aria-label="Mobile organisation navigation"
+      ></nav>
+
+    </div>
+
+  </aside>
+
+
+  <script
+    src="/modules/contractor/shared/js/config.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/shared/js/shell.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/projects/projects.js"
+  ></script>
+
+</body>
+
+</html>

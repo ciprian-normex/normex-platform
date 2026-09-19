@@ -1,0 +1,2127 @@
+/* =========================================================
+   NORMEX PEOPLE
+   Premium Workforce Intelligence
+========================================================= */
+
+:root {
+  --people-ink: #172c22;
+  --people-ink-soft: #405249;
+  --people-muted: #738078;
+  --people-line: #dfe7e2;
+  --people-line-soft: #ebf0ed;
+  --people-surface: #ffffff;
+  --people-soft: #f7f9f8;
+
+  --people-green: #1e4a36;
+  --people-green-dark: #163729;
+  --people-green-soft: #e5efe9;
+
+  --people-amber: #d2a247;
+  --people-blue: #8398bd;
+  --people-red: #b56c5b;
+
+  --people-shadow:
+    0 15px 38px rgba(16, 39, 28, 0.055);
+}
+
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+.people-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  width: 100%;
+
+  margin:
+    0
+    0
+    20px;
+
+  padding:
+    22px
+    24px;
+
+  border:
+    1px solid
+    var(--people-line);
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #ffffff 64%,
+      #f6f8f7 100%
+    );
+
+  box-shadow:
+    0 15px 38px rgba(16, 39, 28, 0.055);
+}
+
+
+.people-intro > div:first-child {
+  min-width: 0;
+}
+
+
+.people-intro .page-eyebrow {
+  margin:
+    0
+    0
+    6px;
+
+  color: #61736a;
+
+  font-size: 0.65rem;
+  font-weight: 900;
+
+  letter-spacing: 0.11em;
+
+  text-transform: uppercase;
+}
+
+
+.people-intro .page-title {
+  margin: 0;
+
+  color: #142d21;
+
+  font-size: 1.7rem;
+  font-weight: 900;
+
+  line-height: 1.05;
+
+  letter-spacing: -0.025em;
+}
+
+
+.people-intro .page-note {
+  max-width: 720px;
+
+  margin:
+    7px
+    0
+    0;
+
+  color: #718078;
+
+  font-size: 0.76rem;
+
+  line-height: 1.45;
+}
+
+
+.people-intro__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  flex-shrink: 0;
+
+  gap: 10px;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.people-primary-action,
+.people-secondary-action,
+.people-small-action,
+.people-icon-action {
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
+}
+
+.people-primary-action {
+  padding: 11px 17px;
+  border: 0;
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      180deg,
+      #1d4b36,
+      #163729
+    );
+  color: #ffffff;
+  font-size: 0.84rem;
+  font-weight: 800;
+  box-shadow:
+    0 9px 22px rgba(18, 53, 37, 0.16);
+}
+
+.people-primary-action:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 12px 26px rgba(18, 53, 37, 0.21);
+}
+
+.people-primary-action:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.people-secondary-action,
+.people-small-action {
+  border: 1px solid var(--people-line);
+  background: #f5f8f6;
+  color: #294236;
+  font-weight: 800;
+}
+
+.people-secondary-action {
+  padding: 10px 15px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+}
+
+.people-small-action {
+  padding: 7px 11px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+}
+
+.people-secondary-action:hover,
+.people-small-action:hover {
+  border-color: #ccd9d1;
+  background: #edf3ef;
+}
+
+.people-icon-action {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--people-line);
+  border-radius: 10px;
+  background: #ffffff;
+  color: #244034;
+  font-size: 0.95rem;
+  font-weight: 850;
+}
+
+.people-icon-action:hover {
+  background: #eef4f0;
+  border-color: #cad7cf;
+}
+
+
+/* =========================================================
+   COMMAND BAR
+========================================================= */
+
+.people-command {
+  position: relative;
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(220px, 280px);
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 18px;
+  overflow: hidden;
+  border: 1px solid var(--people-line);
+  border-radius: 20px;
+  background:
+    linear-gradient(
+      135deg,
+      #fafcfb,
+      #f2f6f3
+    );
+  box-shadow: var(--people-shadow);
+}
+
+.people-command::before {
+  content: "";
+  position: absolute;
+  top: -90px;
+  right: 90px;
+  width: 230px;
+  height: 230px;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle,
+      rgba(36, 84, 59, 0.07),
+      transparent 70%
+    );
+  pointer-events: none;
+}
+
+.people-command__context,
+.people-command__summary {
+  position: relative;
+  z-index: 1;
+}
+
+.people-command__heading strong,
+.people-command__heading span {
+  display: block;
+}
+
+.people-command__eyebrow {
+  margin-bottom: 4px;
+  color: var(--people-muted);
+  font-size: 0.67rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.people-command__heading strong {
+  color: var(--people-ink);
+  font-size: 1rem;
+  font-weight: 850;
+}
+
+.people-command__heading > span:last-child {
+  margin-top: 4px;
+  color: var(--people-muted);
+  font-size: 0.76rem;
+}
+
+.people-command__filters {
+  display: grid;
+  grid-template-columns:
+    minmax(170px, 220px)
+    minmax(155px, 190px)
+    minmax(200px, 1fr);
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.people-command-field label {
+  display: block;
+  margin-bottom: 5px;
+  color: #67766e;
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.people-context-select,
+.people-context-search,
+.people-search,
+.people-filter {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #d9e2dc;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #263b31;
+  padding: 8px 11px;
+  font: inherit;
+  font-size: 0.78rem;
+  outline: none;
+}
+
+.people-context-select:focus,
+.people-context-search:focus,
+.people-search:focus,
+.people-filter:focus {
+  border-color: #8fa99a;
+  box-shadow:
+    0 0 0 3px rgba(70, 114, 90, 0.08);
+}
+
+.people-command__summary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 15px 17px;
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      150deg,
+      #1e3f30,
+      #172d23
+    );
+  color: #ffffff;
+}
+
+.people-command__summary-status {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-bottom: 9px;
+  padding: 4px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #c5d7cc;
+  font-size: 0.61rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.people-command__summary strong {
+  font-size: 0.9rem;
+}
+
+.people-command__summary > span:last-child {
+  margin-top: 5px;
+  color: #b6c7bd;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   PANELS
+========================================================= */
+
+.people-panel,
+.people-controls-panel {
+  width: 100%;
+  margin-bottom: 20px;
+  border: 1px solid var(--people-line);
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: var(--people-shadow);
+}
+
+.people-panel {
+  padding: 21px;
+}
+
+.people-controls-panel {
+  padding: 19px 21px;
+}
+
+.people-panel--position,
+.people-panel--pipeline {
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff,
+      #fbfcfb
+    );
+}
+
+.people-panel__header,
+.people-register-heading,
+.person-workspace-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.people-panel__header {
+  margin-bottom: 17px;
+}
+
+.people-heading__eyebrow {
+  margin: 0 0 4px;
+  color: var(--people-muted);
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.people-heading__title {
+  margin: 0;
+  color: var(--people-ink);
+  font-size: 1.03rem;
+  font-weight: 850;
+}
+
+.people-heading__note {
+  max-width: 700px;
+  margin: 5px 0 0;
+  color: var(--people-muted);
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+
+.people-position-label,
+.people-register-count {
+  display: inline-flex;
+  align-items: center;
+  min-height: 29px;
+  padding: 5px 10px;
+  border: 1px solid var(--people-line);
+  border-radius: 999px;
+  background: #f3f6f4;
+  color: #58675f;
+  font-size: 0.69rem;
+  font-weight: 850;
+}
+
+
+/* =========================================================
+   METRICS
+========================================================= */
+
+.people-metrics {
+  display: grid;
+  grid-template-columns:
+    repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.people-metric {
+  min-width: 0;
+  min-height: 106px;
+  padding: 14px;
+  border: 1px solid #e6ebe8;
+  border-radius: 15px;
+  background:
+    linear-gradient(
+      180deg,
+      #fbfcfb,
+      #f6f8f7
+    );
+}
+
+.people-metric > span {
+  display: block;
+  color: #718078;
+  font-size: 0.63rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.people-metric > strong {
+  display: block;
+  margin-top: 9px;
+  color: #17372a;
+  font-size: 1.55rem;
+  font-weight: 850;
+}
+
+.people-metric > small {
+  display: block;
+  margin-top: 4px;
+  color: #859089;
+  font-size: 0.63rem;
+  line-height: 1.35;
+}
+
+.people-metric.is-alert strong {
+  color: #a24836;
+}
+
+
+/* =========================================================
+   OUTLOOK
+========================================================= */
+
+.people-outlook {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.people-outlook-card {
+  padding: 16px;
+  border: 1px solid #e2e8e4;
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      180deg,
+      #fbfcfb,
+      #f8faf8
+    );
+}
+
+.people-outlook-card__period {
+  display: inline-flex;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #edf3ef;
+  color: #4c6859;
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.people-outlook-card__headline {
+  display: block;
+  margin-top: 10px;
+  color: #20382c;
+  font-size: 0.86rem;
+}
+
+.people-outlook-card__rows {
+  display: grid;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.people-outlook-card__rows > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 7px;
+  border-top: 1px solid #e8edea;
+}
+
+.people-outlook-card__rows span {
+  color: #75827b;
+  font-size: 0.72rem;
+}
+
+.people-outlook-card__rows strong {
+  color: #263d32;
+  font-size: 0.8rem;
+}
+
+
+/* =========================================================
+   AVAILABILITY PANEL
+========================================================= */
+
+.people-panel--availability {
+  padding: 0;
+  overflow: hidden;
+  border-color: #d8e2dc;
+}
+
+.people-panel--availability
+> .people-panel__header {
+  margin: 0;
+  padding: 20px 21px 16px;
+  border-bottom: 1px solid #e7ede9;
+}
+
+.people-panel__header--availability {
+  align-items: center;
+}
+
+.people-availability-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.people-availability-period {
+  min-width: 190px;
+  color: #2c4639;
+  font-size: 0.75rem;
+  font-weight: 850;
+  text-align: center;
+}
+
+.people-availability-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 11px 20px;
+  border-bottom: 1px solid #e4ebe6;
+  background: #f5f8f6;
+}
+
+.people-availability-legend,
+.people-availability-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.people-availability-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #66766e;
+  font-size: 0.66rem;
+  font-weight: 780;
+}
+
+.people-availability-filters
+.people-filter {
+  min-width: 185px;
+}
+
+.people-legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+}
+
+.people-legend-dot.is-available {
+  background: #96bfa5;
+}
+
+.people-legend-dot.is-deployed {
+  background: #244c38;
+}
+
+.people-legend-dot.is-holiday {
+  background: #d4a34a;
+}
+
+.people-legend-dot.is-training {
+  background: #8398bd;
+}
+
+.people-legend-dot.is-unavailable {
+  background: #b66c5c;
+}
+
+/* =========================================================
+   PREMIUM CALENDAR FRAME
+========================================================= */
+
+.people-calendar {
+  min-width: 0;
+  padding: 14px;
+  overflow: hidden;
+  background: #eef3f0;
+}
+
+
+.people-calendar-frame {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+
+  border: 1px solid #d4dfd8;
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 7px 20px rgba(19, 45, 31, 0.055);
+}
+
+
+/* =========================================================
+   CALENDAR MASTER GRID
+
+   Fixed person column.
+   Remaining width divided equally across 48 days.
+========================================================= */
+
+.people-calendar-grid--rolling {
+  display: grid;
+
+  grid-template-columns:
+    190px
+    repeat(
+      var(--calendar-days),
+      minmax(0, 1fr)
+    );
+
+  width: 100%;
+  min-width: 0;
+}
+
+
+/* =========================================================
+   TOP LEFT
+========================================================= */
+
+.people-calendar-corner {
+  display: flex;
+  align-items: center;
+
+  min-height: 40px;
+  padding: 0 13px;
+
+  border-right: 1px solid #cbd8d0;
+  border-bottom: 1px solid #d5e0d9;
+
+  background:
+    linear-gradient(
+      180deg,
+      #1c4633,
+      #17382a
+    );
+
+  color: #dce9e1;
+}
+
+
+.people-calendar-corner span {
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   MONTH HEADERS
+========================================================= */
+
+.people-calendar-month-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 40px;
+
+  border-right: 1px solid #d5dfd9;
+  border-bottom: 1px solid #d5dfd9;
+
+  color: #294438;
+
+  text-align: center;
+}
+
+
+.people-calendar-month-label strong {
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+
+/*
+   September / first visible month.
+*/
+.people-calendar-month-label.month-tone-0 {
+  background:
+    linear-gradient(
+      180deg,
+      #eaf2ed,
+      #eef4f0
+    );
+}
+
+
+/*
+   Second month.
+   Keep it visibly separate from weekend colouring.
+*/
+.people-calendar-month-label.month-tone-1 {
+  background:
+    linear-gradient(
+      180deg,
+      #edf1f5,
+      #f3f5f7
+    );
+}
+
+
+/*
+   Third month if 48 days reaches into one.
+*/
+.people-calendar-month-label.month-tone-2 {
+  background:
+    linear-gradient(
+      180deg,
+      #f2eee8,
+      #f7f4ef
+    );
+}
+
+
+/* =========================================================
+   DAY HEADERS
+========================================================= */
+
+.people-calendar-grid__header {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+  min-height: 43px;
+
+  border-right: 1px solid #e7ede9;
+  border-bottom: 1px solid #dce5df;
+
+  color: #65746c;
+
+  overflow: hidden;
+}
+
+
+.people-calendar-grid__header.is-person {
+  align-items: flex-start;
+
+  padding-left: 13px;
+
+  border-right-color: #cbd8d0;
+
+  background: #f7faf8;
+
+  color: #64736b;
+
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+
+.people-calendar-grid__header.month-tone-0 {
+  background: #fbfcfb;
+}
+
+
+.people-calendar-grid__header.month-tone-1 {
+  background: #fafbfc;
+}
+
+
+.people-calendar-grid__header.month-tone-2 {
+  background: #fdfbf8;
+}
+
+
+/*
+   Weekend is now a neutral warm grey
+   and no longer resembles the October month header.
+*/
+.people-calendar-grid__header.is-weekend {
+  background: #f1f1ee;
+  color: #6e756f;
+}
+
+
+.people-calendar-grid__header.is-today {
+  background: #e7f0ea;
+  color: #163b2a;
+}
+
+
+.people-calendar-day-number {
+  font-size: 0.65rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+
+.people-calendar-grid__header small {
+  margin-top: 3px;
+
+  font-size: 0.48rem;
+  font-weight: 850;
+
+  line-height: 1;
+}
+
+
+/* =========================================================
+   MONTH DIVIDERS
+========================================================= */
+
+.people-calendar-grid__header.is-month-start {
+  box-shadow:
+    inset 3px 0 0 #8fa397;
+}
+
+
+/* =========================================================
+   PROJECT GROUP ROW
+========================================================= */
+
+.people-calendar-project-row {
+  grid-column: 1 / -1;
+
+  display: grid;
+
+  grid-template-columns:
+    23px
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  gap: 8px;
+
+  min-height: 39px;
+
+  padding:
+    0
+    13px;
+
+  border: 0;
+  border-top: 1px solid #d3dfd7;
+  border-bottom: 1px solid #d3dfd7;
+
+  background:
+    linear-gradient(
+      90deg,
+      #eaf2ed,
+      #f6f8f7
+    );
+
+  color: #223e30;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+
+.people-calendar-project-row:hover {
+  background:
+    linear-gradient(
+      90deg,
+      #e3ede6,
+      #f0f5f2
+    );
+}
+
+
+.people-calendar-project-row.is-unassigned {
+  background:
+    linear-gradient(
+      90deg,
+      #f3efe7,
+      #faf8f4
+    );
+}
+
+
+.people-calendar-project-row__toggle {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 21px;
+  height: 21px;
+
+  border: 1px solid #cfdbd3;
+  border-radius: 6px;
+
+  background: rgba(255, 255, 255, 0.82);
+
+  color: #52675c;
+
+  font-size: 0.67rem;
+  font-weight: 900;
+}
+
+
+.people-calendar-project-row__title {
+  overflow: hidden;
+
+  color: #1f3b2e;
+
+  font-size: 0.69rem;
+  font-weight: 900;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.people-calendar-project-row__count {
+  color: #738078;
+
+  font-size: 0.59rem;
+  font-weight: 850;
+}
+
+
+/* =========================================================
+   PERSON COLUMN
+========================================================= */
+
+.people-calendar-person {
+  min-width: 0;
+  min-height: 42px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding:
+    5px
+    10px
+    5px
+    14px;
+
+  overflow: hidden;
+
+  border-right: 1px solid #cbd8d0;
+  border-bottom: 1px solid #e5ebe7;
+
+  background: #ffffff;
+}
+
+
+.people-calendar-person strong,
+.people-calendar-person span {
+  display: block;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.people-calendar-person strong {
+  color: #1d382b;
+
+  font-size: 0.67rem;
+  font-weight: 850;
+
+  line-height: 1.1;
+}
+
+
+.people-calendar-person span {
+  margin-top: 3px;
+
+  color: #89948e;
+
+  font-size: 0.52rem;
+  font-weight: 700;
+
+  line-height: 1.1;
+}
+
+
+/* =========================================================
+   DAY CELLS
+========================================================= */
+
+.people-calendar-day {
+  position: relative;
+
+  min-width: 0;
+  min-height: 42px;
+
+  overflow: hidden;
+
+  border-right: 1px solid #edf1ef;
+  border-bottom: 1px solid #e5ebe7;
+
+  background: #ffffff;
+}
+
+
+.people-calendar-day.month-tone-0 {
+  background: #ffffff;
+}
+
+
+.people-calendar-day.month-tone-1 {
+  background: #fbfcfd;
+}
+
+
+.people-calendar-day.month-tone-2 {
+  background: #fdfcf9;
+}
+
+
+/*
+   Neutral weekend tone.
+*/
+.people-calendar-day.is-weekend {
+  background: #f1f1ee;
+}
+
+
+.people-calendar-day.is-today {
+  background: #edf4ef;
+}
+
+
+.people-calendar-day.is-today::after {
+  content: "";
+
+  position: absolute;
+
+  top: 3px;
+  right: 3px;
+
+  width: 4px;
+  height: 4px;
+
+  border-radius: 50%;
+
+  background: #24523b;
+}
+
+
+/* =========================================================
+   AVAILABILITY BLOCKS
+========================================================= */
+
+.people-calendar-block {
+  position: absolute;
+
+  inset:
+    6px
+    3px;
+
+  border-radius: 5px;
+
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+
+.people-calendar-day:hover
+.people-calendar-block {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 3px 8px rgba(21, 48, 34, 0.12);
+}
+
+
+.people-calendar-block.is-available {
+  background: #d9eadf;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(58, 117, 79, 0.08);
+}
+
+
+.people-calendar-block.is-deployed {
+  background:
+    linear-gradient(
+      180deg,
+      #2e5d44,
+      #244b37
+    );
+}
+
+
+.people-calendar-block.is-holiday {
+  background:
+    linear-gradient(
+      180deg,
+      #f0d59d,
+      #e2bd68
+    );
+}
+
+
+.people-calendar-block.is-training {
+  background:
+    linear-gradient(
+      180deg,
+      #dce4f0,
+      #aebbd1
+    );
+}
+
+
+.people-calendar-block.is-sickness {
+  background:
+    linear-gradient(
+      180deg,
+      #efd0c8,
+      #c7806e
+    );
+}
+
+
+.people-calendar-block.is-unavailable {
+  background: #eadbd6;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(147, 74, 58, 0.08);
+}
+
+/* =========================================================
+   PLACEHOLDER CALENDAR
+========================================================= */
+
+.people-calendar__placeholder {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(360px, 1fr));
+  gap: 12px;
+}
+
+.people-calendar__placeholder-month {
+  min-height: 210px;
+  padding: 17px;
+  border: 1px solid var(--people-line);
+  border-radius: 15px;
+  background: #ffffff;
+}
+
+.people-calendar__placeholder-month > span {
+  color: #486052;
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.people-calendar__placeholder-month > strong {
+  display: block;
+  margin-top: 60px;
+  color: #8a948f;
+  font-size: 0.76rem;
+  text-align: center;
+}
+
+
+/* =========================================================
+   ATTENTION
+========================================================= */
+
+.people-attention-list {
+  display: grid;
+  gap: 9px;
+}
+
+.people-attention-row {
+  display: grid;
+  grid-template-columns:
+    82px
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+  gap: 13px;
+
+  padding: 12px 13px;
+
+  border: 1px solid #e8e5dd;
+  border-radius: 13px;
+
+  background: #fffdfa;
+}
+
+.people-attention-row.is-high {
+  border-color: #ecc8be;
+  background: #fff8f5;
+}
+
+.people-risk-chip {
+  display: inline-flex;
+  justify-content: center;
+
+  padding: 5px 8px;
+
+  border-radius: 999px;
+
+  background: #edf1ef;
+
+  color: #65736c;
+
+  font-size: 0.61rem;
+  font-weight: 900;
+}
+
+.people-risk-chip.is-high {
+  background: #f5ddd7;
+  color: #8a3729;
+}
+
+.people-risk-chip.is-watch {
+  background: #f4ead2;
+  color: #7b5e13;
+}
+
+.people-attention-row strong,
+.people-attention-row span {
+  display: block;
+}
+
+.people-attention-row strong {
+  color: #273c31;
+  font-size: 0.8rem;
+}
+
+.people-attention-row div span {
+  margin-top: 3px;
+  color: #79847e;
+  font-size: 0.7rem;
+}
+
+/* =========================================================
+   CAPABILITY COVERAGE
+========================================================= */
+
+.people-capability-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 11px;
+}
+
+
+.people-capability-card {
+  min-width: 0;
+
+  padding: 15px;
+
+  border:
+    1px solid
+    #e1e8e4;
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fbfcfb,
+      #f8faf9
+    );
+}
+
+
+.people-capability-card__top {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 12px;
+}
+
+
+.people-capability-card__top strong {
+  color: #20392d;
+
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+
+.people-capability-expiry {
+  flex-shrink: 0;
+
+  color: #98711e;
+
+  font-size: 0.6rem;
+  font-weight: 800;
+}
+
+
+.people-capability-expiry.is-clear {
+  color: #93a099;
+
+  font-weight: 700;
+}
+
+
+.people-capability-card__numbers {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      1fr
+    );
+
+  gap: 8px;
+
+  margin-top: 16px;
+}
+
+
+.people-capability-number {
+  min-width: 0;
+}
+
+
+.people-capability-number span,
+.people-capability-number strong {
+  display: block;
+}
+
+
+.people-capability-number span {
+  color: #748179;
+
+  font-size: 0.57rem;
+  font-weight: 850;
+
+  letter-spacing: 0.04em;
+
+  text-transform: uppercase;
+}
+
+
+.people-capability-number strong {
+  margin-top: 4px;
+
+  color: #1b382a;
+
+  font-size: 1rem;
+  font-weight: 850;
+}
+
+
+.people-capability-card__footer {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-top: 14px;
+}
+
+
+.people-capability-status {
+  display: inline-flex;
+
+  align-items: center;
+
+  min-height: 24px;
+
+  padding:
+    4px
+    8px;
+
+  border:
+    1px solid
+    #dce5df;
+
+  border-radius: 999px;
+
+  background: #f1f5f2;
+
+  color: #566a5f;
+
+  font-size: 0.59rem;
+  font-weight: 850;
+}
+
+
+.people-capability-status.has-spare {
+  border-color: #cfe0d5;
+
+  background: #eaf3ed;
+
+  color: #37664a;
+}
+
+
+.people-capability-status.is-neutral {
+  border-color: #dce4df;
+
+  background: #f3f6f4;
+
+  color: #637169;
+}
+
+
+.people-capability-note {
+  color: #909b95;
+
+  font-size: 0.58rem;
+  font-weight: 750;
+}
+
+/* =========================================================
+   DEPLOYMENT
+========================================================= */
+
+.people-deployment-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: 11px;
+}
+
+.people-deployment-card {
+  padding: 15px;
+  border: 1px solid #e2e8e4;
+  border-radius: 15px;
+  background: #fbfcfb;
+}
+
+.people-deployment-card strong,
+.people-deployment-card span {
+  display: block;
+}
+
+.people-deployment-card > strong {
+  color: #20372c;
+  font-size: 0.83rem;
+}
+
+.people-deployment-card > span {
+  margin-top: 4px;
+  color: #76827b;
+  font-size: 0.68rem;
+}
+
+.people-deployment-card__count {
+  margin-top: 13px !important;
+  color: #183d2c !important;
+  font-size: 1.3rem !important;
+  font-weight: 850;
+}
+
+.people-deployment-card__position {
+  display: grid;
+  grid-template-columns:
+    repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.people-deployment-card__position div {
+  padding: 7px;
+  border-radius: 9px;
+  background: #f2f6f3;
+}
+
+.people-deployment-card__position span {
+  color: #859088;
+  font-size: 0.57rem;
+  text-transform: uppercase;
+}
+
+.people-deployment-card__position strong {
+  margin-top: 2px;
+  color: #355044;
+  font-size: 0.72rem;
+}
+
+
+/* =========================================================
+   REGISTER
+========================================================= */
+
+.people-controls {
+  display: grid;
+  grid-template-columns:
+    minmax(250px, 1fr)
+    minmax(145px, 185px)
+    minmax(170px, 215px)
+    minmax(160px, 195px);
+  gap: 9px;
+  margin-top: 15px;
+}
+
+.people-register,
+.people-capacity-pipeline {
+  overflow-x: auto;
+}
+
+.people-table,
+.people-capacity-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.people-table th,
+.people-table td,
+.people-capacity-table th,
+.people-capacity-table td {
+  padding: 12px 11px;
+  border-bottom: 1px solid #edf1ee;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.people-table th,
+.people-capacity-table th {
+  color: #7a857f;
+  font-size: 0.61rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.people-table td,
+.people-capacity-table td {
+  color: #33453b;
+  font-size: 0.75rem;
+}
+
+.people-name strong,
+.people-name span {
+  display: block;
+}
+
+.people-name strong {
+  color: #1f352a;
+  font-size: 0.8rem;
+}
+
+.people-name span {
+  margin-top: 3px;
+  color: #818b86;
+  font-size: 0.66rem;
+}
+
+.people-availability-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 7px;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.people-availability-chip.is-available {
+  background: #e6f2ea;
+  color: #306846;
+}
+
+.people-availability-chip.is-deployed {
+  background: #e7efea;
+  color: #284c38;
+}
+
+.people-availability-chip.is-unavailable {
+  background: #f0eded;
+  color: #715d5d;
+}
+
+.people-capability-inline,
+.people-capacity-capabilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.people-mini-chip {
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: #eef3ef;
+  color: #506358;
+  font-size: 0.59rem;
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   EMPTY STATES
+========================================================= */
+
+.people-empty {
+  padding: 25px;
+  border: 1px dashed #dce4df;
+  border-radius: 13px;
+  color: #7c8881;
+  text-align: center;
+  font-size: 0.76rem;
+}
+
+.people-empty--compact {
+  padding: 17px;
+}
+
+.people-empty--calendar {
+  background: #ffffff;
+}
+
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+.people-modal[hidden] {
+  display: none;
+}
+
+.people-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.people-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 27, 19, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.people-modal__panel {
+  position: relative;
+  z-index: 1;
+  width: min(780px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow:
+    0 32px 95px rgba(9, 24, 16, 0.31);
+}
+
+.people-modal__panel--workspace {
+  width: min(1040px, 100%);
+}
+
+.people-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 22px;
+  border-bottom: 1px solid #e7ece9;
+}
+
+.people-modal__title {
+  margin: 0;
+  color: #193025;
+  font-size: 1.18rem;
+  font-weight: 850;
+}
+
+.people-modal__subtitle {
+  max-width: 620px;
+  margin: 5px 0 0;
+  color: #74817a;
+  font-size: 0.73rem;
+}
+
+.people-modal__close {
+  width: 35px;
+  height: 35px;
+  border: 0;
+  border-radius: 10px;
+  background: #eef2ef;
+  color: #34483e;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.people-modal__body {
+  padding: 22px;
+}
+
+.people-modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid #e7ece9;
+}
+
+
+/* =========================================================
+   FORMS
+========================================================= */
+
+.people-form-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.people-field--wide {
+  grid-column:
+    1 / -1;
+}
+
+.people-field label {
+  display: block;
+  margin-bottom: 5px;
+  color: #53655b;
+  font-size: 0.69rem;
+  font-weight: 800;
+}
+
+.people-field input,
+.people-field select,
+.people-field textarea,
+.person-inline-form input,
+.person-inline-form select {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #dce4df;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 8px 10px;
+  color: #25382f;
+  font: inherit;
+  font-size: 0.78rem;
+  outline: none;
+}
+
+.people-field textarea {
+  resize: vertical;
+}
+
+.people-message {
+  margin-top: 13px;
+  padding: 10px 11px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+}
+
+.people-message--error {
+  border: 1px solid #f0d2ca;
+  background: #fff2ee;
+  color: #8b3829;
+}
+
+
+/* =========================================================
+   PERSON WORKSPACE
+========================================================= */
+
+.person-workspace-summary {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  margin-bottom: 17px;
+}
+
+.person-workspace-summary article,
+.person-workspace-card {
+  border: 1px solid #e3e9e5;
+  border-radius: 13px;
+  background: #fafcfb;
+}
+
+.person-workspace-summary article {
+  padding: 12px;
+}
+
+.person-workspace-summary span,
+.person-workspace-summary strong {
+  display: block;
+}
+
+.person-workspace-summary span {
+  color: #79857f;
+  font-size: 0.59rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.person-workspace-summary strong {
+  margin-top: 4px;
+  color: #21372d;
+  font-size: 0.78rem;
+}
+
+.person-workspace-grid {
+  display: grid;
+  gap: 13px;
+}
+
+.person-workspace-card {
+  padding: 15px;
+}
+
+.person-workspace-card__header {
+  margin-bottom: 12px;
+}
+
+.person-workspace-card__header span,
+.person-workspace-card__header strong {
+  display: block;
+}
+
+.person-workspace-card__header span {
+  color: #7c8781;
+  font-size: 0.59rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.person-workspace-card__header strong {
+  margin-top: 3px;
+  color: #23372e;
+  font-size: 0.8rem;
+}
+
+.person-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.person-record-list {
+  display: grid;
+  gap: 7px;
+}
+
+.person-record {
+  display: flex;
+  justify-content: space-between;
+  gap: 13px;
+  padding: 9px 11px;
+  border: 1px solid #e7ece9;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.person-record strong,
+.person-record span {
+  display: block;
+}
+
+.person-record strong {
+  color: #253a30;
+  font-size: 0.73rem;
+}
+
+.person-record span {
+  margin-top: 3px;
+  color: #78847e;
+  font-size: 0.65rem;
+}
+
+.person-inline-form {
+  display: grid;
+  grid-template-columns:
+    minmax(190px, 1fr)
+    minmax(135px, 175px)
+    auto
+    auto;
+  gap: 8px;
+  margin-top: 11px;
+}
+
+.person-inline-form--stack {
+  grid-template-columns: 1fr;
+}
+
+.person-inline-form__dates,
+.person-inline-form__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.person-inline-form__dates > * {
+  flex: 1;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1180px) {
+
+  .people-command {
+    grid-template-columns: 1fr;
+  }
+
+  .people-metrics {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+  .people-capability-grid,
+  .people-deployment-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+@media (max-width: 900px) {
+
+  .people-command__filters {
+    grid-template-columns:
+      1fr
+      1fr;
+  }
+
+  .people-command-field--search {
+    grid-column:
+      1 / -1;
+  }
+
+  .people-outlook {
+    grid-template-columns:
+      1fr;
+  }
+
+  .people-controls {
+    grid-template-columns:
+      1fr
+      1fr;
+  }
+
+  .people-search {
+    grid-column:
+      1 / -1;
+  }
+
+  .people-capacity-table {
+    min-width: 900px;
+  }
+
+}
+
+
+@media (max-width: 720px) {
+
+  .people-intro,
+  .people-panel__header,
+  .people-register-heading,
+  .people-panel__header--availability {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .people-command__filters,
+  .people-metrics,
+  .people-capability-grid,
+  .people-deployment-grid,
+  .person-workspace-summary,
+  .people-form-grid,
+  .people-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .people-availability-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .people-attention-row {
+    grid-template-columns: 1fr;
+  }
+
+  .people-availability-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .person-inline-form {
+    grid-template-columns: 1fr;
+  }
+
+  .person-inline-form__dates,
+  .person-inline-form__actions {
+    flex-direction: column;
+  }
+
+  .people-calendar-grid--rolling {
+    grid-template-columns:
+      180px
+      repeat(
+        var(--calendar-days),
+        28px
+      );
+  }
+
+}
