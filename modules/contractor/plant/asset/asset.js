@@ -1,3 +1,4 @@
+import { calculateHire, selectHire, belongsToAsset, isHireOwnership as sharedHireOwnership, weeklyHireRate as sharedWeeklyRate, validHireRate } from "../shared/plant-hire.js";
 import {
   db
 } from "/js/firebase.js";
@@ -45,8 +46,9 @@ let asset =
 let hireRecords =
   [];
 
-let currentHireRecord =
-  null;
+let currentHireRecord = null;
+let currentHireSelection = { state: "UNKNOWN", reason: "Hire information unavailable", record: null };
+let hireReadComplete = false;
 
 let assignments =
   [];
@@ -941,18 +943,17 @@ async function loadOrganisationCollection(
 ========================================================= */
 
 async function loadHireRecords() {
-
-  const records =
-    await loadOrganisationCollection(
-      "plantHireRecords"
-    );
-
-
-  hireRecords =
-    records.filter(
-      recordBelongsToAsset
-    );
-
+  hireReadComplete = false;
+  hireRecords = [];
+  if (!canViewPlantCosts) return;
+  try {
+    const snapshot = await getDocs(query(collection(db, "plantHireRecords"), where("organisationId", "==", organisationId)));
+    hireRecords = snapshot.docs.map(item => ({ ...item.data(), id: item.id })).filter(record => belongsToAsset(record, asset));
+    hireReadComplete = true;
+  } catch (error) {
+    // A failed hire read must remain unknown; operational history loads separately.
+    hireReadComplete = false;
+  }
 }
 
 
@@ -1138,130 +1139,8 @@ async function loadDocuments() {
 ========================================================= */
 
 function selectCurrentHireRecord() {
-
-  if (
-    !hireRecords.length
-  ) {
-
-    currentHireRecord =
-      null;
-
-    return;
-
-  }
-
-
-  const preferredId =
-    cleanString(
-      asset.currentHireRecordId
-    );
-
-
-  if (
-    preferredId
-  ) {
-
-    const exact =
-      hireRecords.find(
-        (
-          record
-        ) =>
-          record.id ===
-            preferredId
-      );
-
-
-    if (
-      exact
-    ) {
-
-      currentHireRecord =
-        exact;
-
-      return;
-
-    }
-
-  }
-
-
-  currentHireRecord =
-    hireRecords
-      .slice()
-      .sort(
-        (
-          a,
-          b
-        ) => {
-
-          const aActive =
-            [
-              "ACTIVE",
-              "OFF_HIRE_REQUESTED"
-            ].includes(
-              cleanString(
-                a.status
-              ).toUpperCase()
-            )
-              ? 1
-              : 0;
-
-
-          const bActive =
-            [
-              "ACTIVE",
-              "OFF_HIRE_REQUESTED"
-            ].includes(
-              cleanString(
-                b.status
-              ).toUpperCase()
-            )
-              ? 1
-              : 0;
-
-
-          if (
-            aActive !==
-              bActive
-          ) {
-
-            return (
-              bActive -
-              aActive
-            );
-
-          }
-
-
-          return (
-
-            (
-              parseDate(
-                b.hireStartDate ||
-                b.createdAt
-              )?.getTime()
-              ||
-              0
-            )
-
-            -
-
-            (
-              parseDate(
-                a.hireStartDate ||
-                a.createdAt
-              )?.getTime()
-              ||
-              0
-            )
-
-          );
-
-        }
-      )[0]
-    ||
-    null;
-
+  currentHireSelection = selectHire(asset, hireRecords, { complete: hireReadComplete });
+  currentHireRecord = currentHireSelection.record;
 }
 
 
@@ -1508,17 +1387,7 @@ function deriveCurrentUse() {
 
 
 function isHiredAsset() {
-
-  return [
-    "HIRED",
-    "LEASED",
-    "CROSS_HIRED"
-  ].includes(
-    cleanString(
-      asset?.ownershipType
-    ).toUpperCase()
-  );
-
+  return sharedHireOwnership(asset);
 }
 
 
@@ -1769,218 +1638,24 @@ function getNextMaintenance() {
 ========================================================= */
 
 function calculateHireDays() {
-
-  if (
-    !currentHireRecord?.hireStartDate
-  ) {
-
-    return null;
-
-  }
-
-
-  const finish =
-    currentHireRecord.offHireConfirmedDate ||
-    new Date();
-
-
-  const days =
-    daysBetween(
-      currentHireRecord.hireStartDate,
-      finish
-    );
-
-
-  if (
-    days ===
-      null
-  ) {
-
-    return null;
-
-  }
-
-
-  return Math.max(
-    1,
-    days +
-      1
-  );
-
+  return calculateHire(currentHireRecord).days;
 }
 
 
 function calculateHireExposure() {
-
-  if (
-    currentHireRecord?.hireRate ==
-      null
-
-    ||
-
-    !currentHireRecord?.hireStartDate
-  ) {
-
-    return null;
-
-  }
-
-
-  const days =
-    calculateHireDays();
-
-
-  if (
-    days ===
-      null
-  ) {
-
-    return null;
-
-  }
-
-
-  const rate =
-    Number(
-      currentHireRecord.hireRate
-    );
-
-
-  if (
-    !Number.isFinite(
-      rate
-    )
-  ) {
-
-    return null;
-
-  }
-
-
-  switch (
-    cleanString(
-      currentHireRecord.hireRateUnit
-    ).toUpperCase()
-  ) {
-
-    case "DAY":
-
-      return days *
-        rate;
-
-
-    case "MONTH":
-
-      return (
-        days /
-        30.4375
-      )
-      *
-      rate;
-
-
-    case "WEEK":
-
-    default:
-
-      return (
-        days /
-        7
-      )
-      *
-      rate;
-
-  }
-
+  return calculateHire(currentHireRecord).estimatedCost;
 }
 
 
 function weeklyHireRate() {
-
-  if (
-    currentHireRecord?.hireRate ==
-      null
-  ) {
-
-    return null;
-
-  }
-
-
-  const rate =
-    Number(
-      currentHireRecord.hireRate
-    );
-
-
-  if (
-    !Number.isFinite(
-      rate
-    )
-  ) {
-
-    return null;
-
-  }
-
-
-  switch (
-    cleanString(
-      currentHireRecord.hireRateUnit
-    ).toUpperCase()
-  ) {
-
-    case "DAY":
-
-      return rate *
-        7;
-
-
-    case "MONTH":
-
-      return rate *
-        12 /
-        52;
-
-
-    case "WEEK":
-
-    default:
-
-      return rate;
-
-  }
-
+  return sharedWeeklyRate(currentHireRecord?.hireRate, currentHireRecord?.hireRateUnit);
 }
 
 
 function formatHireRate() {
-
-  if (
-    !currentHireRecord
-
-    ||
-
-    currentHireRecord.hireRate ==
-      null
-  ) {
-
-    return "Not recorded";
-
-  }
-
-
-  return `${
-    formatCurrency(
-      currentHireRecord.hireRate
-    )
-  } / ${
-    cleanString(
-      currentHireRecord.hireRateUnit ||
-      "WEEK"
-    ).toLowerCase()
-  }`;
-
+  if (!currentHireRecord) return currentHireSelection.reason;
+  if (validHireRate(currentHireRecord.hireRate) === null || sharedWeeklyRate(currentHireRecord.hireRate, currentHireRecord.hireRateUnit) === null) return "Unknown";
+  return formatCurrency(currentHireRecord.hireRate) + " / " + cleanString(currentHireRecord.hireRateUnit).toLowerCase();
 }
 
 /* =========================================================
@@ -2443,6 +2118,9 @@ function renderOverviewFinancialPanel() {
   }
 
 
+  if (!currentHireRecord) {
+    return '<section class="asset-financial-panel">' + emptyState("Hire information unknown", currentHireSelection.reason) + '</section>';
+  }
   const exposure =
     calculateHireExposure();
 
@@ -2637,6 +2315,10 @@ function renderHiredFinancialView(
   root
 ) {
 
+  if (!currentHireRecord) {
+    root.innerHTML = sectionHeading("Commercial Control", "Financials", "Hire information needs review") + emptyState("Hire information unknown", currentHireSelection.reason) + renderHireHistory();
+    return;
+  }
   const exposure =
     calculateHireExposure();
 
@@ -4293,8 +3975,8 @@ function renderHireDetails() {
   ) {
 
     return emptyState(
-      "No hire record",
-      "No current hire agreement is linked to this asset."
+      "Hire information unknown",
+      currentHireSelection.reason
     );
 
   }
@@ -4450,8 +4132,7 @@ function renderHireHistory() {
 
                 <span>
                   ${escapeHtml(
-                    record.hireRate !=
-                      null
+                    validHireRate(record.hireRate) !== null && sharedWeeklyRate(record.hireRate, record.hireRateUnit) !== null
                       ? `${
                           formatCurrency(
                             record.hireRate

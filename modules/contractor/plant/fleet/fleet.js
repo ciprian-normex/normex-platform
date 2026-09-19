@@ -1,3 +1,4 @@
+import { calculateHire, selectHire, isHireOwnership as sharedHireOwnership, weeklyHireRate as sharedWeeklyRate, validHireRate } from "../shared/plant-hire.js";
 import {
   auth,
   db
@@ -58,8 +59,9 @@ let plantAssets =
 let hireRecords =
   [];
 
-let hireByAssetKey =
-  new Map();
+let hireSelectionByAsset = new Map();
+let hireReadComplete = false;
+let assetReadComplete = false;
 
 
 let selectedPlantType =
@@ -205,18 +207,8 @@ function currentUserName() {
 }
 
 
-function isHireOwnership(
-  ownershipType
-) {
-
-  return [
-    "HIRED",
-    "LEASED",
-    "CROSS_HIRED"
-  ].includes(
-    ownershipType
-  );
-
+function isHireOwnership(ownershipType) {
+  return sharedHireOwnership(ownershipType);
 }
 
 
@@ -328,7 +320,7 @@ function isIdleHiredAsset(
 function formatCurrency(
   value
 ) {
-
+  if (value == null || value === "") return "Unknown";
   const number =
     Number(
       value
@@ -543,179 +535,13 @@ function dateDiffInDays(
    HIRE CALCULATIONS
 ========================================================= */
 
-function weeklyEquivalent(
-  rate,
-  unit
-) {
-
-  const value =
-    Number(
-      rate
-    );
-
-
-  if (
-    !Number.isFinite(
-      value
-    )
-    ||
-    value <
-      0
-  ) {
-
-    return 0;
-
-  }
-
-
-  switch (
-    cleanString(
-      unit
-    ).toUpperCase()
-  ) {
-
-    case "DAY":
-
-      return value *
-        7;
-
-
-    case "MONTH":
-
-      return value *
-        12 /
-        52;
-
-
-    case "WEEK":
-
-    default:
-
-      return value;
-
-  }
-
+function weeklyEquivalent(rate, unit) {
+  return sharedWeeklyRate(rate, unit);
 }
 
 
-function estimatedHireExposure(
-  record
-) {
-
-  if (
-    !record
-
-    ||
-
-    record.hireRate ==
-      null
-
-    ||
-
-    !record.hireStartDate
-  ) {
-
-    return null;
-
-  }
-
-
-  const start =
-    parseDate(
-      record.hireStartDate
-    );
-
-
-  const finish =
-    parseDate(
-      record.offHireConfirmedDate
-    )
-    ||
-    new Date();
-
-
-  if (
-    !start
-
-    ||
-
-    finish <
-      start
-  ) {
-
-    return null;
-
-  }
-
-
-  const days =
-    Math.max(
-      1,
-      Math.floor(
-        (
-          finish -
-          start
-        )
-        /
-        86400000
-      )
-      +
-      1
-    );
-
-
-  const rate =
-    Number(
-      record.hireRate
-    );
-
-
-  if (
-    !Number.isFinite(
-      rate
-    )
-  ) {
-
-    return null;
-
-  }
-
-
-  switch (
-    cleanString(
-      record.hireRateUnit
-    ).toUpperCase()
-  ) {
-
-    case "DAY":
-
-      return days *
-        rate;
-
-
-    case "MONTH":
-
-      return (
-        days /
-        30.4375
-      )
-      *
-      rate;
-
-
-    case "WEEK":
-
-    default:
-
-      return (
-        days /
-        7
-      )
-      *
-      rate;
-
-  }
-
+function estimatedHireExposure(record) {
+  return calculateHire(record).estimatedCost;
 }
 
 
@@ -813,6 +639,8 @@ async function initialiseFleet(
 
   bindEvents();
 
+
+  openRequestedPlantAction();
 
   await loadFleetData();
 
@@ -1122,6 +950,7 @@ async function loadFleetData() {
 
 async function loadPlantAssets() {
 
+  assetReadComplete = false;
   try {
 
     const snapshot =
@@ -1170,6 +999,7 @@ async function loadPlantAssets() {
         );
 
 
+    assetReadComplete = true;
   } catch (
     error
   ) {
@@ -1190,6 +1020,9 @@ async function loadPlantAssets() {
 
 async function loadHireRecords() {
 
+  hireReadComplete = false;
+  hireRecords = [];
+  if (!canViewPlantCosts) return;
   try {
 
     const snapshot =
@@ -1224,6 +1057,7 @@ async function loadHireRecords() {
       );
 
 
+    hireReadComplete = true;
   } catch (
     error
   ) {
@@ -1243,182 +1077,15 @@ async function loadHireRecords() {
 
 
 function rebuildHireLookup() {
-
-  hireByAssetKey =
-    new Map();
-
-
-  hireRecords.forEach(
-    (
-      record
-    ) => {
-
-      const keys = [
-
-        cleanString(
-          record.plantId
-        ),
-
-        cleanString(
-          record.plantReference
-        )
-
-      ].filter(
-        Boolean
-      );
-
-
-      keys.forEach(
-        (
-          key
-        ) => {
-
-          const existing =
-            hireByAssetKey.get(
-              key
-            );
-
-
-          if (
-            !existing
-
-            ||
-
-            hireRecordPriority(
-              record
-            )
-            >
-            hireRecordPriority(
-              existing
-            )
-          ) {
-
-            hireByAssetKey.set(
-              key,
-              record
-            );
-
-          }
-
-        }
-      );
-
-    }
-  );
-
+  hireSelectionByAsset = new Map(plantAssets.map(asset => [asset.id, selectHire(asset, hireRecords, { complete: hireReadComplete })]));
 }
 
 
-function hireRecordPriority(
-  record
-) {
-
-  const status =
-    cleanString(
-      record?.status
-    ).toUpperCase();
 
 
-  let score =
-    0;
 
-
-  if (
-    status ===
-      "ACTIVE"
-  ) {
-
-    score +=
-      10000000000000;
-
-  }
-
-
-  if (
-    status ===
-      "OFF_HIRE_REQUESTED"
-  ) {
-
-    score +=
-      9000000000000;
-
-  }
-
-
-  const updated =
-    parseDate(
-      record?.updatedAt
-    )?.getTime()
-    ||
-    0;
-
-
-  return score +
-    updated;
-
-}
-
-
-function getHireRecordForAsset(
-  asset
-) {
-
-  if (
-    !asset
-  ) {
-
-    return null;
-
-  }
-
-
-  if (
-    asset.currentHireRecordId
-  ) {
-
-    const direct =
-      hireRecords.find(
-        (
-          record
-        ) =>
-          record.id ===
-            asset.currentHireRecordId
-      );
-
-
-    if (
-      direct
-    ) {
-
-      return direct;
-
-    }
-
-  }
-
-
-  return (
-
-    hireByAssetKey.get(
-      cleanString(
-        asset.id
-      )
-    )
-
-    ||
-
-    hireByAssetKey.get(
-      cleanString(
-        asset.plantReference
-      )
-    )
-
-    ||
-
-    null
-
-  );
-
+function getHireRecordForAsset(asset) {
+  return hireSelectionByAsset.get(asset?.id)?.record || null;
 }
 
 
@@ -1640,6 +1307,14 @@ function renderFinancialMetrics() {
     );
 
 
+  const selections = hiredAssets.map(asset => hireSelectionByAsset.get(asset.id));
+  const unknownSelection = !assetReadComplete || !hireReadComplete || selections.some(item => !item?.record || (calculateHire(item.record).state !== "KNOWN") || (!item.record.offHireConfirmedDate && !["ACTIVE", "OFF_HIRE_REQUESTED"].includes(cleanString(item.record.status).toUpperCase())));
+  if (unknownSelection) {
+    const ambiguous = selections.some(item => item?.state === "AMBIGUOUS");
+    root.innerHTML = emptyState(ambiguous ? "Multiple active hire records require review. Hire totals are unknown." : "Hire information incomplete or invalid. Hire totals are unknown.");
+    return;
+  }
+
   const activeHireRecords =
     hiredAssets
       .map(
@@ -1660,11 +1335,7 @@ function renderFinancialMetrics() {
         ({
           hire
         }) =>
-          hire
-
-          &&
-
-          [
+          hire && !hire.offHireConfirmedDate && [
             "ACTIVE",
             "OFF_HIRE_REQUESTED"
           ].includes(
@@ -1732,13 +1403,7 @@ function renderFinancialMetrics() {
         return (
           sum
           +
-          (
-            estimatedHireExposure(
-              hire
-            )
-            ||
-            0
-          )
+          estimatedHireExposure(hire)
         );
 
       },
@@ -3860,37 +3525,9 @@ function assetUrl(
 }
 
 
-function formatHireRate(
-  hire
-) {
-
-  if (
-    !hire
-
-    ||
-
-    hire.hireRate ==
-      null
-  ) {
-
-    return "Not recorded";
-
-  }
-
-
-  const unit =
-    cleanString(
-      hire.hireRateUnit ||
-      "WEEK"
-    ).toLowerCase();
-
-
-  return (
-    `${formatCurrency(
-      hire.hireRate
-    )} / ${unit}`
-  );
-
+function formatHireRate(hire) {
+  if (!hire || validHireRate(hire.hireRate) === null || sharedWeeklyRate(hire.hireRate, hire.hireRateUnit) === null) return "Unknown";
+  return formatCurrency(hire.hireRate) + " / " + cleanString(hire.hireRateUnit).toLowerCase();
 }
 
 
@@ -3898,6 +3535,7 @@ function getAssetSignal(
   asset,
   hire
 ) {
+
 
   if (
     isOffRoad(
@@ -3919,6 +3557,11 @@ function getAssetSignal(
 
   }
 
+
+  const selection = hireSelectionByAsset.get(asset?.id);
+  if (canViewPlantCosts && isHireOwnership(asset?.ownershipType) && selection?.state !== "SELECTED") {
+    return selection?.reason || "Hire information unknown";
+  }
 
   if (
     isIdleHiredAsset(
@@ -5519,3 +5162,8 @@ function bindEvents() {
 ========================================================= */
 
 waitForWorkspace();
+function openRequestedPlantAction() {
+  if (canManagePlant && new URLSearchParams(window.location.search).get("action") === "add") {
+    openAddPlantModal();
+  }
+}

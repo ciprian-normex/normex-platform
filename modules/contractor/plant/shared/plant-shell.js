@@ -12,7 +12,7 @@ export const PLANT_NAV_ITEMS = Object.freeze([
       "Overview",
 
     href:
-      "/modules/contractor/plant/"
+      "/modules/contractor/plant/overview/index.html"
   },
 
   {
@@ -144,11 +144,6 @@ export function getActivePlantPageFromPath(
     PLANT_NAV_ITEMS.find(
       (item) =>
 
-        item.key !==
-          "overview"
-
-        &&
-
         normalised.includes(
           `/plant/${item.key}/`
         )
@@ -256,7 +251,9 @@ export function renderPlantShell({
                       : ""
                   }
                 "
-                href="${item.href}"
+                ${["overview", "fleet"].includes(item.key)
+                  ? `href="${item.href}"`
+                  : 'aria-disabled="true" title="Coming later"'}
                 ${
                   item.key ===
                     activePage

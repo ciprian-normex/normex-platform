@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17271f">
+  <title>Plant Control | NORMEX</title>
+  <link rel="stylesheet" href="/modules/contractor/shared/css/theme-colemans.css">
+  <link rel="stylesheet" href="/modules/contractor/shared/css/workspace.css">
+  <link rel="stylesheet" href="/modules/contractor/plant/shared/plant-shell.css">
+  <link rel="stylesheet" href="./overview.css">
+</head>
+<body>
+  <div class="workspace">
+    <header class="workspace-header"><div class="workspace-container"><div class="workspace-header__surface">
+      <div class="workspace-brand"><p class="workspace-brand__product">NORMEX · Contractor Workspace</p><h1 id="workspaceOrganisationName" class="workspace-brand__name">Organisation</h1><p class="workspace-brand__tagline">Projects, resources and operational control</p></div>
+      <div class="workspace-user"><div class="workspace-user__details"><span id="workspaceUserName" class="workspace-user__name">User</span><span id="workspaceUserRole" class="workspace-user__role">Loading</span></div><button id="workspaceLogoutButton" class="workspace-user__logout" type="button">Log out</button></div>
+    </div></div></header>
+    <nav class="workspace-nav" aria-label="Organisation navigation"><div class="workspace-container"><div id="contractorNavSurface" class="workspace-nav__surface"><div id="contractorNavLinks" class="workspace-nav__links"></div></div></div></nav>
+    <aside id="contractorMobileNav" class="workspace-mobile-nav" hidden aria-label="Mobile navigation"><div id="mobileNavBackdrop" class="workspace-mobile-nav__backdrop"></div><div class="workspace-mobile-nav__panel"><header class="workspace-mobile-nav__header"><h2 class="workspace-mobile-nav__title">Navigation</h2><button id="mobileNavClose" class="workspace-mobile-nav__close" type="button" aria-label="Close navigation">×</button></header><nav id="contractorMobileNavLinks" class="workspace-mobile-nav__links" aria-label="Mobile organisation navigation"></nav></div></aside>
+    <main class="workspace-main"><div class="workspace-container">
+      <nav id="plantSubnav" aria-label="Plant navigation"></nav>
+      <div class="plant-overview">
+        <header class="plant-control"><div><p class="plant-eyebrow">Fleet &amp; Transport</p><h2>Plant Control</h2><p>Operational priorities, hire commitments and upcoming actions.</p></div><div class="plant-actions"><a id="addPlantLink" class="plant-button" href="../fleet/index.html?action=add" hidden>+ Add Plant</a><a class="plant-button" href="../fleet/index.html">Fleet</a><button id="refreshPlant" class="plant-button plant-button--secondary" type="button">Refresh</button></div></header>
+        <p id="plantLoadStatus" class="plant-load-status" role="status" aria-live="polite">LOADING · Waiting for authenticated workspace</p>
+        <div id="plantOverviewContent" aria-busy="true"><div class="plant-panel plant-empty">Loading Plant information…</div></div>
+        <noscript><p class="plant-panel">Plant information is unavailable without JavaScript.</p></noscript>
+      </div>
+    </div></main>
+  </div>
+  <script src="/modules/contractor/shared/js/config.js"></script>
+  <script type="module" src="/modules/contractor/shared/js/shell.js"></script>
+  <script type="module" src="./overview.js"></script>
+</body>
+</html>
