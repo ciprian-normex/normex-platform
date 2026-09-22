@@ -251,7 +251,7 @@ export function renderPlantShell({
                       : ""
                   }
                 "
-                ${["overview", "fleet", "movements"].includes(item.key)
+                ${["overview", "fleet", "movements", "defects"].includes(item.key)
                   ? `href="${item.href}"`
                   : 'aria-disabled="true" title="Coming later"'}
                 ${

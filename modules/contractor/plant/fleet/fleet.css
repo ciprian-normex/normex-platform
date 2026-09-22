@@ -1937,4 +1937,58 @@
     flex: 1;
   }
 
+}/* Master Fleet register: one discovery and asset-access surface. */
+.fleet-register-page { color:var(--fleet-ink); padding-bottom:26px; }
+.fleet-register-page [hidden] { display:none!important; }
+.fleet-register-header { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:20px 0 12px; }
+.fleet-register-header h2 { margin:0; font-size:1.9rem; letter-spacing:-.04em; }
+.fleet-register-header p:not(.fleet-eyebrow) { color:var(--fleet-muted); font-size:.8rem; margin:6px 0; }
+.fleet-register-actions { display:flex; gap:8px; align-items:center; }
+.fleet-register-note { color:var(--fleet-muted); font-size:.7rem; line-height:1.5; margin:10px 0; }
+.fleet-quick-filters { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); border:1px solid var(--fleet-line); background:#fff; border-radius:12px; padding:13px 0; margin:16px 0; }
+.fleet-quick-filters button { background:none; border:0; border-right:1px solid var(--fleet-line); text-align:left; padding:4px 20px; cursor:pointer; color:var(--fleet-ink); font:inherit; min-width:0; }
+.fleet-quick-filters button:last-child { border-right:0; }
+.fleet-quick-filters span { display:block; font-size:.6rem; text-transform:uppercase; letter-spacing:.06em; font-weight:800; color:var(--fleet-muted); }
+.fleet-quick-filters strong { display:block; font-size:1.6rem; margin-top:5px; }
+.fleet-quick-filters small { display:block; font-size:.6rem; color:var(--fleet-muted); margin-top:3px; }
+.fleet-quick-filters button[aria-pressed="true"] { background:#e8f0e9; box-shadow:inset 0 -3px #285a40; }
+.fleet-register-surface { border:1px solid var(--fleet-line); background:#fff; border-radius:14px; padding:20px; }
+.fleet-register-filters { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; }
+.fleet-register-filters label,.fleet-register-toolbar>label { display:flex; flex-direction:column; gap:6px; font-size:.65rem; color:var(--fleet-muted); font-weight:700; min-width:0; }
+.fleet-register-search { grid-column:1/-1; }
+.fleet-register-filters input,.fleet-register-filters select,.fleet-register-toolbar select { width:100%; min-width:0; background:#fbfcfb; border:1px solid var(--fleet-line); padding:10px; border-radius:7px; color:var(--fleet-ink); font:inherit; font-size:.72rem; }
+.fleet-register-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:12px; border-bottom:1px solid var(--fleet-line); padding:16px 0; }
+.fleet-register-toolbar>label { flex-direction:row; align-items:center; margin-left:auto; white-space:nowrap; }
+.fleet-register-toolbar select { width:auto; }
+.fleet-filter-chips { display:flex; gap:6px; flex-wrap:wrap; max-width:65%; }
+.fleet-filter-chips button { font:inherit; font-size:.67rem; border:1px solid #cbdace; border-radius:6px; background:#edf3ee; color:#294e36; padding:6px 9px; cursor:pointer; overflow-wrap:anywhere; }
+.fleet-master-table { width:100%; table-layout:fixed; border-collapse:collapse; font-size:.7rem; }
+.fleet-master-table th { text-align:left; font-size:.59rem; text-transform:uppercase; letter-spacing:.04em; color:var(--fleet-muted); background:#f4f7f3; padding:10px 8px; overflow-wrap:anywhere; }
+.fleet-master-table td { padding:13px 8px; vertical-align:top; border-bottom:1px solid var(--fleet-line-soft); line-height:1.55; overflow-wrap:anywhere; }
+.fleet-master-table td:first-child { font-weight:800; }
+.fleet-master-table th:nth-child(2) { width:13%; }
+.fleet-master-table th:nth-last-child(2) { width:12%; }
+.fleet-master-table small { display:block; color:var(--fleet-muted); margin-top:4px; font-size:.62rem; }
+.fleet-master-table a { color:var(--fleet-green); font-weight:750; text-decoration:none; }
+.fleet-master-table a:hover { text-decoration:underline; }
+.fleet-register-signal { display:inline-flex; background:#edf2ee; color:#50665a; border-radius:5px; padding:4px 6px; font-size:.63rem; line-height:1.4; }
+.fleet-register-signal.danger { background:#f7e7e1; color:#964d3e; }
+.fleet-register-signal.warning { background:#f5ecd8; color:#8b6127; }
+.fleet-register-signal.information { background:#eaf1f6; color:#446b84; }
+.fleet-register-pagination { display:flex; align-items:center; justify-content:flex-end; gap:16px; margin:16px 0; font-size:.7rem; color:var(--fleet-muted); }
+.fleet-register-pagination button { border:1px solid var(--fleet-line); background:#fff; color:var(--fleet-ink); border-radius:6px; font:inherit; padding:8px 12px; cursor:pointer; }
+.fleet-register-pagination button:disabled { opacity:.4; cursor:default; }
+.fleet-register-page :focus-visible { outline:3px solid #af8b4b; outline-offset:3px; }
+@media(max-width:1050px) { .fleet-register-filters { grid-template-columns:repeat(3,minmax(0,1fr)); } .fleet-master-table thead { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); } .fleet-master-table,.fleet-master-table tbody { display:block; width:100%; } .fleet-master-table tr { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px 18px; padding:15px 0; border-bottom:1px solid var(--fleet-line); } .fleet-master-table td { display:flex; flex-direction:column; gap:4px; padding:0; border:0; min-width:0; } .fleet-master-table td::before { content:attr(data-label); color:var(--fleet-muted); font-size:.58rem; font-weight:500; } .fleet-master-table td:first-child { grid-column:1/-1; font-size:.85rem; } .fleet-master-table td:last-child { align-self:end; } .fleet-register-surface { padding:15px; } }
+@media(max-width:600px) { .fleet-register-header { flex-wrap:wrap; } .fleet-quick-filters { grid-template-columns:repeat(3,minmax(0,1fr)); row-gap:12px; } .fleet-quick-filters button { padding:5px 10px; } .fleet-quick-filters button:nth-child(3) { border:0; } .fleet-register-filters { grid-template-columns:repeat(2,minmax(0,1fr)); } .fleet-filter-chips { max-width:100%; } .fleet-register-toolbar>label { margin-left:0; } .fleet-register-toolbar select { max-width:190px; } .fleet-register-header h2 { font-size:1.65rem; } }
+.fleet-row-details { display:none; }
+#plantSubnav [aria-disabled="true"] { opacity:.5; cursor:default; }
+@media(max-width:1050px) {
+  .fleet-master-table td[data-label="Ownership"],.fleet-master-table td[data-label="Current location"],.fleet-master-table td[data-label="Supplier"],.fleet-master-table td[data-label="Expected off-hire"],.fleet-master-table td[data-label="Hire rate"] { display:none; }
+  .fleet-row-details { display:block; margin-top:8px; font-size:.67rem; }
+  .fleet-row-details summary { color:var(--fleet-green); cursor:pointer; font-weight:700; }
+  .fleet-row-details dl { margin:10px 0 0; }
+  .fleet-row-details dl>div { margin-bottom:8px; }
+  .fleet-row-details dt { color:var(--fleet-muted); font-size:.58rem; }
+  .fleet-row-details dd { margin:3px 0 0; }
 }

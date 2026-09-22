@@ -1,0 +1,1829 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Defects & Repairs | NORMEX</title>
+
+  <link rel="stylesheet" href="/modules/contractor/shared/css/theme-colemans.css" />
+  <link rel="stylesheet" href="/modules/contractor/shared/css/workspace.css" />
+  <link rel="stylesheet" href="/modules/contractor/plant/shared/plant-shell.css" />
+  <link rel="stylesheet" href="/modules/contractor/plant/defects/defects.css" />
+</head>
+
+<body>
+  <div class="workspace">
+
+    <!-- =========================================================
+         SHARED WORKSPACE HEADER
+    ========================================================== -->
+    <header class="workspace-header">
+      <div class="workspace-container">
+        <div class="workspace-header__surface">
+
+          <div class="workspace-brand">
+            <p class="workspace-brand__product">NORMEX · Contractor Workspace</p>
+            <h1 id="workspaceOrganisationName" class="workspace-brand__name">Colemans</h1>
+            <p class="workspace-brand__tagline">Projects, resources and operational control</p>
+          </div>
+
+          <div class="workspace-header-actions">
+            <div class="workspace-user">
+              <div class="workspace-user__details">
+                <span id="workspaceUserName" class="workspace-user__name">Ciprian Trusca</span>
+                <span id="workspaceUserRole" class="workspace-user__role">Platform Administration</span>
+              </div>
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+
+    <!-- =========================================================
+         SHARED CONTRACTOR NAVIGATION
+    ========================================================== -->
+    <nav class="workspace-nav">
+      <div class="workspace-container">
+        <div id="contractorNavSurface" class="workspace-nav__surface">
+          <div id="contractorNavLinks" class="workspace-nav__links"></div>
+        </div>
+      </div>
+    </nav>
+
+
+    <!-- =========================================================
+         PAGE
+    ========================================================== -->
+    <main class="workspace-main">
+      <div class="workspace-container">
+
+        <nav id="plantSubnav"></nav>
+
+        <section class="defects-page">
+
+          <!-- =====================================================
+               PAGE CONTROL HEADER
+          ====================================================== -->
+          <section class="defects-control-surface">
+
+            <div class="defects-control-copy">
+              <p class="defects-eyebrow">Plant reliability control</p>
+
+              <div class="defects-title-row">
+                <div>
+                  <h2>Defects & Repairs</h2>
+                  <p class="defects-lead">
+                    Report Plant faults, control repairs and keep project teams informed from first report to return to service.
+                  </p>
+                </div>
+
+                <button
+                  id="reportDefect"
+                  class="button button-primary button-report-defect"
+                  type="button"
+                >
+                  <span class="button-icon">+</span>
+                  Report Defect
+                </button>
+              </div>
+
+              <p id="defectStatus" class="defects-system-status" role="status">
+                Repair control ready
+              </p>
+            </div>
+
+          </section>
+
+
+          <!-- =====================================================
+               MANAGEMENT POSITION
+          ====================================================== -->
+          <section
+            id="defectSummary"
+            class="defect-position-strip"
+            aria-label="Current defect position"
+          >
+
+            <button class="position-tile position-tile--neutral" type="button">
+              <span class="position-label">New / reported</span>
+              <strong class="position-value">2</strong>
+              <span class="position-meta">Awaiting Plant action</span>
+            </button>
+
+            <button class="position-tile position-tile--danger" type="button">
+              <span class="position-label">Out of service</span>
+              <strong class="position-value">1</strong>
+              <span class="position-meta">Operationally unavailable</span>
+            </button>
+
+            <button class="position-tile position-tile--warning" type="button">
+              <span class="position-label">Awaiting action</span>
+              <strong class="position-value">3</strong>
+              <span class="position-meta">Attendance, parts or replacement</span>
+            </button>
+
+            <button class="position-tile position-tile--orange" type="button">
+              <span class="position-label">Under repair</span>
+              <strong class="position-value">1</strong>
+              <span class="position-meta">Repair currently active</span>
+            </button>
+
+            <button class="position-tile position-tile--success" type="button">
+              <span class="position-label">Awaiting RTS</span>
+              <strong class="position-value">1</strong>
+              <span class="position-meta">Repair complete, awaiting release</span>
+            </button>
+
+          </section>
+
+
+          <!-- =====================================================
+               MANAGEMENT INSIGHT
+          ====================================================== -->
+          <section class="defect-insight-layout">
+
+            <!-- DOWNTIME -->
+            <article class="insight-panel insight-panel--downtime">
+
+              <header class="panel-heading">
+                <div>
+                  <p class="section-kicker">Operational impact</p>
+                  <h3>Downtime · last 30 days</h3>
+                </div>
+
+                <div class="panel-heading-stat">
+                  <strong>0h</strong>
+                  <span>recorded downtime</span>
+                </div>
+              </header>
+
+              <div
+                id="downtimeChart"
+                class="downtime-chart"
+                aria-label="Downtime over the last 30 days"
+              >
+                <div class="downtime-chart-grid">
+
+                  <div class="downtime-column">
+                    <span class="downtime-bar" style="--bar-height: 22%"></span>
+                    <small>W1</small>
+                  </div>
+
+                  <div class="downtime-column">
+                    <span class="downtime-bar" style="--bar-height: 48%"></span>
+                    <small>W2</small>
+                  </div>
+
+                  <div class="downtime-column">
+                    <span class="downtime-bar" style="--bar-height: 30%"></span>
+                    <small>W3</small>
+                  </div>
+
+                  <div class="downtime-column">
+                    <span class="downtime-bar" style="--bar-height: 78%"></span>
+                    <small>W4</small>
+                  </div>
+
+                  <div class="downtime-column">
+                    <span class="downtime-bar" style="--bar-height: 58%"></span>
+                    <small>Now</small>
+                  </div>
+
+                </div>
+              </div>
+
+              <footer class="insight-footer">
+                <span>6 defect cases affected productive Plant availability</span>
+              </footer>
+
+            </article>
+
+
+            <!-- REPAIR POSITION -->
+            <article class="insight-panel insight-panel--repair-position">
+
+              <header class="panel-heading">
+                <div>
+                  <p class="section-kicker">Current workload</p>
+                  <h3>Repair position</h3>
+                </div>
+
+                <div class="panel-heading-stat">
+                  <strong>0</strong>
+                  <span>active cases</span>
+                </div>
+              </header>
+
+              <div class="repair-position-body">
+
+                <div
+                  id="repairPositionChart"
+                  class="repair-donut"
+                  aria-label="Current repair position"
+                >
+                  <div class="repair-donut-centre">
+                    <strong>0</strong>
+                    <span>active</span>
+                  </div>
+                </div>
+
+                <div class="repair-legend">
+
+                  <button type="button" class="repair-legend-row">
+                    <span class="legend-dot legend-dot--blue"></span>
+                    <span>Reported / acknowledged</span>
+                    <strong>1</strong>
+                  </button>
+
+                  <button type="button" class="repair-legend-row">
+                    <span class="legend-dot legend-dot--amber"></span>
+                    <span>Awaiting attendance / parts</span>
+                    <strong>2</strong>
+                  </button>
+
+                  <button type="button" class="repair-legend-row">
+                    <span class="legend-dot legend-dot--orange"></span>
+                    <span>Repair in progress</span>
+                    <strong>2</strong>
+                  </button>
+
+                  <button type="button" class="repair-legend-row">
+                    <span class="legend-dot legend-dot--green"></span>
+                    <span>Awaiting return to service</span>
+                    <strong>1</strong>
+                  </button>
+
+                </div>
+
+              </div>
+
+            </article>
+
+          </section>
+
+
+          <!-- =====================================================
+               ACTIVE REPAIR CONTROL
+          ====================================================== -->
+          <section class="defect-section">
+
+            <header class="section-heading section-heading--action">
+              <div>
+                <p class="section-kicker">Repair control</p>
+                <h3>Attention & Active Repairs</h3>
+                <p>
+                  Current faults requiring action, supplier follow-up or project visibility.
+                </p>
+              </div>
+
+              <button class="button button-secondary" type="button">
+                View all active cases
+              </button>
+            </header>
+
+
+            <div id="activeCases" class="active-repair-list">
+
+              <!-- ACTIVE CASE 1 -->
+              <article class="repair-row repair-row--critical">
+
+                <div class="repair-priority">
+                  <span class="priority-marker priority-marker--red"></span>
+                  <span>High</span>
+                </div>
+
+                <div class="repair-asset">
+                  <a href="#" class="repair-asset-id">HRE-0001</a>
+                  <strong>Hitachi ZX340</strong>
+                  <span>High Reach Excavator · 24 m reach</span>
+                </div>
+
+                <div class="repair-problem">
+                  <strong>Hydraulic pressure hose failure</strong>
+
+                  <div class="repair-badges">
+                    <span class="status-pill status-pill--red">Out of service</span>
+                    <span class="status-pill status-pill--amber">Awaiting parts</span>
+                  </div>
+                </div>
+
+                <div class="repair-context">
+                  <span class="repair-context-label">Supplier</span>
+                  <strong>Sunbelt Rentals</strong>
+                  <span>Owner: Mark Jones</span>
+                </div>
+
+                <div class="repair-impact">
+                  <span class="repair-context-label">Downtime</span>
+                  <strong>2d 4h</strong>
+                  <span>Full productive loss</span>
+                </div>
+
+                <div class="repair-latest">
+                  <span class="repair-context-label">Latest update</span>
+                  <strong>Replacement hose expected Wednesday 10:00</strong>
+                  <span>Updated 2h ago</span>
+                </div>
+
+                <div class="repair-row-action">
+                  <button class="button-link" type="button">
+                    Open Case
+                    <span>→</span>
+                  </button>
+                </div>
+
+              </article>
+
+
+              <!-- ACTIVE CASE 2 -->
+              <article class="repair-row repair-row--restricted">
+
+                <div class="repair-priority">
+                  <span class="priority-marker priority-marker--blue"></span>
+                  <span>Medium</span>
+                </div>
+
+                <div class="repair-asset">
+                  <a href="#" class="repair-asset-id">TEL-0004</a>
+                  <strong>JCB 540-170</strong>
+                  <span>Telehandler · 17 m</span>
+                </div>
+
+                <div class="repair-problem">
+                  <strong>Fork position sensor intermittent</strong>
+
+                  <div class="repair-badges">
+                    <span class="status-pill status-pill--blue">Partially available</span>
+                    <span class="status-pill status-pill--amber">Awaiting attendance</span>
+                  </div>
+                </div>
+
+                <div class="repair-context">
+                  <span class="repair-context-label">Supplier</span>
+                  <strong>GAP Plant</strong>
+                  <span>Owner: Sarah Jones</span>
+                </div>
+
+                <div class="repair-impact">
+                  <span class="repair-context-label">Impact</span>
+                  <strong>Restricted operation</strong>
+                  <span>Alternative task available</span>
+                </div>
+
+                <div class="repair-latest">
+                  <span class="repair-context-label">Latest update</span>
+                  <strong>Engineer booked today at 14:00</strong>
+                  <span>Updated 48m ago</span>
+                </div>
+
+                <div class="repair-row-action">
+                  <button class="button-link" type="button">
+                    Open Case
+                    <span>→</span>
+                  </button>
+                </div>
+
+              </article>
+
+            </div>
+
+          </section>
+
+
+          <!-- =====================================================
+               DEFECT REGISTER
+          ====================================================== -->
+          <section class="defect-register-panel">
+
+            <header class="section-heading">
+              <div>
+                <p class="section-kicker">Full history</p>
+                <h3>Defect Register</h3>
+                <p>
+                  Search current and historic Plant defect and repair records.
+                </p>
+              </div>
+
+              <div class="register-count">
+                <strong id="defectCount">8</strong>
+                <span>recorded defects</span>
+              </div>
+            </header>
+
+
+            <div class="defect-filter-bar">
+
+              <label class="filter-field filter-field--search">
+                <span>Search</span>
+                <input
+                  id="defectSearch"
+                  type="search"
+                  placeholder="Plant ID, fault, supplier, project..."
+                />
+              </label>
+
+              <label class="filter-field">
+                <span>Status</span>
+                <select id="defectStatusFilter">
+                  <option value="">All statuses</option>
+                  <option>Reported</option>
+                  <option>Acknowledged</option>
+                  <option>Awaiting attendance</option>
+                  <option>Awaiting parts</option>
+                  <option>Repair in progress</option>
+                  <option>Replacement requested</option>
+                  <option>Awaiting replacement</option>
+                  <option>Repair complete</option>
+                  <option>Awaiting RTS</option>
+                  <option>Closed</option>
+                </select>
+              </label>
+
+              <label class="filter-field">
+                <span>Operational impact</span>
+                <select id="defectImpactFilter">
+                  <option value="">All positions</option>
+                  <option>Available</option>
+                  <option>Partially available</option>
+                  <option>Out of service</option>
+                  <option>Immobilised</option>
+                </select>
+              </label>
+
+              <label class="filter-field">
+                <span>Supplier</span>
+                <select id="defectSupplierFilter">
+                  <option value="">All suppliers</option>
+                </select>
+              </label>
+
+              <label class="filter-field">
+                <span>Project</span>
+                <select id="defectProjectFilter">
+                  <option value="">All projects</option>
+                </select>
+              </label>
+
+            </div>
+
+
+            <div id="defectRegister" class="defect-register-table-wrap">
+
+              <table class="defect-register-table">
+                <thead>
+                  <tr>
+                    <th>Plant / defect</th>
+                    <th>Operational position</th>
+                    <th>Repair status</th>
+                    <th>Project / location</th>
+                    <th>Owner</th>
+                    <th>Downtime</th>
+                    <th>Latest update</th>
+                    <th></th>
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  <tr>
+                    <td>
+                      <a href="#" class="table-plant-id">HRE-0001</a>
+                      <strong>Hydraulic pressure hose failure</strong>
+                      <span>Hitachi ZX340</span>
+                    </td>
+
+                    <td>
+                      <span class="status-pill status-pill--red">Out of service</span>
+                    </td>
+
+                    <td>
+                      <strong>Awaiting parts</strong>
+                      <span>Sunbelt Rentals</span>
+                    </td>
+
+                    <td>
+                      <strong>Castle Bromwich</strong>
+                      <span>B Block</span>
+                    </td>
+
+                    <td>
+                      <strong>Mark Jones</strong>
+                      <span>Plant & Transport</span>
+                    </td>
+
+                    <td>
+                      <strong>2d 4h</strong>
+                      <span>Since 19 Sep 09:06</span>
+                    </td>
+
+                    <td>
+                      <strong>Hose expected Wednesday</strong>
+                      <span>2h ago</span>
+                    </td>
+
+                    <td>
+                      <button class="table-open-button" type="button">Open</button>
+                    </td>
+                  </tr>
+
+
+                  <tr>
+                    <td>
+                      <a href="#" class="table-plant-id">TEL-0004</a>
+                      <strong>Fork position sensor intermittent</strong>
+                      <span>JCB 540-170</span>
+                    </td>
+
+                    <td>
+                      <span class="status-pill status-pill--blue">Partially available</span>
+                    </td>
+
+                    <td>
+                      <strong>Awaiting attendance</strong>
+                      <span>GAP Plant</span>
+                    </td>
+
+                    <td>
+                      <strong>Castle Bromwich</strong>
+                      <span>D Block</span>
+                    </td>
+
+                    <td>
+                      <strong>Sarah Jones</strong>
+                      <span>Plant & Transport</span>
+                    </td>
+
+                    <td>
+                      <strong>Restricted 5h</strong>
+                      <span>No full downtime</span>
+                    </td>
+
+                    <td>
+                      <strong>Engineer booked 14:00</strong>
+                      <span>48m ago</span>
+                    </td>
+
+                    <td>
+                      <button class="table-open-button" type="button">Open</button>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+
+            </div>
+
+          </section>
+
+        </section>
+
+      </div>
+    </main>
+
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+    <footer class="workspace-footer">
+      <div class="workspace-container">
+        <div class="workspace-footer__inner">
+          <strong>NORMEX</strong>
+          <span id="workspaceFooterOrganisation">Colemans</span>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+
+  <!-- ===========================================================
+       REPORT DEFECT MODAL
+       Static approved structure. Codex will populate/wire later.
+  ============================================================ -->
+  <dialog id="reportDefectDialog" class="normex-dialog report-defect-dialog">
+
+    <form id="reportDefectForm" class="dialog-shell" novalidate>
+
+      <header class="dialog-header">
+
+        <div>
+          <p class="dialog-eyebrow">Plant defect reporting</p>
+          <h2>Report Defect</h2>
+          <p>
+            Record the Plant condition, immediate controls and impact so the Plant team can take action.
+          </p>
+        </div>
+
+        <button
+          id="reportDefectClose"
+          class="dialog-close"
+          type="button"
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div class="dialog-body">
+
+        <!-- ASSET -->
+        <section class="form-section">
+
+          <header class="form-section-heading">
+            <span class="form-section-number">01</span>
+            <div>
+              <h3>Plant & Report Context</h3>
+              <p>Select the affected Plant. Current project, location and supplier details will be shown automatically.</p>
+            </div>
+          </header>
+
+          <div class="form-grid">
+
+            <label class="form-field form-field--wide">
+              <span>Plant asset *</span>
+              <select id="defectAssetSelect">
+                <option value="">Select Plant asset</option>
+                <option>HRE-0001 · Hitachi ZX340 · High Reach Excavator · 24 m</option>
+              </select>
+            </label>
+
+            <div class="selected-asset-card form-field--wide" id="selectedAssetContext">
+
+              <div class="selected-asset-main">
+                <span class="asset-reference">HRE-0001</span>
+                <strong>Hitachi ZX340</strong>
+                <span>High Reach Excavator · 24 m reach</span>
+              </div>
+
+              <dl class="asset-context-grid">
+                <div>
+                  <dt>Project</dt>
+                  <dd>Castle Bromwich</dd>
+                </div>
+                <div>
+                  <dt>Location</dt>
+                  <dd>B Block</dd>
+                </div>
+                <div>
+                  <dt>Ownership</dt>
+                  <dd>Hired</dd>
+                </div>
+                <div>
+                  <dt>Supplier</dt>
+                  <dd>Sunbelt Rentals</dd>
+                </div>
+              </dl>
+
+            </div>
+
+            <label class="form-field">
+              <span>Reported date & time</span>
+              <input id="defectReportedAt" type="datetime-local" />
+            </label>
+
+            <div class="form-field readonly-field">
+              <span>Reported by</span>
+              <strong id="defectReportedBy">Ciprian Trusca</strong>
+              <small>Authenticated NORMEX user</small>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- DEFECT -->
+        <section class="form-section">
+
+          <header class="form-section-heading">
+            <span class="form-section-number">02</span>
+            <div>
+              <h3>What is wrong?</h3>
+              <p>Describe the fault and tell us what the Plant can still safely do.</p>
+            </div>
+          </header>
+
+          <div class="form-grid">
+
+            <label class="form-field form-field--wide">
+              <span>Defect description *</span>
+              <textarea
+                id="defectDescription"
+                rows="4"
+                placeholder="Describe what has failed, what was observed and when the issue became apparent..."
+              ></textarea>
+            </label>
+
+
+            <fieldset class="question-card form-field--wide">
+              <legend>Can the machine still perform its intended task?</legend>
+
+              <div class="choice-grid choice-grid--three">
+                <label class="choice-option">
+                  <input type="radio" name="productiveUse" value="FULL" />
+                  <span>
+                    <strong>Yes, fully</strong>
+                    <small>Normal work can continue</small>
+                  </span>
+                </label>
+
+                <label class="choice-option">
+                  <input type="radio" name="productiveUse" value="PARTIAL" />
+                  <span>
+                    <strong>Partially</strong>
+                    <small>Some functions remain available</small>
+                  </span>
+                </label>
+
+                <label class="choice-option">
+                  <input type="radio" name="productiveUse" value="NONE" />
+                  <span>
+                    <strong>No</strong>
+                    <small>Intended activity cannot continue</small>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+
+
+            <label
+              id="restrictedFunctionField"
+              class="form-field form-field--wide"
+            >
+              <span>Restricted / unavailable function</span>
+              <input
+                id="restrictedFunction"
+                type="text"
+                placeholder="e.g. boom will not raise above 8 m"
+              />
+            </label>
+
+
+            <fieldset class="question-card">
+              <legend>Can it be moved safely?</legend>
+
+              <div class="choice-stack">
+                <label class="choice-option">
+                  <input type="radio" name="mobility" value="SELF" />
+                  <span>
+                    <strong>Yes</strong>
+                    <small>Under its own power</small>
+                  </span>
+                </label>
+
+                <label class="choice-option">
+                  <input type="radio" name="mobility" value="ASSISTED" />
+                  <span>
+                    <strong>With assistance</strong>
+                    <small>Recovery / towing required</small>
+                  </span>
+                </label>
+
+                <label class="choice-option">
+                  <input type="radio" name="mobility" value="IMMOBILISED" />
+                  <span>
+                    <strong>No</strong>
+                    <small>Machine is immobilised</small>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+
+
+            <fieldset class="question-card">
+              <legend>Is it safe to operate?</legend>
+
+              <div class="choice-stack">
+                <label class="choice-option">
+                  <input type="radio" name="safeOperation" value="YES" />
+                  <span>
+                    <strong>Yes</strong>
+                    <small>No known operational restriction</small>
+                  </span>
+                </label>
+
+                <label class="choice-option">
+                  <input type="radio" name="safeOperation" value="RESTRICTED" />
+                  <span>
+                    <strong>With restrictions</strong>
+                    <small>Controlled use only</small>
+                  </span>
+                </label>
+
+                <label class="choice-option choice-option--danger">
+                  <input type="radio" name="safeOperation" value="NO" />
+                  <span>
+                    <strong>No · do not operate</strong>
+                    <small>Plant should be taken out of service</small>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+
+
+            <fieldset class="question-card form-field--wide">
+              <legend>Impact on the work</legend>
+
+              <div class="choice-grid choice-grid--four">
+                <label class="choice-option">
+                  <input type="radio" name="workImpact" value="NONE" />
+                  <span>
+                    <strong>No immediate impact</strong>
+                    <small>Work continuing</small>
+                  </span>
+                </label>
+
+                <label class="choice-option">
+                  <input type="radio" name="workImpact" value="REDUCED" />
+                  <span>
+                    <strong>Reduced capacity</strong>
+                    <small>Work continues slower</small>
+                  </span>
+                </label>
+
+                <label class="choice-option">
+                  <input type="radio" name="workImpact" value="STOPPED" />
+                  <span>
+                    <strong>Activity stopped</strong>
+                    <small>Affected work cannot continue</small>
+                  </span>
+                </label>
+
+                <label class="choice-option">
+                  <input type="radio" name="workImpact" value="REPLACEMENT" />
+                  <span>
+                    <strong>Replacement required</strong>
+                    <small>Alternative Plant needed</small>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+
+
+            <div
+              id="suggestedDefectPosition"
+              class="assessment-result form-field--wide"
+            >
+              <div>
+                <span class="assessment-label">Suggested operational position</span>
+                <strong>OUT OF SERVICE</strong>
+              </div>
+
+              <p>
+                Based on the assessment above. Confirm this position before submitting.
+              </p>
+
+              <label class="assessment-confirm">
+                <input id="confirmDefectPosition" type="checkbox" />
+                <span>I confirm this reflects the current Plant condition</span>
+              </label>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- IMMEDIATE CONTROL -->
+        <section class="form-section">
+
+          <header class="form-section-heading">
+            <span class="form-section-number">03</span>
+            <div>
+              <h3>Immediate Site Controls</h3>
+              <p>Record what has already been done so the Plant team can understand the situation without being on site.</p>
+            </div>
+          </header>
+
+          <div class="control-option-grid">
+
+            <label class="control-option">
+              <input type="checkbox" value="WORK_STOPPED" />
+              <span>Work stopped</span>
+            </label>
+
+            <label class="control-option">
+              <input type="checkbox" value="PARKED_SAFE" />
+              <span>Machine parked safely</span>
+            </label>
+
+            <label class="control-option">
+              <input type="checkbox" value="ISOLATED" />
+              <span>Machine isolated</span>
+            </label>
+
+            <label class="control-option">
+              <input type="checkbox" value="KEYS_SECURED" />
+              <span>Keys removed / secured</span>
+            </label>
+
+            <label class="control-option">
+              <input type="checkbox" value="ATTACHMENT_SAFE" />
+              <span>Attachment lowered / made safe</span>
+            </label>
+
+            <label class="control-option">
+              <input type="checkbox" value="AREA_SEGREGATED" />
+              <span>Area segregated</span>
+            </label>
+
+            <label class="control-option">
+              <input type="checkbox" value="LEAK_CONTROLLED" />
+              <span>Spill / leak controlled</span>
+            </label>
+
+            <label class="control-option">
+              <input type="checkbox" value="SUPERVISOR_INFORMED" />
+              <span>Supervisor informed</span>
+            </label>
+
+            <label class="control-option">
+              <input type="checkbox" value="PLANT_TEAM_INFORMED" />
+              <span>Plant / Transport team informed</span>
+            </label>
+
+            <label class="control-option">
+              <input type="checkbox" value="SUPPLIER_INFORMED" />
+              <span>Supplier informed</span>
+            </label>
+
+          </div>
+
+          <label class="form-field">
+            <span>Other immediate action</span>
+            <textarea
+              id="defectImmediateNotes"
+              rows="3"
+              placeholder="Anything else already done on site..."
+            ></textarea>
+          </label>
+
+        </section>
+
+
+        <!-- HANDOVER -->
+        <section class="form-section">
+
+          <header class="form-section-heading">
+            <span class="form-section-number">04</span>
+            <div>
+              <h3>Handover & Downtime</h3>
+              <p>Give the Plant team enough information to pick up the case immediately.</p>
+            </div>
+          </header>
+
+          <div class="form-grid">
+
+            <div class="supplier-context form-field--wide">
+
+              <div class="supplier-context-heading">
+                <div>
+                  <span class="supplier-label">Recorded supplier</span>
+                  <strong>Sunbelt Rentals</strong>
+                </div>
+
+                <span class="status-pill status-pill--neutral">Hired Plant</span>
+              </div>
+
+              <div class="supplier-contact-grid">
+                <div>
+                  <span>Primary contact</span>
+                  <strong>Mark Smith</strong>
+                  <small>Account Manager</small>
+                </div>
+                <div>
+                  <span>Telephone</span>
+                  <strong>07700 900000</strong>
+                </div>
+                <div>
+                  <span>Email</span>
+                  <strong>mark@example.com</strong>
+                </div>
+                <div>
+                  <span>Hire reference</span>
+                  <strong>SR-24551</strong>
+                </div>
+              </div>
+
+            </div>
+
+
+            <label class="form-field">
+              <span>Additional repair contact</span>
+              <input
+                id="defectCaseContactName"
+                type="text"
+                placeholder="e.g. Craig Jones"
+              />
+            </label>
+
+            <label class="form-field">
+              <span>Contact number / detail</span>
+              <input
+                id="defectCaseContactDetail"
+                type="text"
+                placeholder="Engineer / mobile / reference"
+              />
+            </label>
+
+            <label class="form-field">
+              <span>Full downtime started</span>
+              <input id="defectDowntimeStartedAt" type="datetime-local" />
+              <small>Use when productive work has stopped completely.</small>
+            </label>
+
+            <label class="form-field">
+              <span>Current responsible route</span>
+              <select id="defectResponsibilityRoute">
+                <option>Plant / Transport team</option>
+                <option>Supplier</option>
+                <option>Internal workshop</option>
+                <option>External repairer</option>
+                <option>Project team</option>
+                <option>Other</option>
+              </select>
+            </label>
+
+          </div>
+
+        </section>
+
+      </div>
+
+
+      <footer class="dialog-footer">
+
+        <div class="dialog-footer-note">
+          <strong>After reporting</strong>
+          <span>The Plant / Transport team will pick up the case and updates will remain visible to the project team.</span>
+        </div>
+
+        <div class="dialog-footer-actions">
+          <button id="reportDefectCancel" class="button button-secondary" type="button">
+            Cancel
+          </button>
+
+          <button id="reportDefectSubmit" class="button button-primary" type="submit">
+            Report Defect
+          </button>
+        </div>
+
+      </footer>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- ===========================================================
+       REPAIR CASE DRAWER
+  ============================================================ -->
+  <div
+    id="repairCaseBackdrop"
+    class="drawer-backdrop"
+    hidden
+  ></div>
+
+  <aside
+    id="repairCaseDrawer"
+    class="repair-case-drawer"
+    aria-hidden="true"
+    hidden
+  >
+
+    <header class="drawer-header">
+
+      <div class="drawer-asset-heading">
+        <div>
+          <p class="drawer-eyebrow">Defect repair case</p>
+
+          <div class="drawer-title-line">
+            <span class="drawer-plant-id">HRE-0001</span>
+            <span class="drawer-title-divider">·</span>
+            <span>Hitachi ZX340</span>
+          </div>
+
+          <h2>Hydraulic pressure hose failure</h2>
+        </div>
+
+        <button
+          id="repairCaseClose"
+          class="drawer-close"
+          type="button"
+          aria-label="Close repair case"
+        >
+          ×
+        </button>
+      </div>
+
+
+      <div class="drawer-status-line">
+        <span class="status-pill status-pill--red">High</span>
+        <span class="status-pill status-pill--red">Out of service</span>
+        <span class="status-pill status-pill--amber">Awaiting parts</span>
+      </div>
+
+    </header>
+
+
+    <div class="drawer-body">
+
+      <!-- CURRENT POSITION -->
+      <section class="drawer-section drawer-current-position">
+
+        <header class="drawer-section-heading">
+          <div>
+            <p class="section-kicker">Current position</p>
+            <h3>Repair Control</h3>
+          </div>
+
+          <span class="drawer-updated">Updated 2h ago</span>
+        </header>
+
+        <dl class="position-detail-grid">
+
+          <div>
+            <dt>Project</dt>
+            <dd>Castle Bromwich</dd>
+          </div>
+
+          <div>
+            <dt>Location</dt>
+            <dd>B Block</dd>
+          </div>
+
+          <div>
+            <dt>Reported by</dt>
+            <dd>John Smith</dd>
+          </div>
+
+          <div>
+            <dt>Current owner</dt>
+            <dd>Mark Jones</dd>
+          </div>
+
+          <div>
+            <dt>Supplier</dt>
+            <dd>Sunbelt Rentals</dd>
+          </div>
+
+          <div>
+            <dt>Downtime</dt>
+            <dd class="position-emphasis">2d 4h</dd>
+          </div>
+
+          <div>
+            <dt>Repair route</dt>
+            <dd>Repair on site</dd>
+          </div>
+
+          <div>
+            <dt>Mobility</dt>
+            <dd>Can move under own power</dd>
+          </div>
+
+        </dl>
+
+      </section>
+
+
+      <!-- LATEST POSITION -->
+      <section class="latest-position-card">
+
+        <div>
+          <p class="section-kicker">Latest position</p>
+          <strong>No update</strong>
+        </div>
+
+        <span>Updated by Mark Jones · 2h ago</span>
+
+      </section>
+
+
+      <!-- ACTIONS -->
+      <section class="repair-action-bar">
+
+        <button id="addRepairUpdate" class="button button-primary" type="button">
+          + Add Update
+        </button>
+
+        <button id="changeRepairStatus" class="button button-secondary" type="button">
+          Change Status
+        </button>
+
+        <button id="recordRepairFeedback" class="button button-secondary" type="button">
+          Repair Feedback
+        </button>
+
+        <button id="returnToServiceAction" class="button button-success" type="button">
+          Return to Service
+        </button>
+
+      </section>
+
+
+      <!-- CASE DIARY -->
+      <section class="drawer-section">
+
+        <header class="drawer-section-heading">
+          <div>
+            <p class="section-kicker">Communication & activity</p>
+            <h3>Case Diary</h3>
+          </div>
+
+          <button id="addDiaryUpdate" class="button-link" type="button">
+            + Add update
+          </button>
+        </header>
+
+
+        <div id="repairCaseDiary" class="case-diary">
+
+          <article class="diary-entry">
+
+            <div class="diary-marker diary-marker--red"></div>
+
+            <div class="diary-content">
+              <div class="diary-meta">
+                <strong>John Smith</strong>
+                <span>Site Supervisor</span>
+                <time>21 Sep · 09:06</time>
+              </div>
+
+              <p>
+                Defect reported. Machine stopped and parked safely. Hydraulic pressure lost during normal operation.
+              </p>
+            </div>
+
+          </article>
+
+
+          <article class="diary-entry">
+
+            <div class="diary-marker diary-marker--blue"></div>
+
+            <div class="diary-content">
+              <div class="diary-meta">
+                <strong>Mark Jones</strong>
+                <span>Plant & Transport</span>
+                <time>21 Sep · 09:25</time>
+              </div>
+
+              <p>
+                Sunbelt contacted. Spoke with Mark Smith and provided defect details. Engineer requested for site attendance.
+              </p>
+            </div>
+
+          </article>
+
+
+          <article class="diary-entry">
+
+            <div class="diary-marker diary-marker--orange"></div>
+
+            <div class="diary-content">
+              <div class="diary-meta">
+                <strong>Mark Jones</strong>
+                <span>Plant & Transport</span>
+                <time>21 Sep · 14:18</time>
+              </div>
+
+              <p>
+                Engineer attended site. Hydraulic pressure hose confirmed failed. Replacement part not carried on vehicle.
+              </p>
+            </div>
+
+          </article>
+
+
+          <article class="diary-entry">
+
+            <div class="diary-marker diary-marker--amber"></div>
+
+            <div class="diary-content">
+              <div class="diary-meta">
+                <strong>Mark Jones</strong>
+                <span>Plant & Transport</span>
+                <time>21 Sep · 16:20</time>
+              </div>
+
+              <p>
+                Replacement hose ordered. Supplier currently expects delivery Wednesday morning.
+              </p>
+            </div>
+
+          </article>
+
+        </div>
+
+      </section>
+
+
+      <!-- REPAIR DETAILS -->
+      <section class="drawer-section">
+
+        <header class="drawer-section-heading">
+          <div>
+            <p class="section-kicker">Repair management</p>
+            <h3>Repair Details</h3>
+          </div>
+
+          <button id="editRepairDetails" class="button-link" type="button">
+            Edit details
+          </button>
+        </header>
+
+
+        <dl class="repair-details-grid">
+
+          <div>
+            <dt>Resolution route</dt>
+            <dd>Repair on site</dd>
+          </div>
+
+          <div>
+            <dt>Repair contact</dt>
+            <dd>Craig Jones · Sunbelt Engineer</dd>
+          </div>
+
+          <div>
+            <dt>Expected attendance</dt>
+            <dd>21 Sep · 14:00</dd>
+          </div>
+
+          <div>
+            <dt>Attendance confirmed</dt>
+            <dd>21 Sep · 14:18</dd>
+          </div>
+
+          <div>
+            <dt>Parts required</dt>
+            <dd>Hydraulic pressure hose</dd>
+          </div>
+
+          <div>
+            <dt>Expected completion</dt>
+            <dd>23 Sep · Morning</dd>
+          </div>
+
+        </dl>
+
+
+        <div class="linked-action-panel">
+          <div>
+            <strong>Movement required?</strong>
+            <span>
+              If the asset needs recovering to a workshop, create the movement from the Plant Movements workspace.
+            </span>
+          </div>
+
+          <button id="createDefectMovement" class="button button-secondary" type="button">
+            Create Movement
+          </button>
+        </div>
+
+      </section>
+
+
+      <!-- COST -->
+      <section class="drawer-section repair-cost-section">
+
+        <header class="drawer-section-heading">
+          <div>
+            <p class="section-kicker">Authorised users</p>
+            <h3>Known Repair Cost</h3>
+          </div>
+
+          <button id="updateRepairCosts" class="button-link" type="button">
+            Update costs
+          </button>
+        </header>
+
+
+        <div class="cost-grid">
+
+          <div class="cost-row">
+            <span>Callout</span>
+            <strong>£120</strong>
+          </div>
+
+          <div class="cost-row">
+            <span>Labour</span>
+            <strong>Not recorded</strong>
+          </div>
+
+          <div class="cost-row">
+            <span>Parts</span>
+            <strong>Not recorded</strong>
+          </div>
+
+          <div class="cost-row">
+            <span>Transport</span>
+            <strong>Not recorded</strong>
+          </div>
+
+          <div class="cost-row">
+            <span>Other</span>
+            <strong>Not recorded</strong>
+          </div>
+
+          <div class="cost-row cost-row--total">
+            <span>Known repair total</span>
+            <strong>£120</strong>
+          </div>
+
+        </div>
+
+
+        <div class="hire-exposure-note">
+          <span>Hire exposure during downtime</span>
+          <strong>£241/day</strong>
+          <small>Current hire commitment, not a calculated saving or final loss.</small>
+        </div>
+
+      </section>
+
+
+      <!-- REPAIR FEEDBACK -->
+      <section class="drawer-section repair-feedback-preview">
+
+        <header class="drawer-section-heading">
+          <div>
+            <p class="section-kicker">Completion</p>
+            <h3>Repair Feedback</h3>
+          </div>
+        </header>
+
+        <p>
+          When work is completed, the site or Plant team can record the result before the asset is considered for return to service.
+        </p>
+
+        <div class="feedback-options-preview">
+          <span>Fully resolved</span>
+          <span>Partially resolved</span>
+          <span>Additional fault identified</span>
+          <span>Unable to repair</span>
+          <span>Replacement supplied</span>
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <footer class="drawer-footer">
+
+      <div class="drawer-footer-message">
+        <strong>Asset remains restricted</strong>
+        <span>Repair completion alone does not return this Plant to service.</span>
+      </div>
+
+      <button class="button button-success" type="button">
+        Return to Service
+      </button>
+
+    </footer>
+
+  </aside>
+
+
+  <!-- ===========================================================
+       ADD UPDATE DIALOG
+  ============================================================ -->
+  <dialog id="repairUpdateDialog" class="normex-dialog small-dialog">
+
+    <form class="dialog-shell">
+
+      <header class="dialog-header">
+        <div>
+          <p class="dialog-eyebrow">Repair case</p>
+          <h2>Add Case Update</h2>
+          <p>Keep the site and Plant team informed of the current position.</p>
+        </div>
+
+        <button class="dialog-close" type="button">×</button>
+      </header>
+
+
+      <div class="dialog-body">
+
+        <div class="form-grid">
+
+          <label class="form-field form-field--wide">
+            <span>Update *</span>
+            <textarea
+              id="repairUpdateNote"
+              rows="5"
+              placeholder="What has happened, who was contacted, what are we waiting for..."
+            ></textarea>
+          </label>
+
+          <label class="form-field">
+            <span>Update repair status</span>
+            <select id="repairUpdateStatus">
+              <option value="">No status change</option>
+              <option>Reported</option>
+              <option>Acknowledged</option>
+              <option>Awaiting attendance</option>
+              <option>Awaiting parts</option>
+              <option>Repair in progress</option>
+              <option>Replacement requested</option>
+              <option>Awaiting replacement</option>
+              <option>Repair complete</option>
+              <option>Awaiting RTS</option>
+            </select>
+          </label>
+
+          <label class="form-field">
+            <span>Expected next action</span>
+            <input id="repairExpectedNextAction" type="datetime-local" />
+          </label>
+
+          <label class="form-field">
+            <span>Current owner</span>
+            <input
+              id="repairResponsiblePerson"
+              type="text"
+              placeholder="Person / team responsible"
+            />
+          </label>
+
+          <label class="form-field">
+            <span>Repair route</span>
+            <select id="repairRoute">
+              <option>Repair on site</option>
+              <option>Recover to workshop</option>
+              <option>Supplier replacement</option>
+              <option>Temporary repair</option>
+              <option>Permanent repair</option>
+              <option>Withdraw asset</option>
+            </select>
+          </label>
+
+        </div>
+
+      </div>
+
+
+      <footer class="dialog-footer">
+        <div></div>
+
+        <div class="dialog-footer-actions">
+          <button class="button button-secondary" type="button">Cancel</button>
+          <button class="button button-primary" type="submit">Save Update</button>
+        </div>
+      </footer>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- ===========================================================
+       REPAIR FEEDBACK DIALOG
+  ============================================================ -->
+  <dialog id="repairFeedbackDialog" class="normex-dialog small-dialog">
+
+    <form class="dialog-shell">
+
+      <header class="dialog-header">
+        <div>
+          <p class="dialog-eyebrow">Repair completion</p>
+          <h2>Record Repair Feedback</h2>
+          <p>Record what was repaired and the condition of the Plant after the work.</p>
+        </div>
+
+        <button class="dialog-close" type="button">×</button>
+      </header>
+
+
+      <div class="dialog-body">
+
+        <div class="form-grid">
+
+          <fieldset class="question-card form-field--wide">
+            <legend>Repair outcome</legend>
+
+            <div class="choice-stack">
+              <label class="choice-option">
+                <input type="radio" name="repairOutcome" />
+                <span>
+                  <strong>Fully resolved</strong>
+                  <small>Original fault repaired</small>
+                </span>
+              </label>
+
+              <label class="choice-option">
+                <input type="radio" name="repairOutcome" />
+                <span>
+                  <strong>Partially resolved</strong>
+                  <small>Restriction remains</small>
+                </span>
+              </label>
+
+              <label class="choice-option">
+                <input type="radio" name="repairOutcome" />
+                <span>
+                  <strong>Original fault resolved, additional fault identified</strong>
+                  <small>Potential linked defect required</small>
+                </span>
+              </label>
+
+              <label class="choice-option">
+                <input type="radio" name="repairOutcome" />
+                <span>
+                  <strong>Unable to repair</strong>
+                  <small>Further action required</small>
+                </span>
+              </label>
+
+              <label class="choice-option">
+                <input type="radio" name="repairOutcome" />
+                <span>
+                  <strong>Replacement supplied</strong>
+                  <small>Original asset remains under case control</small>
+                </span>
+              </label>
+            </div>
+          </fieldset>
+
+
+          <label class="form-field form-field--wide">
+            <span>Repair notes</span>
+            <textarea
+              id="repairCompletionNotes"
+              rows="4"
+              placeholder="What was repaired, replaced or tested..."
+            ></textarea>
+          </label>
+
+          <label class="form-field">
+            <span>Repair completed</span>
+            <input id="repairCompletedAt" type="datetime-local" />
+          </label>
+
+          <label class="form-field">
+            <span>Plant available again?</span>
+            <select id="repairAvailablePosition">
+              <option>No</option>
+              <option>Yes</option>
+              <option>Yes, with restrictions</option>
+            </select>
+          </label>
+
+          <div class="form-field form-field--wide optional-upload-placeholder">
+            <div>
+              <strong>Photo evidence</strong>
+              <span>Optional evidence upload will be connected after the controlled Storage workflow is ready.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <footer class="dialog-footer">
+        <div></div>
+
+        <div class="dialog-footer-actions">
+          <button class="button button-secondary" type="button">Cancel</button>
+          <button class="button button-primary" type="submit">Save Feedback</button>
+        </div>
+      </footer>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- ===========================================================
+       RETURN TO SERVICE DIALOG
+  ============================================================ -->
+  <dialog id="returnToServiceDialog" class="normex-dialog small-dialog">
+
+    <form class="dialog-shell">
+
+      <header class="dialog-header">
+        <div>
+          <p class="dialog-eyebrow">Operational release</p>
+          <h2>Return to Service</h2>
+          <p>Confirm the Plant can safely return to its operational position.</p>
+        </div>
+
+        <button class="dialog-close" type="button">×</button>
+      </header>
+
+
+      <div class="dialog-body">
+
+        <div class="rts-warning">
+          <strong>Repair complete does not automatically mean safe to operate.</strong>
+          <span>
+            Confirm the operational checks below before clearing this defect restriction.
+          </span>
+        </div>
+
+
+        <div class="rts-checks">
+
+          <label>
+            <input type="checkbox" />
+            <span>Repair work has been completed</span>
+          </label>
+
+          <label>
+            <input type="checkbox" />
+            <span>Operational checks have been completed</span>
+          </label>
+
+          <label>
+            <input type="checkbox" />
+            <span>Plant has been test operated where appropriate</span>
+          </label>
+
+        </div>
+
+
+        <label class="form-field">
+          <span>Any remaining restriction?</span>
+          <select id="rtsRemainingRestriction">
+            <option>No</option>
+            <option>Yes</option>
+          </select>
+        </label>
+
+
+        <label class="form-field">
+          <span>Return-to-service note</span>
+          <textarea
+            id="rtsNote"
+            rows="4"
+            placeholder="Testing completed, any observations, restrictions or handover information..."
+          ></textarea>
+        </label>
+
+
+        <div class="authenticated-confirmation">
+          <span>Confirmation will be recorded against</span>
+          <strong>Ciprian Trusca</strong>
+          <small>with date and time</small>
+        </div>
+
+      </div>
+
+
+      <footer class="dialog-footer">
+        <div></div>
+
+        <div class="dialog-footer-actions">
+          <button class="button button-secondary" type="button">Cancel</button>
+          <button class="button button-success" type="submit">
+            Confirm Return to Service
+          </button>
+        </div>
+      </footer>
+
+    </form>
+
+  </dialog>
+
+// ===========================================================
+       SCRIPTS
+  <dialog id="repairCostDialog" class="normex-dialog small-dialog">
+    <form id="repairCostForm" class="dialog-shell" novalidate>
+      <header class="dialog-header">
+        <div><p class="dialog-eyebrow">Authorised users</p><h2>Update Repair Costs</h2><p>Record known repair costs in GBP.</p></div>
+        <button class="dialog-close" type="button" aria-label="Close">×</button>
+      </header>
+      <div class="dialog-body"><div class="form-grid">
+        <label class="form-field"><span>Callout</span><input id="repairCostCallout" type="number" min="0" step="0.01" inputmode="decimal" /></label>
+        <label class="form-field"><span>Labour</span><input id="repairCostLabour" type="number" min="0" step="0.01" inputmode="decimal" /></label>
+        <label class="form-field"><span>Parts</span><input id="repairCostParts" type="number" min="0" step="0.01" inputmode="decimal" /></label>
+        <label class="form-field"><span>Transport</span><input id="repairCostTransport" type="number" min="0" step="0.01" inputmode="decimal" /></label>
+        <label class="form-field"><span>Other</span><input id="repairCostOther" type="number" min="0" step="0.01" inputmode="decimal" /></label>
+        <div class="form-field readonly-field"><span>Known repair total</span><strong id="repairCostTotal">£0.00</strong></div>
+      </div></div>
+      <footer class="dialog-footer"><div></div><div class="dialog-footer-actions"><button class="button button-secondary" type="button">Cancel</button><button class="button button-primary" type="submit">Save Costs</button></div></footer>
+    </form>
+  </dialog>
+
+  <script type="module" src="/modules/contractor/plant/defects/defects.js"></script>
+  <script src="/modules/contractor/shared/js/config.js"></script>
+  <script type="module" src="/modules/contractor/shared/js/shell.js"></script>
+
+</body>
+</html>

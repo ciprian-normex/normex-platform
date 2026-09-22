@@ -1,0 +1,10 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import vm from "node:vm";
+const source=readFileSync(new URL("../../modules/contractor/plant/defects/defects.js",import.meta.url),"utf8"),start=source.indexOf("const $"),end=source.lastIndexOf("wait();"),context=vm.createContext({organisationId:"tenant-a"});
+vm.runInContext(source.slice(start,end).replace("let profile,org,assets", "let profile;org='tenant-a';let assets"),context);
+const {manager,transitions,assetPatch,returnPatch}=vm.runInContext("({manager:manage,transitions:valid,assetPatch,returnPatch})",context),actor={status:"ACTIVE",organisationId:"tenant-a",roleCode:"PLANT_TRANSPORT_MANAGER",accessLevel:5.5,permissions:{},displayName:"Alex"};
+test("management is canonical and tenant-scoped",()=>{assert.equal(manager(actor,{organisationId:"tenant-a"}),true);assert.equal(manager({...actor,status:"INACTIVE"},{organisationId:"tenant-a"}),false);assert.equal(manager({...actor,accessLevel:99},{organisationId:"tenant-a"}),false);assert.equal(manager(actor,{organisationId:"tenant-b"}),false);});
+test("defect lifecycle cannot close before explicit return-to-service",()=>{assert.equal(transitions("OPEN","ACKNOWLEDGED"),true);assert.equal(transitions("ACKNOWLEDGED","REPAIR_IN_PROGRESS"),true);assert.equal(transitions("REPAIR_IN_PROGRESS","AWAITING_RTS"),true);assert.equal(transitions("REPORTED","CLOSED"),false);});
+test("an explicit hold creates an off-road asset patch; return preserves prior state",()=>{assert.deepEqual(JSON.parse(JSON.stringify(assetPatch({operationalHold:true},actor,"u","time"))),{safeToUse:false,offRoad:true,status:"OFF_ROAD",defectOwnedRestriction:true,updatedByUid:"u",updatedByName:"Alex",updatedAt:"time"});assert.deepEqual(JSON.parse(JSON.stringify(returnPatch({status:"ALLOCATED",safeToUse:true,offRoad:false},{status:"ALLOCATED",safeToUse:true,offRoad:false},actor,"u","time"))),{safeToUse:true,offRoad:false,status:"ALLOCATED",updatedByUid:"u",updatedByName:"Alex",updatedAt:"time"});});

@@ -199,3 +199,114 @@ export function buildOverview(sources, profile, today = new Date()) {
   model.upcoming.sort((a, b) => a.day - b.day);
   return model;
 }
+
+// Presentation aggregates only. The canonical hire calculator and read gates
+// above remain authoritative; incomplete reads never become organisation totals.
+export function buildManagement(model, today = new Date()) {
+  const day = calendarDay(today);
+  const src = model.sources;
+  const complete = (...names) => names.every(name => isComplete(src[name]));
+  const records = name => ["LOADED_WITH_DATA", "LOADED_EMPTY"].includes(src[name]?.state) ? src[name].data : [];
+  const categories = ["Assigned", "Available", "Off road / hold", "Maintenance", "In transit", "Other", "Unknown"];
+  const rows = model.assets.map(item => {
+    const asset = item.asset;
+    const blocked = asset.safeToUse === false || asset.offRoad === true || asset.complianceHold === true || ["OFF_ROAD", "COMPLIANCE_HOLD"].includes(code(asset.status));
+    let allocation = { key: "unknown", label: "Allocation unknown" };
+    if (complete("plantAssignments")) {
+      const related = records("plantAssignments").filter(row => belongsToAsset(row, asset) && !["CLOSED", "COMPLETED", "CANCELLED", "RELEASED"].includes(code(row.status)));
+      const valid = related.every(row => ["ACTIVE", "PLANNED", "CONFIRMED"].includes(code(row.status)) && calendarDay(row.assignedFrom) !== null && (!row.assignedUntil || calendarDay(row.assignedUntil) !== null && calendarDay(row.assignedUntil) >= calendarDay(row.assignedFrom)) && row.projectId);
+      const current = related.filter(row => calendarDay(row.assignedFrom) <= day && (!row.assignedUntil || calendarDay(row.assignedUntil) >= day));
+      if (valid && current.length === 1) allocation = { key: `project:${current[0].projectId}`, label: current[0].projectName || current[0].projectId };
+      else if (valid && current.length === 0 && !asset.currentProjectId && !asset.currentProjectName) allocation = { key: "unassigned", label: "Unassigned" };
+    }
+    const status = code(asset.status);
+    let category = "Unknown";
+    if (blocked) category = "Off road / hold";
+    else if (status === "MAINTENANCE") category = "Maintenance";
+    else if (status === "IN_TRANSIT") category = "In transit";
+    else if (allocation.key.startsWith("project:") && ["DEPLOYED", "RESERVED", "AWAITING_TRANSPORT", "OFF_HIRE_PENDING"].includes(status)) category = "Assigned";
+    else if (status === "AVAILABLE" && allocation.key === "unassigned") category = "Available";
+    else if (["RESERVED", "AWAITING_TRANSPORT", "OFF_HIRE_PENDING"].includes(status) && allocation.key !== "unknown") category = "Other";
+    return { ...item, allocation, category, blocked, hired: isHireOwnership(asset) };
+  });
+  const chartComplete = complete("plantAssets", "plantAssignments");
+  const positions = categories.map(label => ({ label, count: chartComplete ? rows.filter(row => row.category === label).length : null }));
+  const projectMap = new Map();
+  for (const row of rows) {
+    const group = projectMap.get(row.allocation.key) || { ...row.allocation, rows: [], weekly: 0 };
+    group.rows.push(row);
+    group.weekly += row.hire?.estimate.weekly ?? 0;
+    projectMap.set(group.key, group);
+  }
+  const projects = [...projectMap.values()].sort((a, b) => b.rows.filter(row => row.blocked).length - a.rows.filter(row => row.blocked).length || a.label.localeCompare(b.label));
+  const exposure = model.access.costs && model.finance.complete ? projects.filter(group => group.rows.some(row => row.hire)).sort((a, b) => b.weekly - a.weekly) : [];
+  const named = exposure.filter(group => group.key.startsWith("project:"));
+  const bars = [...named.slice(0, 5), ...exposure.filter(group => !group.key.startsWith("project:"))];
+  if (named.length > 5) bars.push({ key: "other", label: "Other projects", weekly: named.slice(5).reduce((sum, group) => sum + group.weekly, 0), keys: named.slice(5).map(group => group.key) });
+  const attention = model.attention.filter(item => item.asset || item.source || !/information unavailable or incomplete/.test(item.title));
+  const gaps = Object.entries(src).filter(([name, source]) => !(name === "plantHireRecords" && !model.access.costs) && !isComplete(source));
+  const summary = [];
+  const total = model.position[0].value;
+  if (total !== null) summary.push(`${total} active asset${total === 1 ? "" : "s"} recorded.`);
+  else summary.push("Fleet information is incomplete; totals withheld.");
+  if (chartComplete && total > 0) summary.push(`${positions[0].count} assigned, ${positions[1].count} available and ${positions[2].count} off road / hold.`);
+  if (model.access.costs && model.finance.weekly !== null) summary.push(`Current hire commitment is ${new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP", minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(model.finance.weekly)}/week.`);
+  if (gaps.length) summary.push(`${gaps.map(([name]) => SOURCE_NAMES[name]).join(", ")} information is incomplete.`);
+  if (attention.length) summary.push(`${attention.length} known action${attention.length === 1 ? "" : "s"} require${attention.length === 1 ? "s" : ""} attention.`);
+  else summary.push(gaps.length ? "Actions cannot be fully assessed; safety and compliance remain unassessed." : "No actions identified in loaded records; safety and compliance remain unassessed.");
+  return { rows, positions, projects, bars, attention, gaps, chartComplete, summary: summary.join(" "), day };
+}
+
+export function filterManagementRows(rows, filter, today = new Date()) {
+  if (!filter || filter.kind === "all") return rows;
+  return rows.filter(row => {
+    if (filter.kind === "position") return row.category === filter.value;
+    if (filter.kind === "project") return (filter.keys || [filter.value]).includes(row.allocation.key);
+    if (filter.kind === "hired") return row.hired;
+    if (filter.kind === "idle") return row.hire?.idle === true;
+    if (filter.kind === "due") {
+      const due = calendarDay(row.hire?.hire?.expectedOffHireDate);
+      return due !== null && due <= calendarDay(today) + 14;
+    }
+    return true;
+  });
+}
+
+// Asset-centred presentation of existing concerns. No new financial accrual or
+// workflow state is inferred here; amounts are canonical current commitments.
+export function buildAttentionQueue(model, management, today = new Date()) {
+  const day = calendarDay(today);
+  const groups = new Map();
+  management.attention.forEach((concern, index) => {
+    const key = concern.asset?.id || `unlinked:${index}`;
+    if (!groups.has(key)) groups.set(key, { key, asset: concern.asset, concerns: [] });
+    groups.get(key).concerns.push(concern);
+  });
+  const queue = [...groups.values()].map(group => {
+    const row = management.rows.find(item => item.asset.id === group.asset?.id);
+    const hire = model.access.costs ? row?.hire : null;
+    const current = hire?.hire && ["ACTIVE", "OFF_HIRE_REQUESTED"].includes(code(hire.hire.status)) && !hire.hire.offHireConfirmedDate;
+    const expected = current ? calendarDay(hire.hire.expectedOffHireDate) : null;
+    const overdue = expected !== null && expected < day;
+    const weekly = current ? hire.estimate.weekly : null;
+    const locationUnknown = group.concerns.some(item => item.title === "Location not confirmed");
+    const commercialRisk = overdue && row?.allocation.key === "unassigned" && locationUnknown && weekly > 0;
+    const concernUrgency = item => {
+      if (item.title === "Plant unavailable / off road") return 3;
+      if (item.title === "Past expected off-hire" || item.title.startsWith("Overdue ") || item.source === "plantDefects" || item.source === "plantIssues") return 2;
+      if (item.title === "Expected off-hire approaching") return 1;
+      return 0;
+    };
+    group.concerns.sort((a, b) => concernUrgency(b) - concernUrgency(a));
+    const level = commercialRisk ? 3 : Math.max(...group.concerns.map(concernUrgency));
+    const primary = group.concerns[0];
+    const impact = model.access.costs && primary.programmeImpact ? primary.programmeImpact : row?.blocked ? "Recorded restriction prevents availability" : commercialRisk ? "Overdue hire, unassigned; location not confirmed" : overdue ? "Hire continues beyond expected off-hire" : current && expected !== null && expected <= day + 14 ? "Expected off-hire due; confirm continued requirement" : hire?.idle ? "No productive assignment recorded" : locationUnknown ? "Location confirmation required" : primary.currentPosition === "Information gap" ? "Control information needs review" : "Review recorded operational position";
+    return { ...group, row, level, tone: ["information", "warning", "pressure", "danger"][level], label: ["Information", "Due soon", "High", "Critical"][level], primary, impact, weekly, overdue, commercial: Boolean(current && (overdue || hire.idle || row?.blocked)) };
+  });
+  queue.sort((a, b) => b.level - a.level || (b.weekly ?? -1) - (a.weekly ?? -1) || a.key.localeCompare(b.key));
+  const datesKnown = model.access.costs && model.hires.every(row => calendarDay(row.hire?.expectedOffHireDate) !== null);
+  const financeKnown = model.access.costs && model.finance.complete;
+  const allocationKnown = isComplete(model.sources.plantAssignments) && management.rows.every(row => row.allocation.key !== "unknown");
+  const overdueWeekly = financeKnown && datesKnown ? model.hires.filter(row => calendarDay(row.hire?.expectedOffHireDate) < day).reduce((sum, row) => sum + row.estimate.weekly, 0) : null;
+  return { queue, overdueWeekly, commercialAssets: financeKnown && datesKnown && allocationKnown ? queue.filter(group => group.commercial).length : null };
+}

@@ -1591,3 +1591,47 @@
   }
 
 }
+/* Asset master-data editor */
+.asset-edit-dialog { width: min(760px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid #dce4de; border-radius: 18px; color: #20372b; background: #fff; box-shadow: 0 24px 90px #142b3040; }
+.asset-edit-dialog::backdrop { background: #12231dcc; }
+.asset-edit-dialog form { display: flex; flex-direction: column; max-height: calc(100dvh - 34px); }
+.asset-edit-header { display: flex; align-items: center; justify-content: space-between; padding: 22px 26px 16px; }
+.asset-edit-header h2 { margin: 0; font-size: 23px; }
+.asset-edit-header p { margin: 5px 0 0; color: #68766d; font-size: 13px; }
+.asset-edit-dialog button, .asset-edit-primary { font: inherit; cursor: pointer; border-radius: 9px; border: 1px solid #d6dfd8; padding: 10px 16px; background: #fff; color: #20372b; }
+.asset-edit-dialog .asset-edit-primary, .asset-edit-primary { background: #203c2e; color: #fff; border-color: #203c2e; font-weight: 650; }
+.asset-edit-primary[hidden] { display: none; }
+.asset-edit-header button { font-size: 24px; padding: 3px 12px; }
+.asset-edit-identity { margin: 0 26px; padding: 13px 16px; background: #f1f5f1; border: 1px solid #e0e7df; border-radius: 10px; display: grid; gap: 3px; }
+.asset-edit-identity span, .asset-edit-identity small { color: #627267; font-size: 11px; }
+.asset-edit-identity strong { font-size: 18px; }
+.asset-edit-body { min-height: 0; overflow-y: auto; padding: 4px 26px 24px; margin: 0; border: 0; }
+.asset-edit-body h3 { margin: 22px 0 12px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+.asset-edit-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 18px; }
+.asset-edit-grid label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; }
+.asset-edit-grid input, .asset-edit-grid select, .asset-edit-grid textarea { box-sizing: border-box; width: 100%; min-width: 0; border: 1px solid #ced9d0; border-radius: 8px; padding: 10px 11px; font: inherit; font-size: 14px; font-weight: 400; background: #fff; color: #20372b; }
+.asset-edit-grid textarea { resize: vertical; }
+.asset-edit-grid small { font-weight: 400; color: #69776e; }
+.asset-edit-wide { grid-column: 1 / -1; }
+.asset-edit-footer { display: flex; gap: 10px; align-items: center; padding: 16px 26px; border-top: 1px solid #e4e9e4; }
+.asset-edit-footer span { flex: 1; font-size: 11px; color: #69776e; }
+.asset-edit-error { margin: 0; padding: 12px 26px; background: #fff0ed; color: #883e32; font-size: 13px; }
+.asset-edit-confirmation { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 100; max-width: calc(100vw - 40px); padding: 14px 22px; border-radius: 12px; background: #203c2e; color: #fff; box-shadow: 0 8px 30px #142b3030; font-size: 13px; }
+.asset-edit-dialog :focus-visible { outline: 2px solid #487959; outline-offset: 2px; }
+.asset-edit-dialog button:disabled { cursor: wait; opacity: .6; }
+.asset-deployment-actions__buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+.asset-deployment-actions__buttons button { border: 1px solid #cddbd1; border-radius: 9px; background: #f8faf8; color: #203c2e; padding: 10px 14px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.asset-deployment-actions__buttons button:first-child { background: #203c2e; border-color: #203c2e; color: #fff; }
+.asset-deployment-actions__buttons .asset-deployment-actions__release { border-color: #e5c8c0; background: #fff7f4; color: #8b4033; }
+.asset-deployment-actions__restricted { margin: 0; color: #69776e; font-size: 13px; line-height: 1.5; }
+.asset-detail strong { overflow-wrap: anywhere; white-space: pre-line; }
+@media (max-width: 540px) {
+  .asset-edit-dialog { width: calc(100vw - 16px); max-height: calc(100dvh - 16px); }
+  .asset-edit-dialog form { max-height: calc(100dvh - 18px); }
+  .asset-edit-grid { grid-template-columns: minmax(0, 1fr); }
+  .asset-edit-header, .asset-edit-footer { padding: 16px; }
+  .asset-edit-body { padding: 0 16px 20px; }
+  .asset-edit-identity { margin: 0 16px; }
+  .asset-edit-footer { flex-wrap: wrap; }
+  .asset-edit-footer span { flex-basis: 100%; }
+}

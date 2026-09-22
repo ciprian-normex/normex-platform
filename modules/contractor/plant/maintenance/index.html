@@ -1,0 +1,2094 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Maintenance | NORMEX</title>
+
+  <link rel="stylesheet" href="/modules/contractor/shared/css/theme-colemans.css" />
+  <link rel="stylesheet" href="/modules/contractor/shared/css/workspace.css" />
+  <link rel="stylesheet" href="/modules/contractor/plant/shared/plant-shell.css" />
+  <link rel="stylesheet" href="/modules/contractor/plant/maintenance/maintenance.css" />
+</head>
+
+<body>
+  <div class="workspace">
+
+    <!-- =========================================================
+         SHARED WORKSPACE HEADER
+    ========================================================== -->
+    <header class="workspace-header">
+      <div class="workspace-container">
+        <div class="workspace-header__surface">
+
+          <div class="workspace-brand">
+            <p class="workspace-brand__product">NORMEX · Contractor Workspace</p>
+            <h1 id="workspaceOrganisationName" class="workspace-brand__name">Colemans</h1>
+            <p class="workspace-brand__tagline">Projects, resources and operational control</p>
+          </div>
+
+          <div class="workspace-header-actions">
+            <div class="workspace-user">
+
+              <div class="workspace-user__details">
+                <span id="workspaceUserName" class="workspace-user__name">Ciprian Trusca</span>
+                <span id="workspaceUserRole" class="workspace-user__role">Platform Administration</span>
+              </div>
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+
+    <!-- =========================================================
+         MAIN WORKSPACE NAVIGATION
+    ========================================================== -->
+    <nav class="workspace-nav">
+      <div class="workspace-container">
+        <div id="contractorNavSurface" class="workspace-nav__surface">
+          <div id="contractorNavLinks" class="workspace-nav__links"></div>
+        </div>
+      </div>
+    </nav>
+
+
+    <!-- =========================================================
+         PAGE
+    ========================================================== -->
+    <main class="workspace-main">
+      <div class="workspace-container">
+
+        <nav id="plantSubnav"></nav>
+
+        <section class="maintenance-page">
+
+          <!-- =====================================================
+               CONTROL HEADER
+          ====================================================== -->
+          <section class="maintenance-control-surface">
+
+            <div class="maintenance-control-copy">
+
+              <p class="maintenance-eyebrow">Owned asset upkeep</p>
+
+              <div class="maintenance-title-row">
+
+                <div>
+                  <h2>Maintenance</h2>
+
+                  <p class="maintenance-lead">
+                    MOT, servicing, condition monitoring and planned maintenance for organisation-owned vehicles and Plant.
+                  </p>
+                </div>
+
+                <button
+                  id="addMaintenance"
+                  class="button button-primary"
+                  type="button"
+                >
+                  <span class="button-icon">+</span>
+                  Add Maintenance
+                </button>
+
+              </div>
+
+              <p id="maintenanceStatus" class="maintenance-system-status" role="status">
+                Maintenance control ready
+              </p>
+
+            </div>
+
+          </section>
+
+
+          <!-- =====================================================
+               POSITION
+          ====================================================== -->
+          <section
+            id="maintenanceSummary"
+            class="maintenance-position-strip"
+            aria-label="Maintenance position"
+          >
+
+            <button class="position-tile position-tile--mot" type="button">
+              <span class="position-label">MOT attention</span>
+              <strong class="position-value">2</strong>
+              <span class="position-meta">Due within 30 days</span>
+            </button>
+
+            <button class="position-tile position-tile--warning" type="button">
+              <span class="position-label">Due soon</span>
+              <strong class="position-value">4</strong>
+              <span class="position-meta">Maintenance due within 30 days</span>
+            </button>
+
+            <button class="position-tile position-tile--danger" type="button">
+              <span class="position-label">Overdue</span>
+              <strong class="position-value">1</strong>
+              <span class="position-meta">Needs immediate review</span>
+            </button>
+
+            <button class="position-tile position-tile--scheduled" type="button">
+              <span class="position-label">Booked</span>
+              <strong class="position-value">3</strong>
+              <span class="position-meta">Workshop or garage confirmed</span>
+            </button>
+
+            <button class="position-tile position-tile--workshop" type="button">
+              <span class="position-label">Unavailable</span>
+              <strong class="position-value">1</strong>
+              <span class="position-meta">Currently in maintenance</span>
+            </button>
+
+          </section>
+
+
+          <!-- =====================================================
+               UPCOMING MAINTENANCE
+          ====================================================== -->
+          <section class="maintenance-planning-panel">
+
+            <header class="section-heading section-heading--action">
+
+              <div>
+                <p class="section-kicker">Forward planning</p>
+                <h3>Upcoming Maintenance</h3>
+                <p>
+                  Planned MOT, servicing and maintenance work due across owned assets.
+                </p>
+              </div>
+
+              <div class="planning-window">
+                <span>Next</span>
+                <strong>30 days</strong>
+              </div>
+
+            </header>
+
+
+            <div class="maintenance-timeline">
+
+              <div class="timeline-track"></div>
+
+
+              <!-- ITEM -->
+              <article class="timeline-item timeline-item--mot">
+
+                <div class="timeline-date">
+                  <strong>24</strong>
+                  <span>Sep</span>
+                </div>
+
+                <div class="timeline-marker"></div>
+
+                <div class="timeline-content">
+                  <span class="timeline-category">MOT</span>
+
+                  <strong>YK24 ABC · Ford Transit Custom</strong>
+
+                  <span>
+                    MOT expires 05 Oct
+                  </span>
+                </div>
+
+              </article>
+
+
+              <!-- ITEM -->
+              <article class="timeline-item timeline-item--service">
+
+                <div class="timeline-date">
+                  <strong>28</strong>
+                  <span>Sep</span>
+                </div>
+
+                <div class="timeline-marker"></div>
+
+                <div class="timeline-content">
+                  <span class="timeline-category">Annual service</span>
+
+                  <strong>DN73 XYZ · Ford Ranger</strong>
+
+                  <span>
+                    Garage booking · 08:30
+                  </span>
+                </div>
+
+              </article>
+
+
+              <!-- ITEM -->
+              <article class="timeline-item timeline-item--plant">
+
+                <div class="timeline-date">
+                  <strong>03</strong>
+                  <span>Oct</span>
+                </div>
+
+                <div class="timeline-marker"></div>
+
+                <div class="timeline-content">
+                  <span class="timeline-category">Planned maintenance</span>
+
+                  <strong>HRE-0004 · Hitachi ZX350</strong>
+
+                  <span>
+                    Annual service · Internal workshop
+                  </span>
+                </div>
+
+              </article>
+
+
+              <!-- ITEM -->
+              <article class="timeline-item timeline-item--condition">
+
+                <div class="timeline-date">
+                  <strong>14</strong>
+                  <span>Oct</span>
+                </div>
+
+                <div class="timeline-marker"></div>
+
+                <div class="timeline-content">
+                  <span class="timeline-category">Condition review</span>
+
+                  <strong>YK24 ABC · Ford Transit Custom</strong>
+
+                  <span>
+                    Front brake pads · monitor
+                  </span>
+                </div>
+
+              </article>
+
+            </div>
+
+          </section>
+
+
+          <!-- =====================================================
+               ATTENTION
+          ====================================================== -->
+          <section class="maintenance-section">
+
+            <header class="section-heading">
+
+              <div>
+                <p class="section-kicker">Action required</p>
+                <h3>Maintenance Attention</h3>
+                <p>
+                  Owned assets requiring booking, review or planned unavailability.
+                </p>
+              </div>
+
+            </header>
+
+
+            <div id="maintenanceAttention" class="maintenance-attention-list">
+
+
+              <!-- =================================================
+                   VEHICLE
+              ================================================== -->
+              <article class="maintenance-row maintenance-row--mot">
+
+                <div class="maintenance-signal">
+                  <span class="signal-dot signal-dot--amber"></span>
+                  <span>MOT</span>
+                </div>
+
+                <div class="maintenance-asset">
+
+                  <strong class="vehicle-registration">
+                    YK24 ABC
+                  </strong>
+
+                  <span class="asset-title">
+                    Ford Transit Custom
+                  </span>
+
+                  <small>
+                    Company van
+                  </small>
+
+                </div>
+
+
+                <div class="maintenance-requirement">
+
+                  <span class="maintenance-label">
+                    Requirement
+                  </span>
+
+                  <strong>
+                    MOT expires in 14 days
+                  </strong>
+
+                  <span>
+                    05 Oct 2026
+                  </span>
+
+                </div>
+
+
+                <div class="maintenance-assignment">
+
+                  <span class="maintenance-label">
+                    Assigned to
+                  </span>
+
+                  <strong>
+                    Craig Smith
+                  </strong>
+
+                  <span>
+                    Castle Bromwich
+                  </span>
+
+                </div>
+
+
+                <div class="maintenance-plan">
+
+                  <span class="maintenance-label">
+                    Booking
+                  </span>
+
+                  <strong>
+                    Not booked
+                  </strong>
+
+                  <span>
+                    Action required
+                  </span>
+
+                </div>
+
+
+                <div class="maintenance-last">
+
+                  <span class="maintenance-label">
+                    Last maintenance
+                  </span>
+
+                  <strong>
+                    Service · 12 Jun 2026
+                  </strong>
+
+                  <span>
+                    68,420 miles
+                  </span>
+
+                </div>
+
+
+                <div class="maintenance-row-action">
+                  <button class="button-link" type="button">
+                    Open
+                    <span>→</span>
+                  </button>
+                </div>
+
+              </article>
+
+
+              <!-- =================================================
+                   OWNED PLANT
+              ================================================== -->
+              <article class="maintenance-row maintenance-row--service">
+
+                <div class="maintenance-signal">
+                  <span class="signal-dot signal-dot--blue"></span>
+                  <span>Service</span>
+                </div>
+
+                <div class="maintenance-asset">
+
+                  <strong class="plant-reference">
+                    HRE-0004
+                  </strong>
+
+                  <span class="asset-title">
+                    Hitachi ZX350
+                  </span>
+
+                  <small>
+                    High Reach Excavator
+                  </small>
+
+                </div>
+
+
+                <div class="maintenance-requirement">
+
+                  <span class="maintenance-label">
+                    Requirement
+                  </span>
+
+                  <strong>
+                    Annual service due
+                  </strong>
+
+                  <span>
+                    03 Oct 2026
+                  </span>
+
+                </div>
+
+
+                <div class="maintenance-assignment">
+
+                  <span class="maintenance-label">
+                    Current project
+                  </span>
+
+                  <strong>
+                    Castle Bromwich
+                  </strong>
+
+                  <span>
+                    B Block
+                  </span>
+
+                </div>
+
+
+                <div class="maintenance-plan">
+
+                  <span class="maintenance-label">
+                    Booking
+                  </span>
+
+                  <strong>
+                    Internal workshop
+                  </strong>
+
+                  <span>
+                    03 Oct · 08:00
+                  </span>
+
+                </div>
+
+
+                <div class="maintenance-last">
+
+                  <span class="maintenance-label">
+                    Expected downtime
+                  </span>
+
+                  <strong>
+                    4 hours
+                  </strong>
+
+                  <span>
+                    Planned unavailable
+                  </span>
+
+                </div>
+
+
+                <div class="maintenance-row-action">
+                  <button class="button-link" type="button">
+                    Open
+                    <span>→</span>
+                  </button>
+                </div>
+
+              </article>
+
+
+              <!-- =================================================
+                   CONDITION ITEM
+              ================================================== -->
+              <article class="maintenance-row maintenance-row--condition">
+
+                <div class="maintenance-signal">
+                  <span class="signal-dot signal-dot--neutral"></span>
+                  <span>Monitor</span>
+                </div>
+
+                <div class="maintenance-asset">
+
+                  <strong class="vehicle-registration">
+                    DN73 XYZ
+                  </strong>
+
+                  <span class="asset-title">
+                    Ford Ranger
+                  </span>
+
+                  <small>
+                    Company vehicle
+                  </small>
+
+                </div>
+
+
+                <div class="maintenance-requirement">
+
+                  <span class="maintenance-label">
+                    Condition item
+                  </span>
+
+                  <strong>
+                    Front brake pads
+                  </strong>
+
+                  <span>
+                    Approx. 20% remaining
+                  </span>
+
+                </div>
+
+
+                <div class="maintenance-assignment">
+
+                  <span class="maintenance-label">
+                    Assigned to
+                  </span>
+
+                  <strong>
+                    David Jones
+                  </strong>
+
+                  <span>
+                    Organisation vehicle
+                  </span>
+
+                </div>
+
+
+                <div class="maintenance-plan">
+
+                  <span class="maintenance-label">
+                    Next review
+                  </span>
+
+                  <strong>
+                    14 Oct 2026
+                  </strong>
+
+                  <span>
+                    Monitor condition
+                  </span>
+
+                </div>
+
+
+                <div class="maintenance-last">
+
+                  <span class="maintenance-label">
+                    Last checked
+                  </span>
+
+                  <strong>
+                    18 Sep 2026
+                  </strong>
+
+                  <span>
+                    Serviceable
+                  </span>
+
+                </div>
+
+
+                <div class="maintenance-row-action">
+                  <button class="button-link" type="button">
+                    Open
+                    <span>→</span>
+                  </button>
+                </div>
+
+              </article>
+
+            </div>
+
+          </section>
+
+
+          <!-- =====================================================
+               REGISTER
+          ====================================================== -->
+          <section class="maintenance-register-panel">
+
+            <header class="section-heading">
+
+              <div>
+                <p class="section-kicker">Owned asset history</p>
+                <h3>Maintenance Register</h3>
+                <p>
+                  Planned, current and completed maintenance for owned vehicles and Plant.
+                </p>
+              </div>
+
+              <div class="register-count">
+                <strong id="maintenanceCount">14</strong>
+                <span>maintenance records</span>
+              </div>
+
+            </header>
+
+
+            <div class="maintenance-filter-bar">
+
+              <label class="filter-field filter-field--search">
+                <span>Search</span>
+                <input
+                  id="maintenanceSearch"
+                  type="search"
+                  placeholder="Registration, Plant ID, make, model..."
+                />
+              </label>
+
+
+              <label class="filter-field">
+                <span>Type</span>
+
+                <select id="maintenanceTypeFilter">
+                  <option value="">All types</option>
+                  <option>MOT</option>
+                  <option>Service</option>
+                  <option>Planned maintenance</option>
+                  <option>Condition review</option>
+                </select>
+              </label>
+
+
+              <label class="filter-field">
+                <span>Status</span>
+
+                <select id="maintenanceStatusFilter">
+                  <option value="">All statuses</option>
+                  <option>Upcoming</option>
+                  <option>Due</option>
+                  <option>Scheduled</option>
+                  <option>In progress</option>
+                  <option>Completed</option>
+                  <option>Overdue</option>
+                </select>
+              </label>
+
+
+              <label class="filter-field">
+                <span>Asset type</span>
+
+                <select id="maintenanceAssetTypeFilter">
+                  <option value="">All owned assets</option>
+                  <option>Vehicle</option>
+                  <option>Plant</option>
+                  <option>Equipment</option>
+                </select>
+              </label>
+
+
+              <label class="filter-field">
+                <span>Project</span>
+
+                <select id="maintenanceProjectFilter">
+                  <option value="">All projects</option>
+                </select>
+              </label>
+
+            </div>
+
+
+            <div id="maintenanceRegister" class="maintenance-register-table-wrap">
+
+              <table class="maintenance-register-table">
+
+                <thead>
+                  <tr>
+                    <th>Asset</th>
+                    <th>Requirement</th>
+                    <th>Due</th>
+                    <th>Position</th>
+                    <th>Booking</th>
+                    <th>Assigned / project</th>
+                    <th>Last work</th>
+                    <th></th>
+                  </tr>
+                </thead>
+
+
+                <tbody>
+
+                  <tr>
+
+                    <td>
+                      <strong class="table-asset-reference">YK24 ABC</strong>
+                      <span>Ford Transit Custom</span>
+                    </td>
+
+                    <td>
+                      <strong>MOT</strong>
+                      <span>Statutory vehicle requirement</span>
+                    </td>
+
+                    <td>
+                      <strong>05 Oct 2026</strong>
+                      <span class="text-attention">14 days</span>
+                    </td>
+
+                    <td>
+                      <span class="status-pill status-pill--amber">Due soon</span>
+                    </td>
+
+                    <td>
+                      <strong>Not booked</strong>
+                      <span>Action required</span>
+                    </td>
+
+                    <td>
+                      <strong>Craig Smith</strong>
+                      <span>Castle Bromwich</span>
+                    </td>
+
+                    <td>
+                      <strong>Service · 12 Jun</strong>
+                      <span>68,420 miles</span>
+                    </td>
+
+                    <td>
+                      <button class="table-open-button" type="button">
+                        Open
+                      </button>
+                    </td>
+
+                  </tr>
+
+
+                  <tr>
+
+                    <td>
+                      <strong class="table-asset-reference">HRE-0004</strong>
+                      <span>Hitachi ZX350</span>
+                    </td>
+
+                    <td>
+                      <strong>Annual service</strong>
+                      <span>Planned maintenance</span>
+                    </td>
+
+                    <td>
+                      <strong>03 Oct 2026</strong>
+                      <span>12 days</span>
+                    </td>
+
+                    <td>
+                      <span class="status-pill status-pill--blue">Booked</span>
+                    </td>
+
+                    <td>
+                      <strong>Internal workshop</strong>
+                      <span>03 Oct · 08:00</span>
+                    </td>
+
+                    <td>
+                      <strong>Castle Bromwich</strong>
+                      <span>B Block</span>
+                    </td>
+
+                    <td>
+                      <strong>Annual service</strong>
+                      <span>02 Oct 2025</span>
+                    </td>
+
+                    <td>
+                      <button class="table-open-button" type="button">
+                        Open
+                      </button>
+                    </td>
+
+                  </tr>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          </section>
+
+        </section>
+
+      </div>
+    </main>
+
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+    <footer class="workspace-footer">
+      <div class="workspace-container">
+        <div class="workspace-footer__inner">
+          <strong>NORMEX</strong>
+          <span id="workspaceFooterOrganisation">Colemans</span>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+
+  <!-- ===========================================================
+       ADD MAINTENANCE DIALOG
+  ============================================================ -->
+  <dialog id="maintenanceDialog" class="normex-dialog">
+
+    <form id="maintenanceForm" class="dialog-shell" novalidate>
+
+      <header class="dialog-header">
+
+        <div>
+          <p class="dialog-eyebrow">Owned asset maintenance</p>
+          <h2>Add Maintenance</h2>
+          <p>
+            Record planned servicing, condition reviews or other scheduled maintenance for organisation-owned assets.
+          </p>
+        </div>
+
+        <button
+          id="maintenanceDialogClose"
+          class="dialog-close"
+          type="button"
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div class="dialog-body">
+
+
+        <!-- =====================================================
+             ASSET
+        ====================================================== -->
+        <section class="form-section">
+
+          <header class="form-section-heading">
+
+            <span class="form-section-number">01</span>
+
+            <div>
+              <h3>Asset</h3>
+              <p>
+                Maintenance applies only to assets the organisation owns and maintains.
+              </p>
+            </div>
+
+          </header>
+
+
+          <div class="form-grid">
+
+            <label class="form-field form-field--wide">
+              <span>Owned asset *</span>
+
+              <select id="maintenanceAssetSelect">
+                <option value="">Select owned asset</option>
+                <option>YK24 ABC · Ford Transit Custom</option>
+                <option>DN73 XYZ · Ford Ranger</option>
+                <option>HRE-0004 · Hitachi ZX350</option>
+              </select>
+            </label>
+
+
+            <div class="selected-maintenance-asset form-field--wide">
+
+              <div class="selected-maintenance-asset-main">
+
+                <span class="selected-asset-reference">
+                  YK24 ABC
+                </span>
+
+                <strong>
+                  Ford Transit Custom
+                </strong>
+
+                <span>
+                  Company van · Owned
+                </span>
+
+              </div>
+
+
+              <dl class="selected-maintenance-context">
+
+                <div>
+                  <dt>Assigned to</dt>
+                  <dd>Craig Smith</dd>
+                </div>
+
+                <div>
+                  <dt>Current project</dt>
+                  <dd>Castle Bromwich</dd>
+                </div>
+
+                <div>
+                  <dt>MOT expiry</dt>
+                  <dd>05 Oct 2026</dd>
+                </div>
+
+                <div>
+                  <dt>Last service</dt>
+                  <dd>12 Jun 2026</dd>
+                </div>
+
+              </dl>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             REQUIREMENT
+        ====================================================== -->
+        <section class="form-section">
+
+          <header class="form-section-heading">
+
+            <span class="form-section-number">02</span>
+
+            <div>
+              <h3>Maintenance Requirement</h3>
+              <p>
+                Keep this practical. Record only the maintenance information the organisation needs to manage.
+              </p>
+            </div>
+
+          </header>
+
+
+          <div class="form-grid">
+
+            <label class="form-field">
+              <span>Maintenance type *</span>
+
+              <select id="maintenanceType">
+                <option>Annual service</option>
+                <option>Routine service</option>
+                <option>Planned maintenance</option>
+                <option>Condition review</option>
+                <option>Oil / filter service</option>
+                <option>Tyres</option>
+                <option>Brakes</option>
+                <option>Other</option>
+              </select>
+            </label>
+
+
+            <label class="form-field">
+              <span>Due date</span>
+              <input id="maintenanceDueDate" type="date" />
+            </label>
+
+
+            <label class="form-field form-field--wide">
+              <span>Requirement / description *</span>
+
+              <textarea
+                id="maintenanceDescription"
+                rows="3"
+                placeholder="e.g. Annual service, oil and filters, check brakes and tyres..."
+              ></textarea>
+            </label>
+
+
+            <label class="form-field">
+              <span>Mileage due</span>
+              <input
+                id="maintenanceMileageDue"
+                type="number"
+                placeholder="Optional"
+              />
+            </label>
+
+
+            <label class="form-field">
+              <span>Operating hours due</span>
+              <input
+                id="maintenanceHoursDue"
+                type="number"
+                placeholder="Optional"
+              />
+            </label>
+
+          </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             CONDITION
+        ====================================================== -->
+        <section class="form-section">
+
+          <header class="form-section-heading">
+
+            <span class="form-section-number">03</span>
+
+            <div>
+              <h3>Condition Monitoring</h3>
+              <p>
+                Optional condition note for items that should be monitored rather than replaced immediately.
+              </p>
+            </div>
+
+          </header>
+
+
+          <div class="form-grid">
+
+            <label class="form-field">
+              <span>Condition</span>
+
+              <select id="maintenanceCondition">
+                <option value="">Not applicable</option>
+                <option>Good</option>
+                <option>Monitor</option>
+                <option>Plan replacement</option>
+                <option>Due</option>
+                <option>Replace now</option>
+              </select>
+            </label>
+
+
+            <label class="form-field">
+              <span>Next review</span>
+              <input id="maintenanceNextReview" type="date" />
+            </label>
+
+
+            <label class="form-field form-field--wide">
+              <span>Condition note</span>
+
+              <textarea
+                id="maintenanceConditionNote"
+                rows="3"
+                placeholder="e.g. Front brake pads approximately 20% remaining. Review again in 6-8 weeks."
+              ></textarea>
+            </label>
+
+          </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             BOOKING
+        ====================================================== -->
+        <section class="form-section">
+
+          <header class="form-section-heading">
+
+            <span class="form-section-number">04</span>
+
+            <div>
+              <h3>Booking & Planned Downtime</h3>
+              <p>
+                Record confirmed garage, workshop or service arrangements where known.
+              </p>
+            </div>
+
+          </header>
+
+
+          <div class="form-grid">
+
+            <label class="form-field">
+              <span>Booked with</span>
+              <input
+                id="maintenanceBookedWith"
+                type="text"
+                placeholder="Garage, workshop or service company"
+              />
+            </label>
+
+
+            <label class="form-field">
+              <span>Contact / booking reference</span>
+              <input
+                id="maintenanceBookingReference"
+                type="text"
+                placeholder="Optional"
+              />
+            </label>
+
+
+            <label class="form-field">
+              <span>Booked date & time</span>
+              <input
+                id="maintenanceBookedAt"
+                type="datetime-local"
+              />
+            </label>
+
+
+            <label class="form-field">
+              <span>Expected return</span>
+              <input
+                id="maintenanceExpectedReturn"
+                type="datetime-local"
+              />
+            </label>
+
+
+            <label class="form-field">
+              <span>Expected unavailable time</span>
+              <input
+                id="maintenanceExpectedDowntime"
+                type="text"
+                placeholder="e.g. 4 hours / full day"
+              />
+            </label>
+
+
+            <label class="form-field">
+              <span>Planned availability</span>
+
+              <select id="maintenanceAvailability">
+                <option>No operational interruption</option>
+                <option>Planned unavailable</option>
+                <option>Restricted availability</option>
+              </select>
+            </label>
+
+          </div>
+
+        </section>
+
+      </div>
+
+
+      <footer class="dialog-footer">
+
+        <div class="dialog-footer-note">
+          <strong>Maintenance control</strong>
+          <span>
+            Project and vehicle users will be able to see relevant upcoming bookings and planned unavailability.
+          </span>
+        </div>
+
+        <div class="dialog-footer-actions">
+
+          <button
+            id="maintenanceCancel"
+            class="button button-secondary"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="maintenanceSubmit"
+            class="button button-primary"
+            type="submit"
+          >
+            Save Maintenance
+          </button>
+
+        </div>
+
+      </footer>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- ===========================================================
+       MAINTENANCE RECORD DRAWER
+  ============================================================ -->
+  <div
+    id="maintenanceDrawerBackdrop"
+    class="drawer-backdrop"
+    hidden
+  ></div>
+
+  <aside
+    id="maintenanceDrawer"
+    class="maintenance-drawer"
+    aria-hidden="true"
+    hidden
+  >
+
+    <header class="drawer-header">
+
+      <div class="drawer-asset-heading">
+
+        <div>
+
+          <p class="drawer-eyebrow">
+            Maintenance record
+          </p>
+
+          <div class="drawer-title-line">
+            <span class="drawer-asset-reference">
+              YK24 ABC
+            </span>
+
+            <span class="drawer-title-divider">
+              ·
+            </span>
+
+            <span>
+              Ford Transit Custom
+            </span>
+          </div>
+
+          <h2>
+            MOT & Annual Service
+          </h2>
+
+        </div>
+
+
+        <button
+          id="maintenanceDrawerClose"
+          class="drawer-close"
+          type="button"
+          aria-label="Close maintenance record"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="drawer-status-line">
+        <span class="status-pill status-pill--amber">
+          Due soon
+        </span>
+
+        <span class="status-pill status-pill--blue">
+          Booking required
+        </span>
+      </div>
+
+    </header>
+
+
+    <div class="drawer-body">
+
+
+      <!-- =====================================================
+           POSITION
+      ====================================================== -->
+      <section class="drawer-section">
+
+        <header class="drawer-section-heading">
+
+          <div>
+            <p class="section-kicker">
+              Current position
+            </p>
+
+            <h3>
+              Maintenance Control
+            </h3>
+          </div>
+
+          <span class="drawer-updated">
+            Updated today
+          </span>
+
+        </header>
+
+
+        <dl class="maintenance-detail-grid">
+
+          <div>
+            <dt>Assigned to</dt>
+            <dd>Craig Smith</dd>
+          </div>
+
+          <div>
+            <dt>Current project</dt>
+            <dd>Castle Bromwich</dd>
+          </div>
+
+          <div>
+            <dt>MOT expiry</dt>
+            <dd class="detail-attention">05 Oct 2026</dd>
+          </div>
+
+          <div>
+            <dt>Service due</dt>
+            <dd>October 2026</dd>
+          </div>
+
+          <div>
+            <dt>Last service</dt>
+            <dd>12 Jun 2026</dd>
+          </div>
+
+          <div>
+            <dt>Last service mileage</dt>
+            <dd>68,420 miles</dd>
+          </div>
+
+          <div>
+            <dt>Current mileage</dt>
+            <dd>74,110 miles</dd>
+          </div>
+
+          <div>
+            <dt>Ownership</dt>
+            <dd>Company owned</dd>
+          </div>
+
+        </dl>
+
+      </section>
+
+
+      <!-- =====================================================
+           NEXT ACTION
+      ====================================================== -->
+      <section class="next-maintenance-card">
+
+        <div>
+
+          <p class="section-kicker">
+            Next action
+          </p>
+
+          <strong>
+            MOT requires booking before 05 Oct 2026.
+          </strong>
+
+          <span>
+            Vehicle remains available until planned maintenance or expiry position changes.
+          </span>
+
+        </div>
+
+        <button class="button button-primary" type="button">
+          Book Maintenance
+        </button>
+
+      </section>
+
+
+      <!-- =====================================================
+           BOOKING
+      ====================================================== -->
+      <section class="drawer-section">
+
+        <header class="drawer-section-heading">
+
+          <div>
+            <p class="section-kicker">
+              Planning
+            </p>
+
+            <h3>
+              Booking & Availability
+            </h3>
+          </div>
+
+          <button class="button-link" type="button">
+            Edit booking
+          </button>
+
+        </header>
+
+
+        <dl class="maintenance-detail-grid">
+
+          <div>
+            <dt>Booked with</dt>
+            <dd>Not booked</dd>
+          </div>
+
+          <div>
+            <dt>Booking reference</dt>
+            <dd>Not recorded</dd>
+          </div>
+
+          <div>
+            <dt>Planned date</dt>
+            <dd>Not recorded</dd>
+          </div>
+
+          <div>
+            <dt>Expected return</dt>
+            <dd>Not recorded</dd>
+          </div>
+
+          <div>
+            <dt>Expected downtime</dt>
+            <dd>Not recorded</dd>
+          </div>
+
+          <div>
+            <dt>Availability position</dt>
+            <dd>Available</dd>
+          </div>
+
+        </dl>
+
+      </section>
+
+
+      <!-- =====================================================
+           CONDITION ITEMS
+      ====================================================== -->
+      <section class="drawer-section">
+
+        <header class="drawer-section-heading">
+
+          <div>
+            <p class="section-kicker">
+              Condition monitoring
+            </p>
+
+            <h3>
+              Items to Monitor
+            </h3>
+          </div>
+
+          <button class="button-link" type="button">
+            + Add item
+          </button>
+
+        </header>
+
+
+        <div class="condition-list">
+
+          <article class="condition-row">
+
+            <div>
+              <strong>
+                Front brake pads
+              </strong>
+
+              <span>
+                Approx. 20% remaining
+              </span>
+            </div>
+
+            <span class="condition-status condition-status--monitor">
+              Monitor
+            </span>
+
+            <div>
+              <span class="condition-label">
+                Next review
+              </span>
+
+              <strong>
+                14 Oct 2026
+              </strong>
+            </div>
+
+          </article>
+
+
+          <article class="condition-row">
+
+            <div>
+              <strong>
+                Front tyres
+              </strong>
+
+              <span>
+                Serviceable
+              </span>
+            </div>
+
+            <span class="condition-status condition-status--good">
+              Good
+            </span>
+
+            <div>
+              <span class="condition-label">
+                Next review
+              </span>
+
+              <strong>
+                Next service
+              </strong>
+            </div>
+
+          </article>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           HISTORY
+      ====================================================== -->
+      <section class="drawer-section">
+
+        <header class="drawer-section-heading">
+
+          <div>
+            <p class="section-kicker">
+              Asset history
+            </p>
+
+            <h3>
+              Maintenance History
+            </h3>
+          </div>
+
+          <button class="button-link" type="button">
+            View all
+          </button>
+
+        </header>
+
+
+        <div class="maintenance-history">
+
+
+          <article class="history-entry">
+
+            <div class="history-date">
+              <strong>12</strong>
+              <span>Jun</span>
+              <small>2026</small>
+            </div>
+
+            <div class="history-content">
+
+              <div class="history-heading">
+
+                <div>
+                  <strong>
+                    Annual Service
+                  </strong>
+
+                  <span>
+                    Smith Motors
+                  </span>
+                </div>
+
+                <span class="status-pill status-pill--green">
+                  Completed
+                </span>
+
+              </div>
+
+
+              <p>
+                Oil and filters replaced. General vehicle inspection completed.
+              </p>
+
+
+              <dl class="history-details">
+
+                <div>
+                  <dt>Mileage</dt>
+                  <dd>68,420</dd>
+                </div>
+
+                <div>
+                  <dt>Cost</dt>
+                  <dd>£340</dd>
+                </div>
+
+                <div>
+                  <dt>Recorded by</dt>
+                  <dd>Plant Team</dd>
+                </div>
+
+              </dl>
+
+            </div>
+
+          </article>
+
+
+          <article class="history-entry">
+
+            <div class="history-date">
+              <strong>03</strong>
+              <span>Sep</span>
+              <small>2026</small>
+            </div>
+
+            <div class="history-content">
+
+              <div class="history-heading">
+
+                <div>
+                  <strong>
+                    Front tyres replaced
+                  </strong>
+
+                  <span>
+                    Smith Motors
+                  </span>
+                </div>
+
+                <span class="status-pill status-pill--green">
+                  Completed
+                </span>
+
+              </div>
+
+
+              <p>
+                Two front tyres replaced. Vehicle returned to normal service.
+              </p>
+
+
+              <dl class="history-details">
+
+                <div>
+                  <dt>Mileage</dt>
+                  <dd>74,110</dd>
+                </div>
+
+                <div>
+                  <dt>Cost</dt>
+                  <dd>£310</dd>
+                </div>
+
+                <div>
+                  <dt>Recorded by</dt>
+                  <dd>Plant Team</dd>
+                </div>
+
+              </dl>
+
+            </div>
+
+          </article>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           COST
+      ====================================================== -->
+      <section class="drawer-section maintenance-cost-section">
+
+        <header class="drawer-section-heading">
+
+          <div>
+            <p class="section-kicker">
+              Authorised users
+            </p>
+
+            <h3>
+              Maintenance Cost
+            </h3>
+          </div>
+
+          <button class="button-link" type="button">
+            Update cost
+          </button>
+
+        </header>
+
+
+        <div class="maintenance-cost-position">
+
+          <div>
+            <span>
+              Current maintenance record
+            </span>
+
+            <strong>
+              Not recorded
+            </strong>
+          </div>
+
+
+          <div>
+            <span>
+              Maintenance spend · 12 months
+            </span>
+
+            <strong>
+              £650
+            </strong>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <footer class="drawer-footer">
+
+      <div class="drawer-footer-message">
+
+        <strong>
+          Owned asset maintenance
+        </strong>
+
+        <span>
+          Complete maintenance work to preserve the asset's service history.
+        </span>
+
+      </div>
+
+      <button
+        id="completeMaintenanceAction"
+        class="button button-success"
+        type="button"
+      >
+        Complete Maintenance
+      </button>
+
+    </footer>
+
+  </aside>
+
+
+  <!-- ===========================================================
+       BOOK MAINTENANCE DIALOG
+  ============================================================ -->
+  <dialog
+    id="maintenanceBookingDialog"
+    class="normex-dialog small-dialog"
+  >
+
+    <form class="dialog-shell">
+
+      <header class="dialog-header">
+
+        <div>
+          <p class="dialog-eyebrow">Planned maintenance</p>
+
+          <h2>
+            Book Maintenance
+          </h2>
+
+          <p>
+            Record the confirmed garage, workshop or service arrangement.
+          </p>
+        </div>
+
+        <button
+          class="dialog-close"
+          type="button"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div class="dialog-body">
+
+        <div class="form-grid">
+
+          <label class="form-field">
+            <span>Booked with *</span>
+
+            <input
+              id="bookingSupplier"
+              type="text"
+              placeholder="Garage, workshop or service company"
+            />
+          </label>
+
+
+          <label class="form-field">
+            <span>Contact / reference</span>
+
+            <input
+              id="bookingReference"
+              type="text"
+              placeholder="Optional"
+            />
+          </label>
+
+
+          <label class="form-field">
+            <span>Booked date & time *</span>
+
+            <input
+              id="bookingStart"
+              type="datetime-local"
+            />
+          </label>
+
+
+          <label class="form-field">
+            <span>Expected return</span>
+
+            <input
+              id="bookingExpectedReturn"
+              type="datetime-local"
+            />
+          </label>
+
+
+          <label class="form-field">
+            <span>Expected unavailable time</span>
+
+            <input
+              id="bookingDowntime"
+              type="text"
+              placeholder="e.g. 4 hours"
+            />
+          </label>
+
+
+          <label class="form-field">
+            <span>Availability</span>
+
+            <select id="bookingAvailability">
+              <option>Planned unavailable</option>
+              <option>Restricted availability</option>
+              <option>No operational interruption</option>
+            </select>
+          </label>
+
+
+          <label class="form-field form-field--wide">
+            <span>Booking note</span>
+
+            <textarea
+              id="bookingNote"
+              rows="3"
+              placeholder="Access, collection or other booking information..."
+            ></textarea>
+          </label>
+
+        </div>
+
+      </div>
+
+
+      <footer class="dialog-footer">
+
+        <div></div>
+
+        <div class="dialog-footer-actions">
+          <button class="button button-secondary" type="button">
+            Cancel
+          </button>
+
+          <button class="button button-primary" type="submit">
+            Save Booking
+          </button>
+        </div>
+
+      </footer>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- ===========================================================
+       COMPLETE MAINTENANCE DIALOG
+  ============================================================ -->
+  <dialog
+    id="maintenanceCompletionDialog"
+    class="normex-dialog small-dialog"
+  >
+
+    <form class="dialog-shell">
+
+      <header class="dialog-header">
+
+        <div>
+          <p class="dialog-eyebrow">Maintenance history</p>
+
+          <h2>
+            Complete Maintenance
+          </h2>
+
+          <p>
+            Record the work completed and preserve the asset's maintenance history.
+          </p>
+        </div>
+
+        <button
+          class="dialog-close"
+          type="button"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div class="dialog-body">
+
+        <div class="form-grid">
+
+          <label class="form-field">
+            <span>Completed date & time *</span>
+
+            <input
+              id="completionDate"
+              type="datetime-local"
+            />
+          </label>
+
+
+          <label class="form-field">
+            <span>Completed by</span>
+
+            <input
+              id="completionProvider"
+              type="text"
+              placeholder="Garage, workshop or person"
+            />
+          </label>
+
+
+          <label class="form-field">
+            <span>Mileage</span>
+
+            <input
+              id="completionMileage"
+              type="number"
+              placeholder="Optional"
+            />
+          </label>
+
+
+          <label class="form-field">
+            <span>Operating hours</span>
+
+            <input
+              id="completionHours"
+              type="number"
+              placeholder="Optional"
+            />
+          </label>
+
+
+          <label class="form-field form-field--wide">
+            <span>Work completed *</span>
+
+            <textarea
+              id="completionWork"
+              rows="4"
+              placeholder="What servicing, replacement or maintenance work was completed..."
+            ></textarea>
+          </label>
+
+
+          <label class="form-field form-field--wide">
+            <span>Items requiring future attention</span>
+
+            <textarea
+              id="completionFollowUp"
+              rows="3"
+              placeholder="e.g. Front brake pads approximately 20% remaining. Review in 6-8 weeks."
+            ></textarea>
+          </label>
+
+
+          <label class="form-field">
+            <span>Next review / service date</span>
+
+            <input
+              id="completionNextDate"
+              type="date"
+            />
+          </label>
+
+
+          <label class="form-field">
+            <span>Cost</span>
+
+            <input
+              id="completionCost"
+              type="number"
+              step="0.01"
+              placeholder="Authorised users only"
+            />
+          </label>
+
+
+          <label class="form-field form-field--wide">
+            <span>Additional notes</span>
+
+            <textarea
+              id="completionNotes"
+              rows="3"
+            ></textarea>
+          </label>
+
+        </div>
+
+
+        <div class="completion-defect-option">
+
+          <div>
+            <strong>
+              Fault identified during maintenance?
+            </strong>
+
+            <span>
+              A separate Defect & Repair case can be created after this maintenance record is completed.
+            </span>
+          </div>
+
+          <button class="button button-secondary" type="button">
+            Create Defect
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <footer class="dialog-footer">
+
+        <div></div>
+
+        <div class="dialog-footer-actions">
+
+          <button class="button button-secondary" type="button">
+            Cancel
+          </button>
+
+          <button class="button button-success" type="submit">
+            Complete Maintenance
+          </button>
+
+        </div>
+
+      </footer>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- Shared workspace only during design review.
+       maintenance.js intentionally not loaded yet. -->
+
+  <script src="/modules/contractor/shared/js/config.js"></script>
+  <script type="module" src="/modules/contractor/shared/js/shell.js"></script>
+
+</body>
+</html>

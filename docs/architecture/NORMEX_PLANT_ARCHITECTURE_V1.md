@@ -300,47 +300,13 @@ Examples:
 
 The Plant ID must never change.
 
-### 6.1 Firestore document IDs
+### 6.1 Firestore document IDs - approved Option A
 
-Use readable IDs rather than random Firestore IDs wherever practical.
+Approved 2026-09-19; implementation pending. Use internal database key plantAssets/colemans__HRE-0001 with organisationId colemans, plantId HRE-0001 and plantReference HRE-0001.
 
-Preferred:
+The visible Plant reference remains HRE-0001. Related deterministic keys follow the same principle, for example plantHireRecords/colemans__HIRE-HRE-0001-001, plantAssignments/colemans__ASN-HRE-0001-001 and plantMovements/colemans__MOV-HRE-0001-001. Defect, maintenance and issue keys follow the same tenant-safe principle; business references remain clean. High-volume inspection keys also require collision-safe event identity.
 
-```text
-plantAssets/HRE-0001
-```
-
-not:
-
-```text
-plantAssets/GmvtxDRFHwWqfr09hxY7
-```
-
-Inside the record keep:
-
-```text
-plantId: HRE-0001
-plantReference: HRE-0001
-```
-
-For related records use readable references where sensible:
-
-```text
-plantHireRecords/HIRE-HRE-0001-001
-plantAssignments/ASN-HRE-0001-001
-plantMovements/MOV-HRE-0001-001
-plantDefects/DEF-HRE-0001-001
-plantMaintenance/MNT-HRE-0001-001
-plantIssues/ISSUE-HRE-0001-001
-```
-
-High-volume time-based records such as inspections can use:
-
-```text
-plantInspections/INS-HRE-0001-20260914-064238
-```
-
-Readable IDs are preferred because Firestore will eventually contain large numbers of records and operational troubleshooting must remain manageable.
+Inventory existing keys, counters, related references, document links and URLs before implementation. Define legacy compatibility and explicit database-reference fields. Do not migrate existing records yet. See [DEVELOPMENT-ROADMAP.md](DEVELOPMENT-ROADMAP.md), section 4.
 
 ---
 
@@ -864,7 +830,7 @@ Future analytics may include:
 Primary Plant collections:
 
 ```text
-plantAssets/{plantId}
+plantAssets/{assetKey}
 plantHireRecords/{hireId}
 plantAssignments/{assignmentId}
 plantMovements/{movementId}
@@ -981,58 +947,32 @@ Neutral operational facts belong in their relevant page and should not automatic
 
 ---
 
-## 19. Recommended implementation order
+## 19. Approved implementation order
 
-Build canonical data first, then derive intelligence.
+The asset-management lifecycle comes first. See [DEVELOPMENT-ROADMAP.md](DEVELOPMENT-ROADMAP.md) for foundation/release gates.
 
-1. Lock this Plant Architecture specification
-2. Establish readable Firestore ID conventions
-3. Update Firestore rules for Plant collections
-4. Rebuild Plant asset creation against the new canonical model
-5. Build Requests
-6. Build Plant Issues
-7. Build Plant Overview using real financial / project-impact data
-8. Build Fleet owned vs hired views
-9. Build Availability
-10. Build Movements / location confirmation
-11. Build Defects
-12. Build Maintenance
-13. Build Compliance / Documents
-14. Rebuild the Asset workspace around operational + financial history
-15. Connect Operations pre-use inspections
-16. Connect Projects resource demand / plant assignment
-17. Add supplier performance analytics later
+1. Harden Fleet creation
+2. Asset edit
+3. Hire / rate updates and history
+4. Minimal Plant evidence capability
+5. Location confirmation
+6. Project assignment
+7. Movements
+8. Defects
+9. Repair / return to service
+10. Plant Issues
+11. Release / off-hire / collection
+12. Plant Requests
 
----
+Requests feed the established lifecycle after it is reliable. Phase 2 control/intelligence consumes canonical inputs. Unrelated domain redevelopment must not block Plant.
 
 ## 20. First end-to-end workflow to prove the model
 
-Use one realistic scenario:
+Create a hired asset, edit details, change its rate with history, attach evidence, confirm location, assign and deliver it. Report a defect, record repair and authorised return to service, link an issue where appropriate, then release, confirm off-hire and collect.
 
-> Site Manager requests a hired 50t excavator for a project.
+Verify ordinary-role permissions, retained history, restricted costs and honest unavailable/not-assessed states. Afterwards prove Requests feed this workflow without duplicate canonical records. Inspections remain operational forms, not manual Asset-page creation.
 
-Flow:
-
-1. Site Manager raises Plant Request
-2. Plant / Transport Manager reviews
-3. Manager sources hire supplier
-4. Supplier / rate / dates recorded
-5. Plant asset created, e.g. `EXC-0001`
-6. Hire record created
-7. Assignment created
-8. Movement to project created
-9. On-hire condition photos / evidence recorded
-10. Asset becomes deployed
-11. Overview shows active hire exposure
-12. Site completes pre-use inspections
-13. If asset fails, Defect is created
-14. If significant, Plant Issue is created / linked
-15. Project impact / downtime / cost tracked
-16. Repair / replacement milestones tracked
-17. Asset returns to service or is replaced
-18. Off-hire / movement / final condition recorded
-
-If this workflow works cleanly, the Plant architecture is functioning as intended.
+Restricted costs are visible only to Plant / Transport Manager, Organisation Manager, Platform Admin or explicitly authorised relevant Commercial/Plant cost users. Operational access does not imply financial access. Evidence limit: 50 MB per individual file (approved architecture; enforcement pending).
 
 ---
 
@@ -1047,3 +987,43 @@ Its value comes from combining:
 The core management question is:
 
 > Do we have the right plant, compliant, available, transported and ready at the right project at the right time, and what is costing us money or threatening delivery unnecessarily?
+
+## 22. Permanent page-responsibility hierarchy (approved 2026-09-20)
+
+**Overview -> Domain page -> Record / Asset page** is the permanent Plant design principle.
+
+- **Overview:** organisation-level summary, exceptions, financial pressure and navigation. It aggregates trustworthy loaded information and routes management to action.
+- **Domain page:** the detailed control workspace for one Plant domain, with its own queue, filters and workflow controls.
+- **Record / Asset page:** full information, authorised actions and editing, evidence and history for one record or asset.
+
+The detailed capabilities listed earlier in this document are domain targets, not an instruction to reproduce them all on Overview. A summary cannot replace a canonical workflow. Assigned does not mean physically deployed. Missing evidence never establishes safety, readiness or compliance.
+
+### Page responsibility contract
+
+| Page | Primary management question | Information shown | Intended authorised actions | Intentionally not shown | Relationship to Overview and drill-down |
+|---|---|---|---|---|---|
+| Overview | What requires management attention across Plant? | Aggregate position, asset-centred exceptions, known financial pressure, project grouping and upcoming events | Filter/toggle loaded summaries, expand concerns, open the relevant working workspace, refresh | Full asset records, certificate matrices, detailed repair/service histories, duplicate data-entry workflows | Entry point: summary -> domain filtered to the concern -> record/asset -> action -> return and refresh |
+| Fleet | What assets do we have and what is their current recorded position? | Searchable portfolio, ownership, type, state, assignment/location, explicit restrictions and authorised hire position | Create assets through the existing workflow, filter/search, open Asset; authorised edits through Asset | Full evidence matrices, complete event histories or an organisation action dashboard repeated inside the register | Overview position -> Fleet filter -> Asset -> update -> return |
+| Requests | What Plant demand needs clarification, sourcing or fulfilment? | Demand, requester/project, required capability, dates, priority, fulfilment and linked records | Raise, clarify, source, approve/reject where authorised, partially fulfil and link to the established asset/assignment/movement lifecycle | Duplicate Fleet creation, fabricated stock/availability or replacement financial ledgers | Overview demand exception -> request queue -> request record -> fulfilment -> linked asset/workflow |
+| Availability | What can be allocated, when, and what blocks its use? | Recorded operational restrictions, current/future assignments, overlapping commitments, idle position, location confidence and authorised hire implications | Filter by need/date/project, inspect conflicts, route to authorised assignment, release or movement actions | Unsupported ready/safe conclusions, physical deployment inferred from assignment, detailed repair histories | Overview available/idle/conflict -> Availability -> commitment/Asset -> resolve through the owning workflow |
+| Movements | What must move, when, and what is preventing collection or delivery? | Planned/booked/in-transit movements, route/access controls, collection/delivery dates, owners and recorded completion | Plan/book transport, update progress, confirm collection/delivery with history and evidence where required | Assignment treated as proof of delivery, detailed defect/compliance histories, unauthorised transport costs | Overview upcoming/transport exception -> Movements filter -> movement record -> update -> Asset location/history |
+| Defects | What Plant is defective/restricted, what is the repair position, and what action is required? | Open faults, recorded severity/isolation, engineer/parts position, responsible person, repair milestone and authorised costs | Triage, assign repair, update diagnosis/parts/progress, record evidence and route to authorised return-to-service | Automatically removing restrictions on closure, maintenance history unrelated to the fault, full portfolio duplication | Overview restriction -> Defects queue -> defect record/Asset -> repair and authorised return-to-service |
+| Maintenance | What servicing is required, planned, overdue or completed? | Established service baseline, meter/interval evidence, due dates, bookings, owners and completion position | Establish/update an authorised schedule, plan/book service, record completion and evidence, apply authorised state transitions | Treating absent schedules as no maintenance due, unrelated defect histories or compliance certification | Overview due-service exception -> Maintenance queue -> service record/Asset -> complete and verify |
+| Compliance | Can each asset legally/operationally remain in service, and what evidence supports that position? | Requirement/applicability and certificate/evidence matrix, assessments, explicit holds, verified dates and evidence gaps | Review requirements/evidence, route uploads through controlled Documents, record authorised assessments and hold decisions | Compliance inferred from missing records, a duplicate binary document store, invented expiry or legal conclusions | Overview count/status/explicit hold only -> Compliance matrix -> requirement/evidence/Asset -> assess and act |
+| Suppliers | Who can supply, repair or transport Plant, and how do we contact them? | Supplier identity, services, contacts, active status and linked records; authorised financial data only | Maintain supplier details, select for owning workflows, inspect linked activity | Unsupported performance scores, a duplicate hire ledger, confidential prices for restricted roles | Overview supplier-related concern -> relevant domain record -> supplier details and linked activity |
+| Asset | What is the complete current truth and history of this machine? | Permanent identity, assignment/location history, hire periods, defects, maintenance, inspections, evidence, issues and authorised costs | Authorised editing and lifecycle actions, evidence access, location confirmation, linked assignment/movement/repair/off-hire workflows | Organisation-wide dashboards, duplicate canonical event records, manual inspection creation outside its owning workflow | Domain record -> Asset -> act on the owning record -> retain history -> return to domain/Overview |
+
+These are intended responsibilities, not claims that every page or action is implemented. Scope and permissions must be checked before each workflow is built. The Compliance matrix belongs to Compliance; Overview currently consumes explicit holds only and does not derive certificate expiry.
+
+### Bounded Overview interaction and attention contract
+
+- Fleet Position segment and legend clicks use the same toggle: select a category, click again for All Fleet, or select another category. Visually and accessibly identify the selected category. Filter existing lower tables; never create a duplicate asset section.
+- Attention is one expandable management row per identified asset. Summarise overall urgency, primary issue, known impact, active concern count and next action. Retain unrelated/unlinked concerns separately rather than merging them into a fictitious asset.
+- Expanded content shows individual concerns, recorded context/dates and actions with one asset identity. Preserve known blockers when another source fails.
+- Blue means confirmation/data action. Amber means approaching/due soon. Dark amber means present commercial/operational pressure. Red requires an explicit restriction or supported material impact; uncertainty alone is never red.
+- Combined overdue active hire, established non-assignment and missing location confirmation may justify red commercial-control urgency only with a known positive current commitment. This is not a statement of proven financial loss.
+- Rank by known urgency, then known weekly commitment where cost access permits. Do not invent savings, lost production, avoidable-cost history or idle durations.
+- Overdue off-hire financial emphasis means **current weekly commitment on hires past expected off-hire**. It is not a new estimate of charges since the planning date. Canonical hire calculations remain unchanged. Withhold totals when required inputs are incomplete or unknown.
+- Operational Control Review must use a real domain page when implemented. Until then, use a clearly bounded expansion/filter of loaded Overview records or label the action unavailable. Never link to an empty page as though a workflow exists.
+
+After these refinements, stop Overview iteration and prioritise detailed domain work. Fleet is the recommended next workspace: it is the existing creation/register route and provides the asset identity and drill-down foundation used by the remaining domains. Security-sensitive writes retain their release gates.

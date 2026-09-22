@@ -227,7 +227,7 @@ async function pageHarness(profile, { failures = {}, dataset = {}, deferred = {}
       return { docs: rows.slice(0, request.cap).map(row => ({ id: row.id, data: () => row })) };
     }
   };
-  vm.runInNewContext(source.replace(/^import .*;\r?\n/gm, "") + "\nglobalThis.page = { initialise, load };", context);
+  vm.runInNewContext(source.replace(/^import .*;\r?\n/gm, "") + "\nglobalThis.page = { initialise, load, applyFilter, resetFilters, ui, render };", context);
   const pending = context.page.initialise(profile);
   if (waitForLoad) await pending;
   return { html: () => element("plantOverviewContent").innerHTML, queries, elements, context, pending };
@@ -242,19 +242,19 @@ test("restricted page never queries hire records or renders operational cost fie
 test("authorised page queries hires and renders all seven approved sections", async () => {
   const page = await pageHarness(manager, { dataset: { plantAssets: [asset], plantHireRecords: [record] } });
   assert.ok(page.queries.some(query => query.name === "plantHireRecords"));
-  for (const title of ["Plant Position", "Attention Required", "Hire / Financial Position", "Priority Assets", "Plant Controls", "Upcoming"]) assert.ok(page.html().includes(title));
+  for (const title of ["Plant Position", "Attention Required", "Fleet Position", "Hire Exposure", "Plant by Project", "Operational Control", "Upcoming"]) assert.ok(page.html().includes(title));
   const html = await readFile(new URL("../../modules/contractor/plant/overview/index.html", import.meta.url), "utf8");
   assert.ok(html.includes("Plant Control"));
 });
 test("inactive page makes no reads", async () => {
   const page = await pageHarness({ ...manager, status: "INACTIVE" });
   assert.equal(page.queries.length, 0);
-  assert.match(page.html(), /PERMISSION_DENIED/);
+  assert.match(page.html(), /Workspace unavailable/);
 });
 test("rendered denied/failed sources and blockers never become healthy", async () => {
   const page = await pageHarness(manager, { dataset: { plantAssets: [{ ...asset, offRoad: true }] }, failures: { plantDefects: "permission-denied", plantMaintenance: "unavailable" } });
-  assert.match(page.html(), /PERMISSION_DENIED/);
-  assert.match(page.html(), /UNAVAILABLE/);
+  assert.match(page.html(), /Restricted/);
+  assert.match(page.html(), /Unavailable/);
   assert.match(page.html(), /Plant unavailable \/ off road/);
   assert.doesNotMatch(page.html(), /0 defects|0 issues|All clear|safe to use|£0\.00/i);
 });
@@ -271,14 +271,14 @@ test("late requests cannot repopulate content after profile changes", async () =
   await page.context.page.initialise({ ...manager, status: "INACTIVE" });
   release();
   await page.pending;
-  assert.match(page.html(), /PERMISSION_DENIED/);
+  assert.match(page.html(), /Workspace unavailable/);
   assert.doesNotMatch(page.html(), /OLD-TENANT-ASSET/);
   assert.equal(page.elements.get("refreshPlant").disabled, false);
 });
 test("real controller at query limit labels partial and withholds totals", async () => {
   const rows = Array.from({ length: 500 }, (_, index) => ({ ...asset, id: `asset-${index}`, ownershipType: "OWNED", offRoad: index === 0 }));
   const page = await pageHarness(site, { dataset: { plantAssets: rows } });
-  assert.match(page.html(), /PARTIAL \/ INCOMPLETE/);
+  assert.match(page.html(), /Partial \/ incomplete/);
   assert.match(page.html(), /Partial/);
   assert.match(page.html(), /Plant unavailable \/ off road/);
   assert.doesNotMatch(page.html(), /<strong[^>]*>500<\/strong>/);
@@ -339,25 +339,25 @@ test("canonical admin has an explicit override without tenant context; no reads 
   assert.equal(model.overviewContext(admin).state, "MISSING_ORGANISATION_CONTEXT");
   const page = await pageHarness(admin);
   assert.equal(page.queries.length, 0);
-  assert.match(page.html(), /MISSING_ORGANISATION_CONTEXT/);
+  assert.match(page.html(), /authorised organisation context/);
   assert.doesNotMatch(page.html(), /PERMISSION_DENIED/);
 });
 test("admin does not inherit authority from legacy role or string level", async () => {
   for (const profile of [{ ...manager, accessLevel: 99, roleCode: undefined, role: "PLATFORM_ADMIN" }, { ...manager, accessLevel: "99", roleCode: "PLATFORM_ADMIN" }]) {
     const page = await pageHarness(profile);
     assert.equal(page.queries.length, 0);
-    assert.match(page.html(), /PERMISSION_DENIED/);
+    assert.match(page.html(), /Workspace unavailable/);
     assert.match(page.html(), /Canonical/);
   }
 });
-test("single asset card survives a denied secondary source for a restricted reader", async () => {
+test("single asset management rows survive a denied secondary source for a restricted reader", async () => {
   const page = await pageHarness(site, { dataset: { plantAssets: [{ ...asset, manufacturer: "Hitachi", model: "ZX490", plantType: "HIGH_REACH_EXCAVATOR" }] }, failures: { plantMaintenance: "permission-denied" } });
-  assert.match(page.html(), /plant-asset-grid--single/);
-  assert.match(page.html(), /HRE-0001/);
-  assert.match(page.html(), /Hitachi ZX490/);
+  assert.match(page.html(), /Plant by Project/);
+  assert.match(page.html(), /Unassigned/);
+  assert.doesNotMatch(page.html(), /plant-asset-card/);
   assert.match(page.html(), /Depot/);
-  assert.match(page.html(), /Maintenance information unavailable/);
-  assert.equal(page.elements.get("plantLoadStatus").textContent.startsWith("DATA_UNAVAILABLE"), true);
+  assert.match(page.html(), /Maintenance information is incomplete/);
+  assert.equal(page.elements.get("plantLoadStatus").textContent.includes("incomplete"), true);
   assert.equal(page.elements.get("addPlantLink").hidden, true);
 });
 test("financial panel normalises daily and idle weekly exposure from shared hire values", () => {
@@ -390,4 +390,206 @@ test("Fleet action=add opens existing workflow only after management permission"
   }
   const init = file.match(/async function initialiseFleet\([\s\S]*?\n\}/)[0];
   assert.ok(init.indexOf("resolveAccess();") < init.indexOf("openRequestedPlantAction();"));
+});
+
+test("control room replaces asset cards with two charts and management tables", async () => {
+  const page = await pageHarness(manager, { dataset: { plantAssets: [asset], plantHireRecords: [record] } });
+  for (const title of ["Fleet Position", "Hire Exposure", "Attention Required", "Operational Control", "Plant by Project", "Hire Watch", "Upcoming"]) assert.match(page.html(), new RegExp(title));
+  assert.doesNotMatch(page.html(), /plant-asset-card|plant-operation-card|plant-action-facts/);
+  assert.match(page.html(), /plant-ring-segment/);
+});
+test("data status is collapsed and canonical admin only", async () => {
+  const page = await pageHarness({ ...manager, roleCode: "PLATFORM_ADMIN", accessLevel: 99 }, { dataset: { plantAssets: [asset], plantHireRecords: [record] } });
+  const coverage = page.html().match(/<details class="plant-data-status">[\s\S]*?<\/details>/)[0];
+  assert.match(coverage, /7 sources checked/);
+  assert.match(coverage, /Available/);
+  assert.match(coverage, /No records/);
+  assert.doesNotMatch(coverage, /LOADED_WITH_DATA|LOADED_EMPTY| open[ >]/);
+  for (const profile of [manager, site]) assert.doesNotMatch((await pageHarness(profile)).html(), /plant-data-status/);
+});
+test("Overview reuses Fleet's standard footer", async () => {
+  const base = new URL("../../modules/contractor/plant/", import.meta.url);
+  const [overview, fleet] = await Promise.all([readFile(new URL("overview/index.html", base), "utf8"), readFile(new URL("fleet/index.html", base), "utf8")]);
+  const footer = html => html.match(/<footer class="workspace-footer">[\s\S]*?<\/footer>/)[0];
+  assert.equal(footer(overview), footer(fleet));
+});
+
+function fleetFixture(count) {
+  const assets = Array.from({ length: count }, (_, index) => ({ ...asset, id: `tenant-a__EXC-${index}`, plantId: `EXC-${index}`, plantReference: `EXC-${index}`, status: index % 3 === 0 ? "OFF_ROAD" : index % 3 === 1 ? "DEPLOYED" : "AVAILABLE" }));
+  const hires = assets.map((item, index) => ({ ...record, id: `hire-${index}`, plantId: item.plantId, expectedOffHireDate: "2099-01-01" }));
+  const assignments = assets.filter(item => item.status === "DEPLOYED").map((item, index) => ({ id: `assignment-${index}`, organisationId: "tenant-a", plantId: item.plantId, projectId: `project-${index}`, projectName: `Project ${index}`, assignedFrom: "2026-01-01", status: "ACTIVE" }));
+  return { plantAssets: assets, plantHireRecords: hires, plantAssignments: assignments };
+}
+for (const count of [1, 2, 10, 50, 500]) {
+  test(`${count} assets: bounded controller and truthful aggregates`, async () => {
+    const data = fleetFixture(count);
+    const overview = build(data);
+    const management = model.buildManagement(overview, today);
+    assert.equal(management.rows.length, count);
+    assert.equal(management.positions.length, 7);
+    assert.ok(management.bars.length <= 8);
+    if (count === 500) {
+      assert.equal(overview.finance.weekly, null);
+      assert.ok(management.positions.every(item => item.count === null));
+      assert.match(management.summary, /totals withheld/);
+    } else {
+      assert.equal(management.positions.reduce((sum, item) => sum + item.count, 0), count);
+      assert.equal(management.bars.reduce((sum, item) => sum + item.weekly, 0), count * 700);
+    }
+    const page = await pageHarness(manager, { dataset: data });
+    assert.doesNotMatch(page.html(), /plant-asset-card|plant-operation-card/);
+    for (const [name, limit] of [["attention", 6], ["projects", 10], ["hires", 10], ["upcoming", 10]]) {
+      const body = page.html().match(new RegExp(`aria-label="${name}">[\\s\\S]*?<tbody>([\\s\\S]*?)</tbody>`))?.[1] || "";
+      assert.ok((body.match(/<tr>/g) || []).length <= limit, name);
+    }
+  });
+}
+
+test("ring uses mutually exclusive operational categories without asserting deployment", () => {
+  const data = fleetFixture(10);
+  data.plantAssets[2].status = "MAINTENANCE";
+  data.plantAssets[5].status = "IN_TRANSIT";
+  const management = model.buildManagement(build(data), today);
+  assert.equal(management.positions.find(row => row.label === "Maintenance").count, 1);
+  assert.equal(management.positions.find(row => row.label === "In transit").count, 1);
+  assert.equal(management.positions.find(row => row.label === "Off road / hold").count, 4);
+  assert.equal(management.positions.reduce((sum, row) => sum + row.count, 0), 10);
+  assert.ok(!management.positions.some(row => row.label === "Deployed"));
+});
+
+test("conflicting and invalid assignments stay allocation unknown", () => {
+  const assignment = { organisationId: "tenant-a", plantId: asset.plantId, projectId: "p1", assignedFrom: "2026-09-01", status: "ACTIVE" };
+  for (const assignments of [[assignment, { ...assignment, projectId: "p2" }], [{ ...assignment, assignedUntil: "2026-08-01" }]]) {
+    const management = model.buildManagement(build({ plantAssignments: assignments }), today);
+    assert.equal(management.rows[0].allocation.key, "unknown");
+    assert.equal(management.rows[0].category, "Unknown");
+    assert.equal(management.bars[0].label, "Allocation unknown");
+  }
+});
+
+test("failed assignment source withholds donut while preserving explicit blocker", () => {
+  const state = sources({ plantAssets: [{ ...asset, offRoad: true }] });
+  state.plantAssignments = model.failedSource("tenant-a", { code: "permission-denied" });
+  const management = model.buildManagement(model.buildOverview(state, manager, today), today);
+  assert.ok(management.positions.every(row => row.count === null));
+  assert.equal(management.rows[0].category, "Off road / hold");
+  assert.ok(management.attention.some(row => row.priority === 0));
+  assert.match(management.summary, /Assignments information is incomplete/);
+});
+
+test("management summary and financial bars respect restricted profile", () => {
+  const management = model.buildManagement(build({}, site), today);
+  assert.deepEqual(management.bars, []);
+  assert.doesNotMatch(management.summary, /commitment|£|Hire information is incomplete/);
+  assert.match(management.summary, /1 available/);
+});
+
+test("chart filters drill into existing tables and reset restores all loaded rows", async () => {
+  const page = await pageHarness(manager, { dataset: fleetFixture(10) });
+  const api = page.context.page;
+  api.applyFilter("position", "Available", "Available");
+  assert.match(page.html(), /Showing: <strong>Available/);
+  const hires = () => page.html().match(/aria-label="hires">[\s\S]*?<tbody>([\s\S]*?)<\/tbody>/)[1];
+  assert.equal((hires().match(/<tr>/g) || []).length, 3);
+  assert.doesNotMatch(hires(), /EXC-0|EXC-1/);
+  api.applyFilter("position", "Off road / hold", "Off road / hold");
+  assert.equal((hires().match(/<tr>/g) || []).length, 4);
+  api.resetFilters();
+  assert.equal((hires().match(/<tr>/g) || []).length, 10);
+  assert.match(page.html(), /Showing: <strong>All loaded records/);
+  assert.doesNotMatch(page.html(), /plant-asset-card/);
+});
+
+test("idle and other-project filters preserve all matching identities", () => {
+  const management = model.buildManagement(build(fleetFixture(50)), today);
+  const idle = model.filterManagementRows(management.rows, { kind: "idle" }, today);
+  assert.ok(idle.length > 0 && idle.every(row => row.hire.idle));
+  const other = management.bars.find(row => row.key === "other");
+  assert.ok(other.keys.length > 0);
+  const projects = model.filterManagementRows(management.rows, { kind: "project", keys: other.keys }, today);
+  assert.equal(projects.reduce((sum, row) => sum + row.hire.estimate.weekly, 0), other.weekly);
+});
+
+test("empty attention and multiple issues on one asset remain compact and unassessed", async () => {
+  const clear = await pageHarness(manager, { dataset: { plantAssets: [{ ...asset, ownershipType: "OWNED" }] } });
+  assert.match(clear.html(), /No matching actions identified in loaded records/);
+  assert.match(clear.html(), /safety and compliance remain unassessed/i);
+  const page = await pageHarness(manager, { dataset: { plantAssets: [{ ...asset, currentLocationConfirmedAt: null }], plantHireRecords: [record] } });
+  const body = page.html().match(/aria-label="attention">[\s\S]*?<tbody>([\s\S]*?)<\/tbody>/)[1];
+  assert.equal((body.match(/<tr>/g) || []).length, 1);
+  assert.match(body, /3 active concerns/);
+  assert.doesNotMatch(body, /<article/);
+});
+
+test("Upcoming uses recorded dates, paginates, and supports latest-first sorting", async () => {
+  const movements = Array.from({ length: 12 }, (_, index) => ({ id: `move-${index}`, organisationId: "tenant-a", plantId: asset.plantId, status: "PLANNED", plannedDate: new Date(Date.now() + (index + 2) * 86400000).toISOString().slice(0, 10) }));
+  const page = await pageHarness(manager, { dataset: { plantAssets: [{ ...asset, ownershipType: "OWNED" }], plantMovements: movements } });
+  const body = () => page.html().match(/aria-label="upcoming">[\s\S]*?<tbody>([\s\S]*?)<\/tbody>/)[1];
+  assert.equal((body().match(/<tr>/g) || []).length, 10);
+  assert.match(body(), new RegExp(utils.formatPlantDate(movements[0].plannedDate)));
+  page.context.page.ui.sorts.upcoming = "alternate";
+  page.context.page.render();
+  assert.match(body(), new RegExp(utils.formatPlantDate(movements[11].plannedDate)));
+  assert.doesNotMatch(body(), new RegExp(utils.formatPlantDate(movements[0].plannedDate)));
+  page.context.page.ui.pages.upcoming = 1;
+  page.context.page.render();
+  assert.equal((body().match(/<tr>/g) || []).length, 2);
+});
+
+test("unknown hire rates remain unknown in bars, summary and Hire Watch", async () => {
+  const page = await pageHarness(manager, { dataset: { plantAssets: [asset], plantHireRecords: [{ ...record, hireRate: null }] } });
+  assert.match(page.html(), /Complete commitment withheld/);
+  assert.doesNotMatch(page.html(), /class="plant-bar"|£0/);
+});
+
+test("asset-centred financial attention groups concerns and escalates only supported conditions", () => {
+  const make = (data = {}, profile = manager) => {
+    const overview = build(data, profile);
+    return model.buildAttentionQueue(overview, model.buildManagement(overview, today), today);
+  };
+  const idle = make({ plantHireRecords: [{ ...record, expectedOffHireDate: "2027-01-01" }] });
+  assert.equal(idle.queue.length, 1);
+  assert.equal(idle.queue[0].tone, "information");
+  const due = make();
+  assert.equal(due.queue[0].tone, "warning");
+  const data = { plantAssets: [{ ...asset, currentLocationConfirmedAt: null }], plantHireRecords: [{ ...record, expectedOffHireDate: "2026-09-18" }] };
+  const overdue = make(data);
+  assert.equal(overdue.queue.length, 1);
+  assert.equal(overdue.queue[0].concerns.length, 3);
+  assert.equal(overdue.queue[0].tone, "danger");
+  assert.equal(overdue.overdueWeekly, 700);
+  assert.equal(overdue.commercialAssets, 1);
+  const missing = make({ ...data, plantHireRecords: [{ ...data.plantHireRecords[0], hireRate: null }] });
+  assert.equal(missing.queue[0].tone, "pressure");
+  assert.equal(missing.overdueWeekly, null);
+  const restricted = make(data, site);
+  assert.equal(restricted.queue[0].weekly, null);
+  assert.equal(restricted.overdueWeekly, null);
+  assert.equal(restricted.queue[0].tone, "information");
+  const state = sources(data);
+  state.plantHireRecords.complete = false;
+  const partial = model.buildOverview(state, manager, today);
+  assert.equal(model.buildAttentionQueue(partial, model.buildManagement(partial, today), today).overdueWeekly, null);
+});
+
+test("asset-centred queue ranks known weekly pressure without double-counting concerns", () => {
+  const second = { ...asset, id: "second", plantId: "EXC-2", plantReference: "EXC-2" };
+  const overview = build({ plantAssets: [asset, second], plantHireRecords: [record, { ...record, id: "hire-2", plantId: "EXC-2", hireRate: 200 }] });
+  const result = model.buildAttentionQueue(overview, model.buildManagement(overview, today), today);
+  assert.equal(result.queue.length, 2);
+  assert.equal(result.queue[0].asset.id, "second");
+  assert.equal(result.commercialAssets, 2);
+});
+
+test("Fleet category toggle selects, switches, and resets existing tables", async () => {
+  const page = await pageHarness(manager, { dataset: fleetFixture(10) });
+  const api = page.context.page;
+  api.applyFilter("position", "Available", "Available");
+  assert.equal(api.ui.filter.value, "Available");
+  assert.match(page.html(), /aria-pressed="true" data-filter="position" data-value="Available"/);
+  api.applyFilter("position", "Off road / hold", "Off road / hold");
+  assert.equal(api.ui.filter.value, "Off road / hold");
+  api.applyFilter("position", "Off road / hold", "Off road / hold");
+  assert.equal(api.ui.filter.kind, "all");
+  assert.match(page.html(), /Showing: <strong>All Fleet/);
 });

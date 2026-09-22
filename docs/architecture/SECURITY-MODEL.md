@@ -232,7 +232,7 @@ canManageTransport
 
 and project assignment where appropriate.
 
-Plant authority must not automatically provide commercial or assurance authority.
+Plant authority must not automatically provide general project Commercial or Assurance management. Restricted Plant cost viewing has the separate approved scope below.
 
 ---
 
@@ -331,3 +331,21 @@ Whenever a new permission domain is introduced:
 5. update Storage rules if required
 6. update Admin role configuration
 7. test positive and negative access cases
+
+# Approved Delegation, Plant Costs and People Privacy (2026-09-19)
+
+Possessing a permission does not authorise granting it. Use a fixed grant matrix initially, not a configurable role builder. Detailed grant combinations must be defined before enforcement.
+
+Only Platform Administration may create/assign Level 99, assign platform-level roles, change a user organisation or administer across tenants. Organisation Manager may administer approved users/roles within their organisation, but cannot grant platform authority or transfer tenants. Project management cannot implicitly grant Commercial, Assurance or Plant-management powers. Treat role-code changes as authorisation changes as well as permission-map edits.
+
+Restricted Plant costs (hire rates, supplier prices, repair/transport costs and exposure) are visible to Plant / Transport Manager, Organisation Manager, Platform Admin or explicitly authorised relevant Commercial/Plant cost users. Site Managers and H&S users do not receive costs automatically. This does not grant general project Commercial or Assurance management.
+
+People availability/assignment/clash information is distinct from sensitive absence reasons/details. Exact permission vocabulary and the scoped matrix remain implementation-design work.
+
+These are approved target contracts; current code/rules have not changed. See [DEVELOPMENT-ROADMAP.md](DEVELOPMENT-ROADMAP.md).
+
+# Controlled Evidence Direction
+
+Approved maximum individual upload: 50 MB; enforcement pending. Match Storage paths to authorised metadata ownership/category, use new objects per revision, separate upload/review/cost viewing and retain accepted evidence until replacement upload/finalisation succeeds. Define recovery and finalisation verification before implementation.
+
+The project path above remains the project-evidence direction. Unassigned Plant assets also need organisation/entity-scoped evidence; exact paths/references remain to be specified. Checked-in storage.rules currently denies all client access; this document does not describe deployed permissions.

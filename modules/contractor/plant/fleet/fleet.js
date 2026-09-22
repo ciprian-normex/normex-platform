@@ -1,4 +1,4 @@
-import { calculateHire, selectHire, isHireOwnership as sharedHireOwnership, weeklyHireRate as sharedWeeklyRate, validHireRate } from "../shared/plant-hire.js";
+import { calendarDay, calculateHire, selectHire, isHireOwnership as sharedHireOwnership, weeklyHireRate as sharedWeeklyRate, validHireRate } from "../shared/plant-hire.js";
 import {
   auth,
   db
@@ -63,12 +63,6 @@ let hireSelectionByAsset = new Map();
 let hireReadComplete = false;
 let assetReadComplete = false;
 
-
-let selectedPlantType =
-  "";
-
-let selectedFleetView =
-  "ALL";
 
 let stagedAttachments =
   [];
@@ -612,9 +606,8 @@ async function initialiseFleet(
     !organisationId
   ) {
 
-    console.error(
-      "NORMEX Fleet: organisation context is missing."
-    );
+    getElement("fleetLoadStatus").textContent = "Unavailable: organisation context is missing.";
+    getElement("fleetRegister").setAttribute("aria-busy", "false");
 
     return;
 
@@ -640,6 +633,7 @@ async function initialiseFleet(
   bindEvents();
 
 
+  initialiseRegisterFilters();
   openRequestedPlantAction();
 
   await loadFleetData();
@@ -935,6 +929,10 @@ async function loadFleetData() {
   }
 
 
+  fleetAssetState = "Loading"; fleetHireState = canViewPlantCosts ? "Loading" : "Restricted";
+  assetReadComplete = false; hireReadComplete = false;
+  plantAssets = []; hireRecords = [];
+  renderEverything();
   await Promise.all([
     loadPlantAssets(),
     loadHireRecords()
@@ -999,15 +997,13 @@ async function loadPlantAssets() {
         );
 
 
-    assetReadComplete = true;
+    assetReadComplete = snapshot.metadata?.fromCache !== true;
+    fleetAssetState = assetReadComplete ? "Loaded" : "Partial";
   } catch (
     error
   ) {
 
-    console.error(
-      "NORMEX Fleet could not load plantAssets:",
-      error
-    );
+    fleetAssetState = fleetReadError(error);
 
 
     plantAssets =
@@ -1057,15 +1053,13 @@ async function loadHireRecords() {
       );
 
 
-    hireReadComplete = true;
+    hireReadComplete = snapshot.metadata?.fromCache !== true;
+    fleetHireState = hireReadComplete ? "Loaded" : "Partial";
   } catch (
     error
   ) {
 
-    console.warn(
-      "NORMEX Fleet could not load plantHireRecords:",
-      error
-    );
+    fleetHireState = fleetReadError(error);
 
 
     hireRecords =
@@ -1075,6 +1069,8 @@ async function loadHireRecords() {
 
 }
 
+
+function fleetReadError(error) { return String(error?.code).includes("permission-denied") ? "Restricted" : /unavailable|deadline-exceeded/.test(String(error?.code)) ? "Unavailable" : "Error"; }
 
 function rebuildHireLookup() {
   hireSelectionByAsset = new Map(plantAssets.map(asset => [asset.id, selectHire(asset, hireRecords, { complete: hireReadComplete })]));
@@ -1251,23 +1247,150 @@ function renderStaticOptions() {
 ========================================================= */
 
 function renderEverything() {
-
-  renderFinancialMetrics();
-
-  renderFleetMetrics();
-
-  renderPriorityFleet();
-
-  renderCategories();
-
+  const select = getElement("fleetProjectFilter");
+  const selected = select?.value || "";
+  const projects = new Map(plantAssets.filter(isActiveAsset).filter(asset => asset.currentProjectId).map(asset => [asset.currentProjectId, asset.currentProjectName || asset.currentProjectId]));
+  if (select) {
+    select.innerHTML = '<option value="">All projects</option><option value="__UNASSIGNED">No recorded project</option>' + [...projects].sort((a, b) => String(a[1]).localeCompare(String(b[1]))).map(([id, name]) => `<option value="${escapeHtml(id)}">${escapeHtml(name)}</option>`).join("");
+    if (selected && !["__UNASSIGNED", ...projects.keys()].includes(selected)) select.add(new Option("Requested project (no loaded match)", selected));
+    select.value = selected;
+  }
   applyFleetFilters();
-
 }
 
+const fleetFilterIds = { search: "fleetSearchInput", ownership: "fleetOwnershipFilter", type: "fleetTypeFilter", status: "fleetStatusFilter", project: "fleetProjectFilter", attention: "fleetAttentionFilter" };
+let fleetPage = 0;
+let fleetQuickFilter = "";
+let fleetSortDescending = false;
+const fleetPageSize = 25;
+let fleetAssetState = "Loading";
+let fleetHireState = "Loading";
 
-/* =========================================================
-   FINANCIAL POSITION
-========================================================= */
+function recordedAssigned(asset) {
+  return Boolean(cleanString(asset.currentProjectId) || cleanString(asset.currentProjectName));
+}
+function recordedAvailable(asset) {
+  return asset.status === "AVAILABLE" && !isOffRoad(asset) && !recordedAssigned(asset);
+}
+function fleetAttention(asset) {
+  const flags = [];
+  const hire = canViewPlantCosts ? getHireRecordForAsset(asset) : null;
+  let label = "No recorded signal", rank = 9, tone = "neutral";
+  const add = (flag, text, priority, colour) => { flags.push(flag); if (priority < rank) { label = text; rank = priority; tone = colour; } };
+  if (isOffRoad(asset)) add("OFF_ROAD", "Off road / hold", 0, "danger");
+  if (asset.status === "MAINTENANCE") add("MAINTENANCE", "Maintenance recorded", 2, "warning");
+  if (!PLANT_STATUSES.some(item => item.code === asset.status)) add("STATE", "State needs review", 3, "information");
+  if (canViewPlantCosts && isHireOwnership(asset.ownershipType)) {
+    const selection = hireSelectionByAsset.get(asset.id);
+    if (selection?.state !== "SELECTED" || calculateHire(hire).state !== "KNOWN") add("HIRE_UNKNOWN", "Hire needs review", 3, "information");
+    if (hire && !hire.offHireConfirmedDate && ["ACTIVE", "OFF_HIRE_REQUESTED"].includes(hire.status)) {
+      const due = calendarDay(hire.expectedOffHireDate), today = calendarDay(new Date());
+      if (due !== null && due <= today + 14) add("OFF_HIRE", due < today ? "Off-hire overdue" : "Off-hire due soon", due < today ? 1 : 2, "warning");
+    }
+  }
+  const locationDay = calendarDay(asset.currentLocationConfirmedAt);
+  if (!asset.currentLocationLabel || locationDay === null || locationDay > calendarDay(new Date())) add("LOCATION", "Location unconfirmed", 4, "information");
+  if (isIdleHiredAsset(asset) && (!hire || !hire.offHireConfirmedDate)) add("IDLE", "Hired / recorded unassigned", 5, "information");
+  if (!flags.length) flags.push("NONE");
+  return { flags, label, rank, tone };
+}
+function renderFleetMetrics() {
+  const active = plantAssets.filter(isActiveAsset);
+  const metrics = [["TOTAL", "Total", active.length], ["ASSIGNED", "Assigned", active.filter(recordedAssigned).length], ["AVAILABLE", "Available", active.filter(recordedAvailable).length], ["HIRED", "Hired / leased", active.filter(asset => isHireOwnership(asset.ownershipType)).length], ["OFF_ROAD", "Off road / hold", active.filter(isOffRoad).length]];
+  getElement("fleetMetrics").innerHTML = metrics.map(([key, label, count]) => `<button type="button" data-fleet-quick="${key}" aria-pressed="${fleetQuickFilter === key}" ${!canViewPlant ? "disabled" : ""}><span>${label}</span><strong>${assetReadComplete ? count : "--"}</strong><small>${key === "TOTAL" ? "Active assets" : key === "ASSIGNED" ? "Recorded project" : key === "AVAILABLE" ? "Readiness not assessed" : "Filter register"}</small></button>`).join("");
+}
+function initialiseRegisterFilters() {
+  const params = new URLSearchParams(window.location.search);
+  const allow = {
+    ownership: ["HIRED", "OWNED", "LEASED", "CROSS_HIRED", "OTHER"],
+    type: PLANT_TYPES.map(item => item.code),
+    status: PLANT_STATUSES.map(item => item.code),
+    attention: ["OFF_ROAD", "OFF_HIRE", "LOCATION", "IDLE", "HIRE_UNKNOWN", "NONE", "MAINTENANCE"]
+  };
+  for (const [key, values] of Object.entries(allow)) {
+    const value = params.get(key);
+    if (values.includes(value) && !(!canViewPlantCosts && key === "attention" && ["OFF_HIRE", "HIRE_UNKNOWN"].includes(value))) getElement(fleetFilterIds[key]).value = value;
+  }
+  const project = params.get("project");
+  if (project && project.length < 200) { getElement("fleetProjectFilter").add(new Option("Requested project", project)); getElement("fleetProjectFilter").value = project; }
+  if (!canViewPlantCosts) {
+    for (const value of ["OFF_HIRE", "HIRE_UNKNOWN"]) getElement("fleetAttentionFilter").querySelector(`option[value="${value}"]`)?.remove();
+    getElement("fleetSort").querySelector('option[value="offhire"]')?.remove();
+  }
+}
+function applyFleetFilters() {
+  renderFleetMetrics();
+  const filters = Object.fromEntries(Object.entries(fleetFilterIds).map(([key, id]) => [key, cleanString(getElement(id)?.value)]));
+  const active = plantAssets.filter(asset => filters.status === "INACTIVE" ? !isActiveAsset(asset) : isActiveAsset(asset));
+  const ownershipMatches = (asset, ownership) => !ownership || (ownership === "HIRED" ? isHireOwnership(asset.ownershipType) : asset.ownershipType === ownership);
+  const statusMatches = (asset, value) => !value || (value === "AVAILABLE" ? recordedAvailable(asset) : value === "OFF_ROAD" ? isOffRoad(asset) : asset.status === value);
+  const filtered = active.filter(asset => {
+    const hire = canViewPlantCosts ? getHireRecordForAsset(asset) : null;
+    const search = [asset.id, asset.plantId, asset.plantReference, asset.manufacturer, asset.model, asset.serialNumber, asset.registrationNumber, asset.supplierName, hire?.supplierName, asset.currentLocationLabel, asset.currentProjectName].filter(Boolean).join(" ").toLowerCase();
+    const quick = !fleetQuickFilter || fleetQuickFilter === "TOTAL" || (fleetQuickFilter === "ASSIGNED" ? recordedAssigned(asset) : fleetQuickFilter === "HIRED" ? isHireOwnership(asset.ownershipType) : statusMatches(asset, fleetQuickFilter));
+    return quick && search.includes(filters.search.toLowerCase()) && ownershipMatches(asset, filters.ownership) && (!filters.type || asset.plantType === filters.type) && statusMatches(asset, filters.status) && (!filters.project || (filters.project === "__UNASSIGNED" ? !recordedAssigned(asset) : asset.currentProjectId === filters.project)) && (!filters.attention || fleetAttention(asset).flags.includes(filters.attention));
+  });
+  const sort = getElement("fleetSort")?.value || "attention";
+  const id = asset => asset.plantReference || asset.plantId || asset.id;
+  const value = asset => ({ id: id(asset), type: getPlantTypeLabel(asset.plantType), ownership: asset.ownershipType || "", status: isOffRoad(asset) ? "OFF_ROAD" : asset.status || "", project: asset.currentProjectName || asset.currentProjectId || "", attention: fleetAttention(asset).rank, offhire: canViewPlantCosts ? calendarDay(getHireRecordForAsset(asset)?.expectedOffHireDate) : null })[sort];
+  filtered.sort((a, b) => {
+    const av = value(a), bv = value(b);
+    if (av == null || bv == null) return av == null && bv == null ? String(id(a)).localeCompare(String(id(b)), "en-GB", { numeric: true }) : av == null ? 1 : -1;
+    const result = typeof av === "number" ? av - bv : String(av).localeCompare(String(bv), "en-GB", { numeric: true });
+    return (fleetSortDescending ? -result : result) || String(id(a)).localeCompare(String(id(b)), "en-GB", { numeric: true });
+  });
+  getElement("fleetLoadStatus").textContent = !canViewPlant ? "Restricted: Plant access is required." : fleetAssetState === "Loading" ? "Loading Fleet..." : ["Unavailable", "Restricted", "Error"].includes(fleetAssetState) ? `${fleetAssetState}: Fleet could not be loaded.` : `${assetReadComplete ? "Current Fleet records loaded" : "Partial data: cached records only; organisation totals withheld"}${canViewPlantCosts && !hireReadComplete ? ` | Hire information: ${fleetHireState}` : !canViewPlantCosts ? " | Financial information: Restricted" : ""}`;
+  const chips = Object.entries(filters).filter(([, val]) => val).map(([key, val]) => {
+    const el = getElement(fleetFilterIds[key]);
+    const text = key === "search" ? val : el.selectedOptions[0]?.textContent || val;
+    return `<button type="button" data-clear-filter="${key}" aria-label="Remove ${escapeHtml(key)} filter">${escapeHtml(text)} &times;</button>`;
+  });
+  if (fleetQuickFilter) chips.unshift(`<button type="button" data-clear-filter="quick">${escapeHtml(fleetQuickFilter.replaceAll("_", " "))} &times;</button>`);
+  getElement("fleetFilterChips").innerHTML = chips.join("");
+  getElement("fleetSortDirection").textContent = fleetSortDescending ? "Descending" : "Ascending";
+  renderFleetRegister(filtered);
+}
+function renderFleetRegister(records) {
+  const root = getElement("fleetRegister");
+  root.setAttribute("aria-busy", String(canViewPlant && fleetAssetState === "Loading"));
+  const pages = Math.max(1, Math.ceil(records.length / fleetPageSize));
+  fleetPage = Math.min(fleetPage, pages - 1);
+  getElement("fleetPagination").innerHTML = records.length ? `<button type="button" data-page="-1" ${fleetPage === 0 ? "disabled" : ""}>Previous</button><span>Page ${fleetPage + 1} of ${pages}</span><button type="button" data-page="1" ${fleetPage + 1 === pages ? "disabled" : ""}>Next</button>` : "";
+  getElement("fleetRegisterCount").textContent = !canViewPlant || ["Loading", "Unavailable", "Restricted", "Error"].includes(fleetAssetState) ? "" : `${records.length ? fleetPage * fleetPageSize + 1 : 0}-${Math.min((fleetPage + 1) * fleetPageSize, records.length)} of ${records.length} matching loaded assets${!assetReadComplete ? " (partial data)" : ""}`;
+  if (!canViewPlant || ["Loading", "Unavailable", "Restricted", "Error"].includes(fleetAssetState)) { root.innerHTML = emptyState(!canViewPlant ? "Restricted" : fleetAssetState === "Loading" ? "Loading Plant records..." : `${fleetAssetState}: refresh to retry.`); return; }
+  if (!records.length) { root.innerHTML = emptyState(!assetReadComplete ? "Partial data: no matches in cached records. Complete Fleet position is unavailable." : plantAssets.filter(isActiveAsset).length ? "No filter matches. Clear filters to see loaded Fleet records." : "No active assets recorded. Add Plant to start the organisation register."); return; }
+  const columns = ["Plant ID", "Plant", "Ownership", "Status", "Current project", "Current location", "Supplier", "Expected off-hire", ...(canViewPlantCosts ? ["Hire rate"] : []), "Attention", "Action"];
+  root.innerHTML = `<table class="fleet-master-table"><thead><tr>${columns.map(label => `<th scope="col">${label}</th>`).join("")}</tr></thead><tbody>${records.slice(fleetPage * fleetPageSize, (fleetPage + 1) * fleetPageSize).map(asset => {
+    const hire = canViewPlantCosts ? getHireRecordForAsset(asset) : null;
+    const hired = isHireOwnership(asset.ownershipType);
+    const signal = fleetAttention(asset);
+    const cells = [escapeHtml(asset.plantReference || asset.plantId || asset.id), `${escapeHtml(assetDisplayName(asset))}<small>${escapeHtml(getPlantTypeLabel(asset.plantType))}</small>`, escapeHtml(getPlantOwnershipLabel(asset.ownershipType) || "Unknown"), `<span class="fleet-register-signal ${isOffRoad(asset) ? "danger" : "neutral"}">${escapeHtml(isOffRoad(asset) ? "Off road / hold" : asset.status ? getPlantStatusLabel(asset.status) : "Unknown")}</span>`, escapeHtml(asset.currentProjectName || asset.currentProjectId || "Not recorded"), escapeHtml(asset.currentLocationLabel || "Not confirmed"), escapeHtml(asset.supplierName || hire?.supplierName || "Not recorded"), !hired ? "Not applicable" : !canViewPlantCosts ? "Restricted" : hire?.offHireConfirmedDate ? "Off-hire confirmed" : calendarDay(hire?.expectedOffHireDate) === null ? "Unknown" : escapeHtml(formatDate(hire.expectedOffHireDate)), ...(canViewPlantCosts ? [hired ? escapeHtml(formatHireRate(hire)) : "Not applicable"] : []), `<span class="fleet-register-signal ${signal.tone}">${escapeHtml(signal.label)}</span>`, `<a href="${assetUrl(asset)}">Open Asset &rarr;</a>`];
+    const details = [2, 5, 6, 7, ...(canViewPlantCosts ? [8] : [])].map(index => '<div><dt>' + columns[index] + '</dt><dd>' + cells[index] + '</dd></div>').join('');
+    cells[cells.length - 1] += '<details class="fleet-row-details"><summary>More details</summary><dl>' + details + '</dl></details>';
+    return `<tr>${cells.map((cell, i) => `<td data-label="${columns[i]}"><div>${cell}</div></td>`).join("")}</tr>`;
+  }).join("")}</tbody></table>`;
+}
+function clearFilters() {
+  Object.values(fleetFilterIds).forEach(id => { getElement(id).value = ""; });
+  fleetQuickFilter = ""; fleetPage = 0; fleetSortDescending = false;
+  getElement("fleetSort").value = "attention";
+  applyFleetFilters();
+}
+function bindRegisterEvents() {
+  for (const [key, id] of Object.entries(fleetFilterIds)) getElement(id).addEventListener(key === "search" ? "input" : "change", () => { fleetPage = 0; applyFleetFilters(); });
+  getElement("fleetSort").addEventListener("change", () => { fleetPage = 0; applyFleetFilters(); });
+  getElement("clearFleetFilters").addEventListener("click", clearFilters);
+  getElement("fleetSortDirection").addEventListener("click", () => { fleetSortDescending = !fleetSortDescending; fleetPage = 0; applyFleetFilters(); });
+  getElement("fleetWorkspace").addEventListener("click", event => {
+    const button = event.target.closest("button[data-fleet-quick], button[data-clear-filter], button[data-page]");
+    if (!button) return;
+    if (button.dataset.fleetQuick) { fleetQuickFilter = fleetQuickFilter === button.dataset.fleetQuick || button.dataset.fleetQuick === "TOTAL" ? "" : button.dataset.fleetQuick; fleetPage = 0; }
+    if (button.dataset.clearFilter) { if (button.dataset.clearFilter === "quick") fleetQuickFilter = ""; else getElement(fleetFilterIds[button.dataset.clearFilter]).value = ""; fleetPage = 0; }
+    if (button.dataset.page) fleetPage = Math.max(0, fleetPage + Number(button.dataset.page));
+    applyFleetFilters();
+    if (button.dataset.page) getElement("fleetRegister").scrollIntoView({ block: "start" });
+  });
+}
 
 function renderFinancialMetrics() {
 
@@ -1596,1892 +1719,6 @@ function renderFinancialMetrics() {
    FLEET POSITION
 ========================================================= */
 
-function renderFleetMetrics() {
-
-  const root =
-    getElement(
-      "fleetMetrics"
-    );
-
-
-  if (
-    !root
-  ) {
-
-    return;
-
-  }
-
-
-  const active =
-    plantAssets.filter(
-      isActiveAsset
-    );
-
-
-  const deployed =
-    active.filter(
-      (
-        asset
-      ) =>
-        asset.status ===
-          "DEPLOYED"
-    ).length;
-
-
-  const available =
-    active.filter(
-      (
-        asset
-      ) =>
-        asset.status ===
-          "AVAILABLE"
-    ).length;
-
-
-  const hired =
-    active.filter(
-      (
-        asset
-      ) =>
-        isHireOwnership(
-          asset.ownershipType
-        )
-    ).length;
-
-
-  const owned =
-    active.filter(
-      (
-        asset
-      ) =>
-        asset.ownershipType ===
-          "OWNED"
-    ).length;
-
-
-  const offRoad =
-    active.filter(
-      isOffRoad
-    ).length;
-
-
-  const cards = [
-
-    {
-      label:
-        "Total Plant",
-
-      value:
-        active.length,
-
-      note:
-        "Active fleet assets"
-    },
-
-    {
-      label:
-        "Deployed",
-
-      value:
-        deployed,
-
-      note:
-        "Currently recorded in use"
-    },
-
-    {
-      label:
-        "Available",
-
-      value:
-        available,
-
-      note:
-        "Ready for allocation"
-    },
-
-    {
-      label:
-        "Hired / Leased",
-
-      value:
-        hired,
-
-      note:
-        "External fleet"
-    },
-
-    {
-      label:
-        "Owned",
-
-      value:
-        owned,
-
-      note:
-        "Organisation-owned plant"
-    },
-
-    {
-      label:
-        "Off Road / Hold",
-
-      value:
-        offRoad,
-
-      note:
-        "Defect or compliance restriction",
-
-      alert:
-        offRoad >
-          0
-    }
-
-  ];
-
-
-  root.innerHTML =
-    cards
-      .map(
-        (
-          card
-        ) => `
-
-          <article
-            class="
-              fleet-metric
-              ${
-                card.alert
-                  ? "is-alert"
-                  : ""
-              }
-            "
-          >
-
-            <span>
-              ${escapeHtml(
-                card.label
-              )}
-            </span>
-
-            <strong>
-              ${card.value}
-            </strong>
-
-            <small>
-              ${escapeHtml(
-                card.note
-              )}
-            </small>
-
-          </article>
-
-        `
-      )
-      .join("");
-
-}
-
-
-/* =========================================================
-   PRIORITY HIRED / OWNED VIEWS
-========================================================= */
-
-function renderPriorityFleet() {
-
-  const active =
-    plantAssets.filter(
-      isActiveAsset
-    );
-
-
-  const hired =
-    active.filter(
-      (
-        asset
-      ) =>
-        isHireOwnership(
-          asset.ownershipType
-        )
-    );
-
-
-  const owned =
-    active.filter(
-      (
-        asset
-      ) =>
-        asset.ownershipType ===
-          "OWNED"
-    );
-
-
-  setCount(
-    "hiredFleetCount",
-    hired.length
-  );
-
-
-  setCount(
-    "ownedFleetCount",
-    owned.length
-  );
-
-
-  renderPriorityCards(
-    "hiredFleetGrid",
-    sortHiredForPriority(
-      hired
-    ).slice(
-      0,
-      6
-    ),
-    "HIRED"
-  );
-
-
-  renderPriorityCards(
-    "ownedFleetGrid",
-    sortOwnedForPriority(
-      owned
-    ).slice(
-      0,
-      6
-    ),
-    "OWNED"
-  );
-
-}
-
-
-function sortHiredForPriority(
-  records
-) {
-
-  return records
-    .slice()
-    .sort(
-      (
-        a,
-        b
-      ) => {
-
-        const aPriority =
-          (
-            isOffRoad(
-              a
-            )
-              ? 100
-              : 0
-          )
-          +
-          (
-            isIdleHiredAsset(
-              a
-            )
-              ? 50
-              : 0
-          );
-
-
-        const bPriority =
-          (
-            isOffRoad(
-              b
-            )
-              ? 100
-              : 0
-          )
-          +
-          (
-            isIdleHiredAsset(
-              b
-            )
-              ? 50
-              : 0
-          );
-
-
-        if (
-          aPriority !==
-            bPriority
-        ) {
-
-          return (
-            bPriority -
-            aPriority
-          );
-
-        }
-
-
-        const aHire =
-          getHireRecordForAsset(
-            a
-          );
-
-
-        const bHire =
-          getHireRecordForAsset(
-            b
-          );
-
-
-        const aWeekly =
-          weeklyEquivalent(
-            aHire?.hireRate,
-            aHire?.hireRateUnit
-          );
-
-
-        const bWeekly =
-          weeklyEquivalent(
-            bHire?.hireRate,
-            bHire?.hireRateUnit
-          );
-
-
-        return (
-          bWeekly -
-          aWeekly
-        );
-
-      }
-    );
-
-}
-
-
-function sortOwnedForPriority(
-  records
-) {
-
-  return records
-    .slice()
-    .sort(
-      (
-        a,
-        b
-      ) => {
-
-        if (
-          isOffRoad(
-            a
-          )
-          !==
-          isOffRoad(
-            b
-          )
-        ) {
-
-          return isOffRoad(
-            b
-          )
-            ? 1
-            : -1;
-
-        }
-
-
-        return cleanString(
-          a.plantReference
-        ).localeCompare(
-          cleanString(
-            b.plantReference
-          )
-        );
-
-      }
-    );
-
-}
-
-
-function renderPriorityCards(
-  rootId,
-  records,
-  viewType
-) {
-
-  const root =
-    getElement(
-      rootId
-    );
-
-
-  if (
-    !root
-  ) {
-
-    return;
-
-  }
-
-
-  if (
-    !records.length
-  ) {
-
-    root.innerHTML =
-      emptyState(
-        viewType ===
-          "HIRED"
-          ? "No hired or leased plant is recorded yet."
-          : "No owned plant is recorded yet."
-      );
-
-    return;
-
-  }
-
-
-  root.innerHTML =
-    records
-      .map(
-        (
-          asset
-        ) =>
-          renderPriorityAssetCard(
-            asset,
-            viewType
-          )
-      )
-      .join("");
-
-}
-
-
-function renderPriorityAssetCard(
-  asset,
-  viewType
-) {
-
-  const hire =
-    getHireRecordForAsset(
-      asset
-    );
-
-
-  const idleHire =
-    isIdleHiredAsset(
-      asset
-    );
-
-
-  const offRoad =
-    isOffRoad(
-      asset
-    );
-
-
-  const cardClasses = [
-    "fleet-priority-card"
-  ];
-
-
-  if (
-    idleHire
-  ) {
-
-    cardClasses.push(
-      "is-idle-hire"
-    );
-
-  }
-
-
-  if (
-    offRoad
-  ) {
-
-    cardClasses.push(
-      "is-off-road"
-    );
-
-  }
-
-
-  const facts =
-    viewType ===
-      "HIRED"
-
-      ? [
-
-          [
-            "Supplier",
-            asset.supplierName ||
-            hire?.supplierName ||
-            "Not recorded"
-          ],
-
-          [
-            "Current Location",
-            asset.currentLocationLabel ||
-            "Not confirmed"
-          ],
-
-          [
-            "Hire Rate",
-            canViewPlantCosts
-              ? formatHireRate(
-                  hire
-                )
-              : "Restricted"
-          ],
-
-          [
-            "Expected Off-Hire",
-            formatDate(
-              hire?.expectedOffHireDate
-            )
-          ]
-
-        ]
-
-      : [
-
-          [
-            "Current Project",
-            asset.currentProjectName ||
-            "Not allocated"
-          ],
-
-          [
-            "Current Location",
-            asset.currentLocationLabel ||
-            "Not confirmed"
-          ],
-
-          [
-            "Last Inspection",
-            asset.lastInspectionLabel ||
-            "No record"
-          ],
-
-          [
-            "Compliance",
-            asset.complianceLabel ||
-            "Not assessed"
-          ]
-
-        ];
-
-
-  return `
-
-    <article
-      class="${cardClasses.join(
-        " "
-      )}"
-    >
-
-      <div class="fleet-priority-card__top">
-
-        <div>
-
-          <span class="fleet-priority-card__reference">
-
-            ${escapeHtml(
-              asset.plantReference ||
-              asset.id
-            )}
-
-          </span>
-
-          <strong class="fleet-priority-card__model">
-
-            ${escapeHtml(
-              assetDisplayName(
-                asset
-              )
-            )}
-
-          </strong>
-
-          <span class="fleet-priority-card__type">
-
-            ${escapeHtml(
-              getPlantTypeLabel(
-                asset.plantType
-              )
-            )}
-
-          </span>
-
-        </div>
-
-
-        <span
-          class="
-            fleet-status-chip
-            ${getStatusClass(
-              asset.status
-            )}
-          "
-        >
-
-          ${escapeHtml(
-            getPlantStatusLabel(
-              asset.status ||
-              "AVAILABLE"
-            )
-          )}
-
-        </span>
-
-      </div>
-
-
-      <div class="fleet-priority-card__facts">
-
-        ${facts
-          .map(
-            (
-              [
-                label,
-                value
-              ]
-            ) => `
-
-              <div>
-
-                <span>
-                  ${escapeHtml(
-                    label
-                  )}
-                </span>
-
-                <strong>
-                  ${escapeHtml(
-                    value
-                  )}
-                </strong>
-
-              </div>
-
-            `
-          )
-          .join("")}
-
-      </div>
-
-
-      <div class="fleet-priority-card__footer">
-
-        <span
-          class="
-            fleet-card-signal
-            ${
-              offRoad
-                ? "is-alert"
-                : idleHire
-                  ? "is-watch"
-                  : ""
-            }
-          "
-        >
-
-          ${escapeHtml(
-            getAssetSignal(
-              asset,
-              hire
-            )
-          )}
-
-        </span>
-
-
-        <a
-          class="fleet-small-action"
-          href="${assetUrl(
-            asset
-          )}"
-        >
-          Open Asset
-        </a>
-
-      </div>
-
-    </article>
-
-  `;
-
-}
-
-
-/* =========================================================
-   CATEGORY VIEW
-========================================================= */
-
-function buildCategoryPositions() {
-
-  const grouped =
-    new Map();
-
-
-  plantAssets
-    .filter(
-      isActiveAsset
-    )
-    .forEach(
-      (
-        asset
-      ) => {
-
-        const code =
-          asset.plantType ||
-          "OTHER";
-
-
-        if (
-          !grouped.has(
-            code
-          )
-        ) {
-
-          grouped.set(
-            code,
-            []
-          );
-
-        }
-
-
-        grouped
-          .get(
-            code
-          )
-          .push(
-            asset
-          );
-
-      }
-    );
-
-
-  return Array
-    .from(
-      grouped.entries()
-    )
-    .map(
-      (
-        [
-          code,
-          assets
-        ]
-      ) => ({
-
-        code,
-
-        label:
-          getPlantTypeLabel(
-            code
-          ),
-
-        total:
-          assets.length,
-
-        deployed:
-          assets.filter(
-            (
-              asset
-            ) =>
-              asset.status ===
-                "DEPLOYED"
-          ).length,
-
-        available:
-          assets.filter(
-            (
-              asset
-            ) =>
-              asset.status ===
-                "AVAILABLE"
-          ).length,
-
-        hired:
-          assets.filter(
-            (
-              asset
-            ) =>
-              isHireOwnership(
-                asset.ownershipType
-              )
-          ).length,
-
-        offRoad:
-          assets.filter(
-            isOffRoad
-          ).length
-
-      }))
-    .sort(
-      (
-        a,
-        b
-      ) =>
-        a.label.localeCompare(
-          b.label
-        )
-    );
-
-}
-
-
-function renderCategories() {
-
-  const root =
-    getElement(
-      "fleetCategoryGrid"
-    );
-
-
-  if (
-    !root
-  ) {
-
-    return;
-
-  }
-
-
-  const categories =
-    buildCategoryPositions();
-
-
-  const count =
-    getElement(
-      "fleetCategoryCount"
-    );
-
-
-  if (
-    count
-  ) {
-
-    count.textContent =
-      `${categories.length} ${
-        categories.length ===
-          1
-          ? "category"
-          : "categories"
-      }`;
-
-  }
-
-
-  if (
-    !categories.length
-  ) {
-
-    root.innerHTML =
-      emptyState(
-        "Fleet categories will appear when plant assets are added."
-      );
-
-    return;
-
-  }
-
-
-  root.innerHTML =
-    categories
-      .map(
-        (
-          category
-        ) => `
-
-          <article
-            class="
-              fleet-category-card
-              ${
-                selectedPlantType ===
-                  category.code
-                  ? "is-active"
-                  : ""
-              }
-            "
-            data-fleet-category="${escapeHtml(
-              category.code
-            )}"
-            tabindex="0"
-            role="button"
-            aria-label="View ${escapeHtml(
-              category.label
-            )}"
-          >
-
-            <div class="fleet-category-card__top">
-
-              <span class="fleet-category-card__code">
-                ${escapeHtml(
-                  getPlantPrefix(
-                    category.code
-                  )
-                )}
-              </span>
-
-              <span class="fleet-category-card__count">
-                ${category.total} plant
-              </span>
-
-            </div>
-
-
-            <strong>
-              ${escapeHtml(
-                category.label
-              )}
-            </strong>
-
-
-            <div class="fleet-category-card__position">
-
-              <div>
-                <span>Deployed</span>
-                <b>${category.deployed}</b>
-              </div>
-
-              <div>
-                <span>Available</span>
-                <b>${category.available}</b>
-              </div>
-
-              <div>
-                <span>Hired</span>
-                <b>${category.hired}</b>
-              </div>
-
-              <div>
-                <span>Off Road</span>
-                <b>${category.offRoad}</b>
-              </div>
-
-            </div>
-
-          </article>
-
-        `
-      )
-      .join("");
-
-
-  root
-    .querySelectorAll(
-      "[data-fleet-category]"
-    )
-    .forEach(
-      (
-        card
-      ) => {
-
-        const selectCategory =
-          () => {
-
-            const code =
-              card.dataset.fleetCategory;
-
-
-            selectedPlantType =
-              selectedPlantType ===
-                code
-                ? ""
-                : code;
-
-
-            syncTypeFilterFromCategory();
-
-            renderCategories();
-
-            applyFleetFilters();
-
-          };
-
-
-        card.addEventListener(
-          "click",
-          selectCategory
-        );
-
-
-        card.addEventListener(
-          "keydown",
-          (
-            event
-          ) => {
-
-            if (
-              [
-                "Enter",
-                " "
-              ].includes(
-                event.key
-              )
-            ) {
-
-              event.preventDefault();
-
-              selectCategory();
-
-            }
-
-          }
-        );
-
-      }
-    );
-
-}
-
-
-function syncTypeFilterFromCategory() {
-
-  const filter =
-    getElement(
-      "fleetTypeFilter"
-    );
-
-
-  if (
-    filter
-  ) {
-
-    filter.value =
-      selectedPlantType;
-
-  }
-
-}
-
-
-/* =========================================================
-   FILTER / MAIN ASSET VIEW
-========================================================= */
-
-function applyFleetFilters() {
-
-  const search =
-    normaliseText(
-      getElement(
-        "fleetSearchInput"
-      )?.value
-    );
-
-
-  const typeFilter =
-    cleanString(
-      getElement(
-        "fleetTypeFilter"
-      )?.value
-    );
-
-
-  const statusFilter =
-    cleanString(
-      getElement(
-        "fleetStatusFilter"
-      )?.value
-    );
-
-
-  const effectiveType =
-    typeFilter ||
-    selectedPlantType;
-
-
-  const filtered =
-    plantAssets
-      .filter(
-        isActiveAsset
-      )
-      .filter(
-        (
-          asset
-        ) => {
-
-          const hire =
-            getHireRecordForAsset(
-              asset
-            );
-
-
-          const searchText = [
-
-            asset.id,
-            asset.plantReference,
-            asset.manufacturer,
-            asset.model,
-            asset.serialNumber,
-            asset.registrationNumber,
-            asset.supplierName,
-            hire?.supplierName,
-            asset.currentLocationLabel,
-            asset.currentProjectName
-
-          ]
-            .filter(
-              Boolean
-            )
-            .join(
-              " "
-            )
-            .toLowerCase();
-
-
-          const ownershipMatch = (
-
-            selectedFleetView ===
-              "ALL"
-
-            ||
-
-            (
-              selectedFleetView ===
-                "OWNED"
-
-              &&
-
-              asset.ownershipType ===
-                "OWNED"
-            )
-
-            ||
-
-            (
-              selectedFleetView ===
-                "HIRED"
-
-              &&
-
-              isHireOwnership(
-                asset.ownershipType
-              )
-            )
-
-          );
-
-
-          return (
-
-            ownershipMatch
-
-            &&
-
-            (
-              !effectiveType
-
-              ||
-
-              asset.plantType ===
-                effectiveType
-            )
-
-            &&
-
-            (
-              !statusFilter
-
-              ||
-
-              asset.status ===
-                statusFilter
-            )
-
-            &&
-
-            (
-              !search
-
-              ||
-
-              searchText.includes(
-                search
-              )
-            )
-
-          );
-
-        }
-      );
-
-
-  updateCurrentFleetHeading(
-    filtered
-  );
-
-
-  renderFleetCards(
-    filtered
-  );
-
-
-  renderFleetRegister(
-    filtered
-  );
-
-}
-
-
-function updateCurrentFleetHeading(
-  records
-) {
-
-  const title =
-    getElement(
-      "currentFleetTitle"
-    );
-
-
-  const note =
-    getElement(
-      "currentFleetNote"
-    );
-
-
-  const count =
-    getElement(
-      "currentFleetCount"
-    );
-
-
-  const typeFilter =
-    cleanString(
-      getElement(
-        "fleetTypeFilter"
-      )?.value
-    )
-    ||
-    selectedPlantType;
-
-
-  let baseTitle =
-    "Current Fleet";
-
-
-  let baseNote =
-    "Live asset position across the organisation.";
-
-
-  if (
-    selectedFleetView ===
-      "HIRED"
-  ) {
-
-    baseTitle =
-      "Hired / Leased Fleet";
-
-
-    baseNote =
-      "External plant currently recorded across the organisation.";
-
-  } else if (
-    selectedFleetView ===
-      "OWNED"
-  ) {
-
-    baseTitle =
-      "Owned Fleet";
-
-
-    baseNote =
-      "Organisation-owned plant currently in the fleet.";
-
-  }
-
-
-  if (
-    typeFilter
-  ) {
-
-    baseTitle =
-      `${getPlantTypeLabel(
-        typeFilter
-      )} · ${baseTitle}`;
-
-  }
-
-
-  if (
-    title
-  ) {
-
-    title.textContent =
-      baseTitle;
-
-  }
-
-
-  if (
-    note
-  ) {
-
-    note.textContent =
-      baseNote;
-
-  }
-
-
-  if (
-    count
-  ) {
-
-    count.textContent =
-      `${records.length} plant`;
-
-  }
-
-}
-
-
-function renderFleetCards(
-  records
-) {
-
-  const root =
-    getElement(
-      "fleetAssetGrid"
-    );
-
-
-  if (
-    !root
-  ) {
-
-    return;
-
-  }
-
-
-  if (
-    !records.length
-  ) {
-
-    root.innerHTML =
-      emptyState(
-        plantAssets.length
-          ? "No plant matches the current fleet view."
-          : "No plant assets have been added yet."
-      );
-
-    return;
-
-  }
-
-
-  root.innerHTML =
-    records
-      .map(
-        renderFleetAssetCard
-      )
-      .join("");
-
-}
-
-
-function renderFleetAssetCard(
-  asset
-) {
-
-  const hire =
-    getHireRecordForAsset(
-      asset
-    );
-
-
-  const hired =
-    isHireOwnership(
-      asset.ownershipType
-    );
-
-
-  const idleHire =
-    isIdleHiredAsset(
-      asset
-    );
-
-
-  const offRoad =
-    isOffRoad(
-      asset
-    );
-
-
-  const cardClasses = [
-    "fleet-asset-card"
-  ];
-
-
-  if (
-    idleHire
-  ) {
-
-    cardClasses.push(
-      "is-idle-hire"
-    );
-
-  }
-
-
-  if (
-    offRoad
-  ) {
-
-    cardClasses.push(
-      "is-off-road"
-    );
-
-  }
-
-
-  const fourthFact =
-    hired
-
-      ? [
-          "Off-Hire",
-          formatDate(
-            hire?.expectedOffHireDate
-          )
-        ]
-
-      : [
-          "Inspection",
-          asset.lastInspectionLabel ||
-          "No record"
-        ];
-
-
-  return `
-
-    <article
-      class="${cardClasses.join(
-        " "
-      )}"
-    >
-
-      <div class="fleet-asset-card__header">
-
-        <span class="fleet-asset-card__reference">
-
-          ${escapeHtml(
-            asset.plantReference ||
-            asset.id
-          )}
-
-        </span>
-
-
-        <div class="fleet-asset-card__chips">
-
-          <span class="fleet-ownership-chip">
-
-            ${escapeHtml(
-              getPlantOwnershipLabel(
-                asset.ownershipType
-              )
-              ||
-              "Unknown"
-            )}
-
-          </span>
-
-
-          <span
-            class="
-              fleet-status-chip
-              ${getStatusClass(
-                asset.status
-              )}
-            "
-          >
-
-            ${escapeHtml(
-              getPlantStatusLabel(
-                asset.status ||
-                "AVAILABLE"
-              )
-            )}
-
-          </span>
-
-        </div>
-
-      </div>
-
-
-      <strong class="fleet-asset-card__model">
-
-        ${escapeHtml(
-          assetDisplayName(
-            asset
-          )
-        )}
-
-      </strong>
-
-
-      <span class="fleet-asset-card__type">
-
-        ${escapeHtml(
-          getPlantTypeLabel(
-            asset.plantType
-          )
-        )}
-
-      </span>
-
-
-      <div class="fleet-asset-card__facts">
-
-
-        <div>
-
-          <span>
-            Current Project
-          </span>
-
-          <strong>
-            ${escapeHtml(
-              asset.currentProjectName ||
-              "Not allocated"
-            )}
-          </strong>
-
-        </div>
-
-
-        <div>
-
-          <span>
-            Current Location
-          </span>
-
-          <strong>
-            ${escapeHtml(
-              asset.currentLocationLabel ||
-              "Not confirmed"
-            )}
-          </strong>
-
-        </div>
-
-
-        <div>
-
-          <span>
-            ${
-              hired
-                ? "Hire Rate"
-                : "Compliance"
-            }
-          </span>
-
-          <strong>
-
-            ${escapeHtml(
-              hired
-                ? (
-                    canViewPlantCosts
-                      ? formatHireRate(
-                          hire
-                        )
-                      : "Restricted"
-                  )
-                : (
-                    asset.complianceLabel ||
-                    "Not assessed"
-                  )
-            )}
-
-          </strong>
-
-        </div>
-
-
-        <div>
-
-          <span>
-            ${escapeHtml(
-              fourthFact[0]
-            )}
-          </span>
-
-          <strong>
-            ${escapeHtml(
-              fourthFact[1]
-            )}
-          </strong>
-
-        </div>
-
-
-      </div>
-
-
-      <div class="fleet-asset-card__footer">
-
-        <span
-          class="
-            fleet-asset-card__signal
-            ${
-              offRoad
-                ? "is-alert"
-                : idleHire
-                  ? "is-watch"
-                  : ""
-            }
-          "
-        >
-
-          ${escapeHtml(
-            getAssetSignal(
-              asset,
-              hire
-            )
-          )}
-
-        </span>
-
-
-        <a
-          class="fleet-small-action"
-          href="${assetUrl(
-            asset
-          )}"
-        >
-          Open Asset
-        </a>
-
-      </div>
-
-
-    </article>
-
-  `;
-
-}
-
-/* =========================================================
-   REGISTER
-========================================================= */
-
-function renderFleetRegister(
-  records
-) {
-
-  const root =
-    getElement(
-      "fleetRegister"
-    );
-
-
-  if (
-    !root
-  ) {
-
-    return;
-
-  }
-
-
-  setCount(
-    "fleetRegisterCount",
-    records.length
-  );
-
-
-  if (
-    !records.length
-  ) {
-
-    root.innerHTML =
-      emptyState(
-        "No plant records in this view."
-      );
-
-    return;
-
-  }
-
-
-  root.innerHTML = `
-
-    <table class="fleet-table">
-
-      <thead>
-
-        <tr>
-
-          <th>
-            Plant ID
-          </th>
-
-          <th>
-            Plant
-          </th>
-
-          <th>
-            Ownership
-          </th>
-
-          <th>
-            Current Project
-          </th>
-
-          <th>
-            Location
-          </th>
-
-          <th>
-            Status
-          </th>
-
-          ${
-            canViewPlantCosts
-              ? "<th>Hire Rate</th>"
-              : ""
-          }
-
-          <th></th>
-
-        </tr>
-
-      </thead>
-
-
-      <tbody>
-
-        ${records
-          .map(
-            (
-              asset
-            ) => {
-
-              const hire =
-                getHireRecordForAsset(
-                  asset
-                );
-
-
-              return `
-
-                <tr>
-
-                  <td>
-
-                    <strong>
-                      ${escapeHtml(
-                        asset.plantReference ||
-                        asset.id
-                      )}
-                    </strong>
-
-                  </td>
-
-
-                  <td>
-                    ${escapeHtml(
-                      assetDisplayName(
-                        asset
-                      )
-                    )}
-                  </td>
-
-
-                  <td>
-                    ${escapeHtml(
-                      getPlantOwnershipLabel(
-                        asset.ownershipType
-                      )
-                      ||
-                      "—"
-                    )}
-                  </td>
-
-
-                  <td>
-                    ${escapeHtml(
-                      asset.currentProjectName ||
-                      "Not allocated"
-                    )}
-                  </td>
-
-
-                  <td>
-                    ${escapeHtml(
-                      asset.currentLocationLabel ||
-                      "Not confirmed"
-                    )}
-                  </td>
-
-
-                  <td>
-                    ${escapeHtml(
-                      getPlantStatusLabel(
-                        asset.status ||
-                        "AVAILABLE"
-                      )
-                    )}
-                  </td>
-
-
-                  ${
-                    canViewPlantCosts
-                      ? `
-
-                        <td>
-
-                          ${escapeHtml(
-                            isHireOwnership(
-                              asset.ownershipType
-                            )
-                              ? formatHireRate(
-                                  hire
-                                )
-                              : "—"
-                          )}
-
-                        </td>
-
-                      `
-                      : ""
-                  }
-
-
-                  <td>
-
-                    <a
-                      class="fleet-small-action"
-                      href="${assetUrl(
-                        asset
-                      )}"
-                    >
-                      Open
-                    </a>
-
-                  </td>
-
-                </tr>
-
-              `;
-
-            }
-          )
-          .join("")}
-
-      </tbody>
-
-    </table>
-
-  `;
-
-}
-
-
-/* =========================================================
-   CARD / DISPLAY HELPERS
-========================================================= */
-
 function assetDisplayName(
   asset
 ) {
@@ -3722,149 +1959,6 @@ function emptyState(
 
 /* =========================================================
    VIEW SWITCH / FILTERS
-========================================================= */
-
-function setFleetView(
-  view
-) {
-
-  selectedFleetView =
-    view;
-
-
-  document
-    .querySelectorAll(
-      "[data-fleet-view]"
-    )
-    .forEach(
-      (
-        button
-      ) => {
-
-        button.classList.toggle(
-          "is-active",
-          button.dataset.fleetView ===
-            view
-        );
-
-      }
-    );
-
-
-  applyFleetFilters();
-
-}
-
-
-function showHiredFleet() {
-
-  setFleetView(
-    "HIRED"
-  );
-
-
-  scrollToCurrentFleet();
-
-}
-
-
-function showOwnedFleet() {
-
-  setFleetView(
-    "OWNED"
-  );
-
-
-  scrollToCurrentFleet();
-
-}
-
-
-function scrollToCurrentFleet() {
-
-  getElement(
-    "currentFleetTitle"
-  )
-    ?.closest(
-      ".fleet-section"
-    )
-    ?.scrollIntoView({
-      behavior:
-        "smooth",
-
-      block:
-        "start"
-    });
-
-}
-
-
-function clearFilters() {
-
-  selectedPlantType =
-    "";
-
-
-  selectedFleetView =
-    "ALL";
-
-
-  [
-    "fleetSearchInput",
-    "fleetTypeFilter",
-    "fleetStatusFilter"
-  ].forEach(
-    (
-      id
-    ) => {
-
-      const element =
-        getElement(
-          id
-        );
-
-
-      if (
-        element
-      ) {
-
-        element.value =
-          "";
-
-      }
-
-    }
-  );
-
-
-  document
-    .querySelectorAll(
-      "[data-fleet-view]"
-    )
-    .forEach(
-      (
-        button
-      ) => {
-
-        button.classList.toggle(
-          "is-active",
-          button.dataset.fleetView ===
-            "ALL"
-        );
-
-      }
-    );
-
-
-  renderCategories();
-
-  applyFleetFilters();
-
-}
-
-
-/* =========================================================
-   ADD PLANT MODAL
 ========================================================= */
 
 function openAddPlantModal() {
@@ -5047,89 +3141,7 @@ function bindEvents() {
   );
 
 
-  getElement(
-    "fleetSearchInput"
-  )?.addEventListener(
-    "input",
-    applyFleetFilters
-  );
-
-
-  getElement(
-    "fleetTypeFilter"
-  )?.addEventListener(
-    "change",
-    () => {
-
-      selectedPlantType =
-        cleanString(
-          getElement(
-            "fleetTypeFilter"
-          )?.value
-        );
-
-
-      renderCategories();
-
-      applyFleetFilters();
-
-    }
-  );
-
-
-  getElement(
-    "fleetStatusFilter"
-  )?.addEventListener(
-    "change",
-    applyFleetFilters
-  );
-
-
-  getElement(
-    "clearFleetFilters"
-  )?.addEventListener(
-    "click",
-    clearFilters
-  );
-
-
-  getElement(
-    "showAllHiredButton"
-  )?.addEventListener(
-    "click",
-    showHiredFleet
-  );
-
-
-  getElement(
-    "showAllOwnedButton"
-  )?.addEventListener(
-    "click",
-    showOwnedFleet
-  );
-
-
-  document
-    .querySelectorAll(
-      "[data-fleet-view]"
-    )
-    .forEach(
-      (
-        button
-      ) => {
-
-        button.addEventListener(
-          "click",
-          () =>
-            setFleetView(
-              button.dataset.fleetView
-            )
-        );
-
-      }
-    );
-
-
+  bindRegisterEvents();
   document.addEventListener(
     "keydown",
     (

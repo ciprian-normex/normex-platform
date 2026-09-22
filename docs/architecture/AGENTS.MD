@@ -1,7 +1,7 @@
 
 ---
 
-# 2. `/AGENTS.md`
+# 2. `/docs/architecture/AGENTS.MD`
 
 ```markdown
 # NORMEX Development Instructions
@@ -10,7 +10,7 @@
 
 Before making architectural, workflow, UI, database, security or permission decisions, read:
 
-`/docs/product/NORMEX-VISION.md`
+`/docs/architecture/NORMEX-VISION.md`
 
 That document defines what NORMEX is intended to become and is the product source of truth.
 
@@ -344,7 +344,7 @@ Do not change permanent business identifiers after creation unless the architect
 
 The Plant domain currently uses or plans to use:
 
-plantAssets/{plantId}
+plantAssets/{assetKey}
 plantHireRecords/{hireId}
 plantAssignments/{assignmentId}
 plantMovements/{movementId}
@@ -381,7 +381,7 @@ project impact
 
 Before changing Plant functionality, read the Plant sections of:
 
-/docs/product/NORMEX-VISION.md
+/docs/architecture/NORMEX-VISION.md
 
 13. Plant inspection architecture
 
@@ -456,7 +456,7 @@ Create new revisions where appropriate.
 Plant documents should normally support:
 
 entityType: "PLANT"
-entityId: plantId
+entityId: resolved asset identity (exact reference semantics must be agreed before implementation)
 15. Module file structure
 
 Keep module-specific files local to the module.
@@ -835,7 +835,7 @@ But it should not silently redefine the product.
 
 If the current implementation conflicts with:
 
-/docs/product/NORMEX-VISION.md
+/docs/architecture/NORMEX-VISION.md
 
 identify the conflict and propose a correction.
 
@@ -847,7 +847,7 @@ Architecture documents should become source-of-truth references.
 
 Expected documentation may include:
 
-/docs/product/NORMEX-VISION.md
+/docs/architecture/NORMEX-VISION.md
 
 /docs/architecture/
     PLATFORM-ARCHITECTURE.md
@@ -1003,6 +1003,10 @@ CODE QUICKLY
 PATCH
 ↓
 ADD MORE
+
+Approved delivery decisions are maintained in /docs/architecture/DEVELOPMENT-ROADMAP.md.
+Option A uses internal assetKey colemans__HRE-0001 while visible plantId remains HRE-0001. Related deterministic records follow the tenant-safe principle. Inventory existing records and agree compatibility before implementation; no automatic migration.
+The roadmap locks safe delegation, restricted Plant costs, absence privacy, 50 MB evidence, eight loading states and the asset-first delivery sequence. These are target contracts, not existing enforcement or permission to code.
 
 The goal is not just to make NORMEX work today.
 

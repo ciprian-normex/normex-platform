@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="/modules/contractor/plant/shared/plant-shell.css">
   <link rel="stylesheet" href="./overview.css">
 </head>
-<body>
+<body class="plant-control-page">
   <div class="workspace">
     <header class="workspace-header"><div class="workspace-container"><div class="workspace-header__surface">
       <div class="workspace-brand"><p class="workspace-brand__product">NORMEX · Contractor Workspace</p><h1 id="workspaceOrganisationName" class="workspace-brand__name">Organisation</h1><p class="workspace-brand__tagline">Projects, resources and operational control</p></div>
@@ -21,12 +21,34 @@
     <main class="workspace-main"><div class="workspace-container">
       <nav id="plantSubnav" aria-label="Plant navigation"></nav>
       <div class="plant-overview">
-        <header class="plant-control"><div><p class="plant-eyebrow">Fleet &amp; Transport</p><h2>Plant Control</h2><p>Operational priorities, hire commitments and upcoming actions.</p></div><div class="plant-actions"><a id="addPlantLink" class="plant-button" href="../fleet/index.html?action=add" hidden>+ Add Plant</a><a class="plant-button" href="../fleet/index.html">Fleet</a><button id="refreshPlant" class="plant-button plant-button--secondary" type="button">Refresh</button></div></header>
-        <p id="plantLoadStatus" class="plant-load-status" role="status" aria-live="polite">LOADING · Waiting for authenticated workspace</p>
+        <header class="plant-control"><div><p class="plant-eyebrow">Fleet &amp; Transport</p><h2>Plant Control</h2></div><div class="plant-actions"><a id="addPlantLink" class="plant-button" href="../fleet/index.html?action=add" hidden>+ Add Plant</a><a class="plant-button" href="../fleet/index.html">Open Fleet</a><button id="refreshPlant" class="plant-button plant-button--secondary" type="button">Refresh</button></div></header>
+        <p id="plantLoadStatus" class="plant-load-status" role="status" aria-live="polite">Waiting for authenticated workspace</p>
         <div id="plantOverviewContent" aria-busy="true"><div class="plant-panel plant-empty">Loading Plant information…</div></div>
         <noscript><p class="plant-panel">Plant information is unavailable without JavaScript.</p></noscript>
       </div>
     </div></main>
+    <footer class="workspace-footer">
+
+      <div class="workspace-container">
+
+        <div class="workspace-footer__inner">
+
+          <span class="workspace-footer__brand">
+            <strong>NORMEX</strong>
+          </span>
+
+          <span
+            id="workspaceFooterOrganisation"
+            class="workspace-footer__context"
+          >
+            Colemans
+          </span>
+
+        </div>
+
+      </div>
+
+    </footer>
   </div>
   <script src="/modules/contractor/shared/js/config.js"></script>
   <script type="module" src="/modules/contractor/shared/js/shell.js"></script>

@@ -232,6 +232,7 @@
 
 
             <div class="asset-hero__state">
+              <button id="assetEditButton" class="asset-edit-primary" type="button" hidden>Edit Asset</button>
 
               <span
                 id="assetOwnershipChip"
@@ -557,6 +558,28 @@
   ></script>
 
 
+  <p id="assetEditConfirmation" class="asset-edit-confirmation" role="status" hidden></p>
+  <dialog id="assetEditDialog" class="asset-edit-dialog" aria-labelledby="assetEditTitle" aria-describedby="assetEditDescription">
+    <form id="assetEditForm" novalidate>
+      <header class="asset-edit-header">
+        <div><h2 id="assetEditTitle">Edit Asset</h2><p id="assetEditDescription">Master asset information</p></div>
+        <button id="assetEditClose" type="button" aria-label="Close edit asset">&#215;</button>
+      </header>
+      <div class="asset-edit-identity"><span>Permanent Plant ID</span><strong id="assetEditIdentity"></strong><small id="assetEditOwnership"></small></div>
+      <fieldset id="assetEditFields" class="asset-edit-body"></fieldset>
+      <p id="assetEditError" class="asset-edit-error" role="alert" hidden></p>
+      <footer class="asset-edit-footer"><span>Plant ID and ownership remain unchanged.</span><button id="assetEditCancel" type="button">Cancel</button><button id="assetEditSave" class="asset-edit-primary" type="submit">Save changes</button></footer>
+    </form>
+  </dialog>
+  <dialog id="deploymentDialog" class="asset-edit-dialog" aria-labelledby="deploymentTitle">
+    <form id="deploymentForm" novalidate>
+      <header class="asset-edit-header"><div><h2 id="deploymentTitle">Update deployment</h2><p id="deploymentDescription">Recorded operational position</p></div><button id="deploymentClose" type="button" aria-label="Close deployment editor">&#215;</button></header>
+      <div class="asset-edit-identity"><span>Plant</span><strong id="deploymentIdentity"></strong><small id="deploymentCurrentPosition"></small></div>
+      <fieldset id="deploymentFields" class="asset-edit-body"></fieldset>
+      <p id="deploymentError" class="asset-edit-error" role="alert" hidden></p>
+      <footer class="asset-edit-footer"><span id="deploymentHelp"></span><button id="deploymentCancel" type="button">Cancel</button><button id="deploymentSave" class="asset-edit-primary" type="submit">Save</button></footer>
+    </form>
+  </dialog>
 </body>
 
 </html>

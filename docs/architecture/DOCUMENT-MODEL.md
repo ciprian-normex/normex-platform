@@ -211,11 +211,11 @@ These should not be introduced merely because Storage can technically accept the
 
 ---
 
-# Initial Maximum File Size
+# Approved Maximum Individual File Size
 
-25 MB per file
+50 MB per file, approved 2026-09-19.
 
-Larger files may be introduced later for genuine project requirements.
+This supersedes the earlier 25 MB documentation and 100 MB application limit. Enforcement is pending; agree one exact byte threshold for UI and Storage. No application or security rules are changed by this decision.
 
 ---
 
@@ -235,3 +235,11 @@ uploaded user
 upload date
 
 It should not maintain a second independent copy of the document metadata.
+
+# Controlled Plant Evidence and Upload Lifecycle
+
+The project path above remains valid for project evidence. Plant evidence must support organisation-owned assets without project assignment. Use entityType PLANT and explicitly defined asset-reference semantics; resolve entityId/business-ID/database-key relationships before implementation under Option A.
+
+Each revision has new metadata and a new Storage object. Preserve the accepted revision until replacement upload/finalisation succeeds. Pending/failed uploads are not valid evidence. Define retry, finalisation verification and abandoned-upload handling. Upload, review and restricted-cost viewing are distinct permissions.
+
+Checked-in Storage rules deny all client access. These are approved requirements, not implemented access. See [DEVELOPMENT-ROADMAP.md](DEVELOPMENT-ROADMAP.md).

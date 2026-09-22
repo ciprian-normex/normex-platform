@@ -3,9 +3,7 @@ import { collection, getDocsFromServer, query, where, limit } from "https://www.
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import { initialisePlantShell } from "../shared/plant-shell.js";
 import { escapePlantHtml as escape, formatPlantDate, formatCurrencyGBP } from "../shared/plant-utils.js";
-import { getPlantTypeLabel } from "../shared/plant-catalogue.js";
-import { validHireRate, weeklyHireRate } from "../shared/plant-hire.js";
-import { SOURCE_NAMES, QUERY_LIMIT, overviewAccess, overviewContext, canAddPlant, sourceResult, loadedSource, failedSource, isComplete, sourceLabel, buildOverview } from "./overview-model.js";
+import { SOURCE_NAMES, QUERY_LIMIT, overviewAccess, overviewContext, canAddPlant, sourceResult, loadedSource, failedSource, isComplete, buildOverview, buildManagement, filterManagementRows, buildAttentionQueue } from "./overview-model.js";
 
 let profile = null;
 let sources = {};
@@ -13,109 +11,114 @@ let generation = 0;
 const root = document.getElementById("plantOverviewContent");
 const status = document.getElementById("plantLoadStatus");
 const refresh = document.getElementById("refreshPlant");
+const ui = { filter: { kind: "all", label: "All loaded records" }, issue: "all", order: "high", allActions: false, pages: {}, sorts: {}, expanded: new Set() };
 const money = value => value == null ? "Not assessed" : formatCurrencyGBP(value);
 const date = value => value ? formatPlantDate(value) : "Not recorded";
 const reference = asset => asset?.plantReference || asset?.plantId || asset?.id || "Organisation";
-const label = value => String(value || "Not assessed").replaceAll("_", " ").toLowerCase();
-const machine = asset => [asset.manufacturer, asset.model].filter(Boolean).join(" ") || getPlantTypeLabel(asset.plantType);
-const assetLink = asset => asset ? `<a class="plant-record-link" href="../asset/index.html?id=${encodeURIComponent(asset.id)}">View Asset <span aria-hidden="true">↗</span></a>` : "";
+const assetLink = (asset, text = "View Asset") => asset ? `<a class="plant-record-link" href="../asset/index.html?id=${encodeURIComponent(asset.id)}">${escape(text)} &rarr;</a>` : "Review source information";
 const pill = (text, tone = "neutral") => `<span class="plant-pill plant-pill--${tone}">${escape(text)}</span>`;
-const empty = text => `<div class="plant-empty">${escape(text)}</div>`;
-const heading = (eyebrow, title, extra = "") => `<header class="plant-section-heading"><div><p class="plant-eyebrow">${escape(eyebrow)}</p><h3>${escape(title)}</h3></div>${extra}</header>`;
-const fact = (title, value) => `<div><dt>${escape(title)}</dt><dd>${escape(value || "Not recorded")}</dd></div>`;
+const empty = text => `<p class="plant-empty">${escape(text)}</p>`;
+const heading = (title, extra = "") => `<header class="plant-section-heading"><h3>${escape(title)}</h3>${extra}</header>`;
+const stateLabel = source => !source ? "Unavailable" : ["LOADED_WITH_DATA", "LOADED_EMPTY"].includes(source.state) && !source.complete ? "Partial / incomplete" : ({ LOADING: "Loading", LOADED_WITH_DATA: "Available", LOADED_EMPTY: "No records", PERMISSION_DENIED: "Restricted", UNAVAILABLE: "Unavailable", ERROR: "Error", NOT_ASSESSED: "Not assessed", NOT_APPLICABLE: "Not applicable" }[source.state] || "Unavailable");
+const filterButton = (kind, value, label, content = label) => `<button type="button" class="plant-text-button" aria-pressed="${ui.filter.kind === kind && ui.filter.value === value}" data-filter="${kind}" data-value="${escape(value)}" data-label="${escape(label)}">${content}</button>`;
+const sourceNote = (model, names) => names.some(name => !isComplete(model.sources[name])) ? '<p class="plant-note">Partial / incomplete information. Loaded records only; complete totals withheld.</p>' : "";
 
-function availability(result) {
-  if (!result) return "Unavailable";
-  if (["LOADED_WITH_DATA", "LOADED_EMPTY"].includes(result.state)) return result.complete ? "Not assessed" : "Partial";
-  return { LOADING: "Loading", PERMISSION_DENIED: "Restricted", NOT_ASSESSED: "Not assessed" }[result.state] || "Unavailable";
+function table(id, columns, rows, pageSize = 10) {
+  const pages = Math.max(1, Math.ceil(rows.length / pageSize));
+  const page = Math.min(ui.pages[id] || 0, pages - 1);
+  ui.pages[id] = page;
+  const visible = rows.slice(page * pageSize, (page + 1) * pageSize);
+  return `<div class="plant-table-wrap"><table class="plant-table" aria-label="${escape(id)}"><thead><tr>${columns.map(name => `<th scope="col">${escape(name)}</th>`).join("")}</tr></thead><tbody>${visible.length ? visible.map(cells => `<tr>${cells.map((cell, i) => `<td data-label="${escape(columns[i])}"><div class="plant-cell">${cell}</div></td>`).join("")}</tr>${cells.detail ? `<tr class="plant-concern-detail" id="${escape(cells.detail.id)}" ${ui.expanded.has(cells.detail.key) ? "" : "hidden"}><td colspan="${columns.length}">${cells.detail.html}</td></tr>` : ""}`).join("") : `<tr><td colspan="${columns.length}">No matching records in loaded information.</td></tr>`}</tbody></table></div>${pages > 1 ? `<nav class="plant-pagination" aria-label="${escape(id)} pages"><button data-page="${id}" data-step="-1" ${page === 0 ? "disabled" : ""}>Previous</button><span>Page ${page + 1} of ${pages} &middot; ${rows.length} loaded rows</span><button data-page="${id}" data-step="1" ${page === pages - 1 ? "disabled" : ""}>Next</button></nav>` : ""}`;
 }
 
-function renderPosition(model) {
-  const labels = ["Total fleet", "Hired / leased", "Owned", "Assigned", "Available", "Off road"];
-  return `<section class="plant-position" aria-label="Plant Position">${model.position.map((metric, index) => {
-    const inputs = [model.sources.plantAssets, ...([3, 4].includes(index) ? [model.sources.plantAssignments] : [])];
-    const failed = inputs.find(source => !isComplete(source));
-    const value = metric.value === null ? availability(failed || model.sources.plantAssets) : metric.value;
-    return `<article class="plant-position-item ${index === 5 && metric.value > 0 ? "is-alert" : ""}"><span>${labels[index]}</span><strong class="${metric.value === null ? "is-text" : ""}">${escape(value)}</strong><small>${escape(index === 1 ? "Ownership recorded" : metric.note || "Recorded position")}</small></article>`;
-  }).join("")}</section>`;
-}
-
-function renderAction(item) {
-  const tone = item.priority === 0 ? "danger" : item.priority < 3 ? "warning" : "neutral";
-  const context = item.asset ? `${reference(item.asset)} · ${machine(item.asset)}` : "Information coverage";
-  return `<article class="plant-action plant-action--${tone}">
-    <div class="plant-action-top"><span class="plant-action-identity">${escape(context)}</span>${pill(item.priority === 0 ? "Action required" : item.priority < 3 ? "Review" : "Data gap", tone)}</div>
-    <h4>${escape(item.title)}</h4><p class="plant-action-why">${escape(item.why)}</p>
-    <dl class="plant-action-facts">
-      ${fact("Current position", label(item.currentPosition))}
-      ${item.asset ? fact("Project / location", item.asset.currentProjectName || item.asset.currentLocationLabel || "Not confirmed") : ""}
-      ${item.supplier ? fact("Supplier", item.supplier) : ""}
-      ${item.responsible ? fact("Responsible", item.responsible) : ""}
-      ${item.due || item.expectedOffHire ? fact(item.due ? "Due" : "Expected off-hire", date(item.due || item.expectedOffHire)) : ""}
-      ${item.programmeImpact ? fact("Programme impact", item.programmeImpact) : ""}
-      ${item.financial ? fact("Hire commitment", `${money(item.financial.daily)} / day · ${money(item.financial.weekly)} / week`) : ""}
-    </dl>
-    <div class="plant-action-next"><div><span>Next action</span><p>${escape(item.nextAction)}</p></div>${assetLink(item.asset)}</div>
-  </article>`;
-}
-
-function renderAttention(model, loading) {
-  const items = model.attention;
-  return `<section class="plant-panel plant-attention">${heading("Operational priorities", "Attention Required", pill("Known exceptions", "warning"))}
-    ${items.length ? items.slice(0, 4).map(renderAction).join("") : empty(loading ? "Loading exception information. Conclusions withheld." : "No actionable exceptions identified in loaded records. Maintenance and compliance remain unassessed.")}
-    ${items.length > 4 ? `<details class="plant-more"><summary>Review ${items.length - 4} more recorded exceptions</summary>${items.slice(4).map(renderAction).join("")}</details>` : ""}
-  </section>`;
-}
-
-function renderFinance(model) {
-  if (!model.access.costs) return `<aside class="plant-panel plant-finance">${heading("Financial control", "Hire / Financial Position")}${empty("Restricted")}<p class="plant-note">Plant financial information requires authorised cost access.</p></aside>`;
-  const finance = model.finance;
-  const rows = [
-    ["Active hired Plant", finance.active == null ? "Not assessed" : finance.active],
-    ["Daily commitment", money(finance.daily)],
-    ["Accrued exposure", money(finance.exposure)],
-    ["Idle-hire exposure / week", money(finance.idleWeekly)],
-    ["Off-hire requiring action", finance.offHireAction == null ? "Not assessed" : finance.offHireAction]
+function renderPosition(model, management) {
+  const count = label => management.positions.find(item => item.label === label).count;
+  const metrics = [
+    ["Total Fleet", model.position[0].value, "all", ""],
+    ["Assigned", count("Assigned"), "position", "Assigned"],
+    ["Available", count("Available"), "position", "Available"],
+    ["Hired", model.position[1].value, "hired", ""],
+    ["Off road / hold", model.position[5].value, "position", "Off road / hold"],
+    ["Due off-hire", model.access.costs ? model.finance.offHireAction : "Restricted", "due", ""]
   ];
-  return `<aside class="plant-panel plant-finance">${heading("Hire exposure", "Hire / Financial Position", pill(finance.complete ? "Estimated" : "Incomplete", "light"))}
-    <div class="plant-finance-lead"><span>Weekly hire commitment</span><strong>${escape(money(finance.weekly))}</strong><small>Current hire periods · estimated charges</small></div>
-    <dl class="plant-finance-rows">${rows.map(([title, value]) => fact(title, String(value))).join("")}</dl>
-    <div class="plant-finance-footer"><span class="plant-eyebrow">Cost pressure</span><p>${finance.idle === null ? "Idle hire position not assessed." : `${finance.idle} hired asset${finance.idle === 1 ? "" : "s"} recorded available without an assignment.`}</p><small>Daily equivalent = weekly ÷ 7. Off-hire planning dates do not stop accrued charges.</small></div>
-  </aside>`;
+  return `<section class="plant-position" aria-label="Plant Position">${metrics.map(([label, value, kind, filter]) => `<button class="plant-position-item" data-filter="${kind}" data-value="${filter}" data-label="${label}" ${value === "Restricted" || value === null ? "disabled" : ""}><span>${label}</span><strong class="${typeof value !== "number" ? "is-text" : ""}">${escape(value ?? "Not assessed")}</strong>${label === "Due off-hire" ? '<small>Overdue + next 14 days</small>' : label === "Available" ? '<small>Readiness not assessed</small>' : ""}</button>`).join("")}</section>`;
 }
 
-function renderAssetCard(item, costAccess) {
-  const { asset, hire, issue } = item;
-  const blocked = asset.safeToUse === false || asset.offRoad === true || asset.complianceHold === true || ["OFF_ROAD", "COMPLIANCE_HOLD"].includes(asset.status);
-  const state = blocked ? "Off road / hold" : label(asset.status);
-  return `<article class="plant-asset-card">
-    <header><div><span class="plant-eyebrow">${escape(getPlantTypeLabel(asset.plantType))}</span><h4>${escape(reference(asset))}</h4></div>${pill(state, blocked ? "danger" : "neutral")}</header>
-    <div class="plant-machine"><strong>${escape(machine(asset))}</strong><span>${escape(label(asset.ownershipType))}</span></div>
-    <dl class="plant-asset-facts">${fact("Current project", asset.currentProjectName || "Not confirmed")}${fact("Current location", asset.currentLocationLabel || "Not confirmed")}${fact("Supplier", asset.supplierName || hire?.hire?.supplierName || "Not recorded")}${fact("Expected off-hire", costAccess ? date(hire?.hire?.expectedOffHireDate) : "Restricted")}</dl>
-    ${hire && costAccess ? `<div class="plant-asset-hire"><span>Hire position</span><strong>${escape(money(hire.estimate.weekly))}<small> / week</small></strong></div>` : ""}
-    <div class="plant-asset-action"><span class="plant-eyebrow">${issue ? "Next action" : "Asset review"}</span><p>${escape(item.nextAction)}</p>${assetLink(asset)}</div>
-  </article>`;
+function renderCharts(model, management) {
+  const total = management.rows.length;
+  let offset = 0;
+  const colors = ["#285b43", "#83a68b", "#a86350", "#b59a5c", "#687e91", "#adb9b0", "#d4dbd5"];
+  const segments = management.chartComplete && total ? management.positions.map((item, index) => {
+    const share = item.count / total * 100;
+    const svg = item.count ? `<circle class="plant-ring-segment" cx="60" cy="60" r="45" pathLength="100" fill="none" stroke="${colors[index]}" stroke-width="15" stroke-dasharray="${share} ${100 - share}" stroke-dashoffset="${-offset}" transform="rotate(-90 60 60)" role="button" tabindex="0" aria-pressed="${ui.filter.kind === "position" && ui.filter.value === item.label}" aria-label="${escape(item.label)}: ${item.count}. Filter loaded records" data-filter="position" data-value="${escape(item.label)}" data-label="${escape(item.label)}"><title>${escape(item.label)}: ${item.count}</title></circle>` : "";
+    offset += share;
+    return svg;
+  }).join("") : "";
+  const ring = `<div class="plant-ring"><svg viewBox="0 0 120 120" aria-label="Fleet position"><circle cx="60" cy="60" r="45" fill="none" stroke="#eef2ee" stroke-width="15"/>${segments}</svg><div><strong>${management.chartComplete ? total : "--"}</strong><span>${management.chartComplete ? "active assets" : "Incomplete"}</span></div></div>`;
+  const legend = `<ul class="plant-chart-legend">${management.positions.map((item, index) => `<li><span style="background:${colors[index]}" aria-hidden="true"></span>${filterButton("position", item.label, item.label, `${escape(item.label)} <strong>${item.count ?? "--"}</strong>`)}</li>`).join("")}</ul>`;
+  const fleet = `<section class="plant-panel plant-chart">${heading("Fleet Position", pill(management.chartComplete ? "Recorded position" : "Incomplete"))}<div class="plant-ring-layout">${ring}${legend}</div><p class="plant-note">Assignment does not confirm physical deployment. Safety and compliance remain unassessed.</p></section>`;
+  let finance = empty("Restricted");
+  if (model.access.costs) {
+    const max = Math.max(1, ...management.bars.map(group => group.weekly));
+    finance = model.finance.complete ? `<div class="plant-bars">${management.bars.map(group => `<button class="plant-bar" data-filter="project" data-value="${escape(group.key)}" data-label="${escape(group.label)}"><span>${escape(group.label)}</span><strong>${escape(money(group.weekly))}</strong><i style="width:${group.weekly / max * 100}%" aria-hidden="true"></i></button>`).join("") || empty("No active hire commitment recorded.")}</div>` : empty("Hire information incomplete. Complete commitment withheld.");
+    finance += `<div class="plant-finance-figures"><div><span>Current weekly commitment</span><strong>${escape(money(model.finance.weekly))}</strong></div><div><span>Accrued exposure</span><strong>${escape(money(model.finance.exposure))}</strong></div><div>${filterButton("idle", "", "Idle / unassigned", `<span>Idle / unassigned per week</span><strong>${escape(money(model.finance.idleWeekly))}</strong>`)}</div></div><p class="plant-note">Estimated charges. Expected off-hire does not stop accrual.</p>`;
+  }
+  return `<div class="plant-charts">${fleet}<section class="plant-panel plant-finance plant-chart">${heading("Hire Exposure", pill(model.access.costs ? "Weekly commitment" : "Restricted", "light"))}${finance}</section></div>`;
 }
 
-function renderAssets(model) {
-  const source = model.sources.plantAssets;
-  return `<section class="plant-fleet-section">${heading("Current fleet", "Priority Assets", '<a class="plant-record-link" href="../fleet/index.html">Open Fleet ↗</a>')}
-    <div class="plant-asset-grid ${model.assets.length === 1 ? "plant-asset-grid--single" : ""}">${model.assets.length ? model.assets.slice(0, 6).map(item => renderAssetCard(item, model.access.costs)).join("") : empty(isComplete(source) ? "No active assets recorded. Add Plant through Fleet to establish the current position." : `Fleet information ${availability(source).toLowerCase()}. Other known exceptions remain visible.`)}</div>
-    ${model.assets.length > 6 ? '<p class="plant-note">Showing six priority assets from loaded records. Open Fleet for the register.</p>' : ""}
-  </section>`;
+function renderAttention(model, management) {
+  const attention = buildAttentionQueue(model, management);
+  const matches = concern => ui.issue === "all" || (ui.issue === "compliance" ? concern.asset?.complianceHold === true || concern.asset?.status === "COMPLIANCE_HOLD" : (concern.source || "asset") === ui.issue);
+  let groups = attention.queue.filter(group => group.concerns.some(matches));
+  if (ui.order === "low") groups = [...groups].sort((a, b) => a.level - b.level || (b.weekly ?? -1) - (a.weekly ?? -1));
+  const rows = groups.map(group => {
+    const id = "concerns-" + encodeURIComponent(group.key);
+    const row = [assetLink(group.asset, reference(group.asset)), pill(group.label, group.tone), escape(group.primary.title), escape(group.impact) + (group.weekly !== null ? '<small>' + escape(money(group.weekly)) + '/week current commitment</small>' : ''), '<button class="plant-text-button" data-concerns="' + escape(group.key) + '" aria-controls="' + id + '" aria-expanded="' + ui.expanded.has(group.key) + '">' + group.concerns.length + ' active concern' + (group.concerns.length === 1 ? '' : 's') + ' &darr;</button>', escape(group.primary.nextAction)];
+    const context = group.row ? '<p class="plant-concern-context">Project: ' + escape(group.row.allocation.label) + ' &middot; Location: ' + escape(group.asset.currentLocationLabel || 'Not confirmed') + (group.weekly !== null ? ' &middot; Hire: ' + escape(money(group.weekly)) + '/week' : '') + '</p>' : '';
+    row.detail = { key: group.key, id, html: context + '<ul class="plant-concern-list">' + group.concerns.map(item => '<li><strong>' + escape(item.title) + '</strong><p>' + escape(String(item.currentPosition).replaceAll("_", " ").toLowerCase()) + (item.due ? ' &middot; Due: ' + escape(date(item.due)) : /off-hire/i.test(item.title) && item.expectedOffHire ? ' &middot; Expected off-hire: ' + escape(date(item.expectedOffHire)) : '') + (item.responsible ? ' &middot; Owner: ' + escape(item.responsible) : '') + '</p><p>' + escape(item.nextAction) + '</p></li>').join('') + '</ul>' + assetLink(group.asset) };
+    return row;
+  });
+  const options = [["all", "All issues"], ["asset", "Asset / hire"], ["plantDefects", "Defects"], ["plantMaintenance", "Maintenance"], ["compliance", "Explicit compliance holds"], ["plantMovements", "Movements"], ["plantIssues", "Plant Issues"]];
+  const financial = model.access.costs ? '<div class="plant-exception-finance"><span>Overdue off-hire commitment <strong>' + escape(money(attention.overdueWeekly)) + (attention.overdueWeekly !== null ? '/week' : '') + '</strong></span><span>Assets requiring commercial action <strong>' + escape(attention.commercialAssets ?? 'Not assessed') + '</strong></span><small>Current commitment on hires past expected off-hire; not a calculation of loss or savings.</small></div>' : '';
+  return '<section id="attention" class="plant-panel plant-section">' + heading("Attention Required", pill("Asset exceptions", "warning")) + financial + '<div class="plant-table-tools"><label>Issue <select id="plantIssueFilter">' + options.map(([value, label]) => '<option value="' + value + '" ' + (ui.issue === value ? 'selected' : '') + '>' + label + '</option>').join('') + '</select></label><label>Priority <select id="plantPrioritySort"><option value="high" ' + (ui.order === 'high' ? 'selected' : '') + '>Highest first</option><option value="low" ' + (ui.order === 'low' ? 'selected' : '') + '>Lowest first</option></select></label></div>' + (rows.length ? table('attention', ['Plant', 'Attention', 'Primary issue', 'Known impact', 'Concerns', 'Next action'], rows, ui.allActions ? 10 : 6) : empty('No matching actions identified in loaded records. Safety and compliance remain unassessed.')) + (!ui.allActions && rows.length > 6 ? '<button class="plant-text-button" data-action="all-actions">View all loaded actions</button>' : '') + '</section>';
 }
 
-function renderOperations(model) {
-  const order = ["plantDefects", "plantMaintenance", "compliance", "plantMovements", "plantIssues"];
-  return `<section class="plant-operational-section">${heading("Operational position", "Plant Controls")}<div class="plant-operation-grid">${order.map(name => {
+function renderOperations(model, management) {
+  const specs = [["plantDefects", "Defects"], ["plantMaintenance", "Maintenance"], ["compliance", "Compliance"], ["plantMovements", "Movements"], ["plantIssues", "Plant Issues"]];
+  return `<section class="plant-panel plant-section">${heading("Operational Control")}<div class="plant-operations">${specs.map(([name, title]) => {
     const item = model.operations.find(row => row.name === name);
-    const state = item.count === null ? item.state === "NOT_ASSESSED" ? "Not assessed" : item.state === "PERMISSION_DENIED" ? "Restricted" : item.state.includes("PARTIAL") ? "Partial" : item.state === "LOADING" ? "Loading" : "Unavailable" : item.count > 0 ? `${item.count} open` : model.sources[name]?.state === "LOADED_EMPTY" ? "No records" : "No open items";
-    return `<article class="plant-operation-card"><h4>${escape(name === "plantIssues" ? "Plant Issues" : item.label)}</h4>${pill(state, item.count > 0 ? "warning" : "neutral")}<p>${escape(item.note)}</p></article>`;
-  }).join("")}</div></section>`;
+    const primary = item.count === null ? name === "compliance" || item.state === "NOT_ASSESSED" ? (item.state === "UNAVAILABLE" ? "Unavailable" : "Not assessed") : stateLabel(model.sources[name]) : `${item.count} ${name === "plantMovements" ? "outstanding" : "open"}`;
+    const due = management.attention.filter(row => row.source === name && row.title.startsWith("Overdue")).length;
+    const next = model.upcoming.filter(row => row.title === (name === "plantMovements" ? "Movement" : "Maintenance") && row.day === management.day).length;
+    const holds = management.rows.filter(row => row.asset.complianceHold === true || row.asset.status === "COMPLIANCE_HOLD").length;
+    const secondary = item.state === "NOT_ASSESSED" && name === "plantMaintenance" ? "Maintenance baseline required" : name === "compliance" ? `${holds ? `${holds} known explicit holds` : isComplete(model.sources.plantAssets) ? "No explicit holds recorded" : "Explicit holds not fully assessed"}; evidence not assessed` : name === "plantMaintenance" || name === "plantMovements" ? `${isComplete(model.sources[name]) ? `${due} known overdue; ${next} recorded today` : "Dates not fully assessed"}` : item.note;
+    return `<div class="plant-operation-row"><strong>${title}</strong>${pill(primary, item.count > 0 ? "warning" : "neutral")}<span>${escape(secondary)}</span><button class="plant-text-button" data-operation="${name}">Review &rarr;</button></div>`;
+  }).join("")}</div><p class="plant-note">Review opens loaded actions or dates below. Standalone module workflows are not yet available.</p></section>`;
 }
 
-function renderUpcoming(model) {
-  return `<section class="plant-panel plant-upcoming">${heading("Next 30 days", "Upcoming", pill("Recorded dates"))}<ol class="plant-timeline">${model.upcoming.slice(0, 8).map(item => `<li><time>${escape(date(item.date))}</time><div><span class="plant-eyebrow">${escape(reference(item.asset))}</span><h4>${escape(item.title)}</h4><p>${escape(item.detail)}</p></div>${assetLink(item.asset)}</li>`).join("")}</ol>${!model.upcoming.length ? empty("No upcoming dates found in loaded records. Missing dates and unavailable sources remain unassessed.") : ""}${model.upcoming.length > 8 ? '<p class="plant-note">Showing the next eight recorded actions.</p>' : ""}</section>`;
+function managementSort(name, alternate) {
+  return '<label class="plant-sort-label">Sort <select data-management-sort="' + name + '"><option value="default">' + (name === 'upcoming' ? 'Earliest first' : name === 'projects' ? 'Blockers first' : 'Cost pressure') + '</option><option value="alternate" ' + (ui.sorts[name] === 'alternate' ? 'selected' : '') + '>' + alternate + '</option></select></label>';
+}
+
+function renderManagement(model, management) {
+  const rows = filterManagementRows(management.rows, ui.filter);
+  const ids = new Set(rows.map(row => row.asset.id));
+  const groups = management.projects.map(group => ({ ...group, rows: group.rows.filter(row => ids.has(row.asset.id)) })).filter(group => group.rows.length);
+  if (ui.sorts.projects === "alternate") groups.sort((a, b) => a.label.localeCompare(b.label, "en-GB", { numeric: true }));
+  const complete = isComplete(model.sources.plantAssets) && isComplete(model.sources.plantAssignments);
+  const projectRows = groups.map(group => [filterButton("project", group.key, group.label, escape(group.label)) + `<small>${escape([...new Set(group.rows.map(row => row.asset.currentLocationLabel).filter(Boolean))].slice(0, 2).join(" / ") || "Location not confirmed")}</small>`, complete ? String(group.rows.length) : "Incomplete", complete && model.position[1].value !== null ? String(group.rows.filter(row => row.hired).length) : "Not assessed", complete ? String(group.rows.filter(row => row.blocked).length) : "Incomplete", escape(group.rows.find(row => row.blocked)?.issue?.title || (group.key === "unknown" ? "Allocation needs review" : group.rows.find(row => row.issue)?.issue?.title) || "No exception identified in loaded records")]);
+  const filterBar = `<div id="management-filter" class="plant-filter-bar" tabindex="-1"><span>Showing: <strong>${escape(ui.filter.label)}</strong></span><button class="plant-text-button" data-action="reset">Reset filters</button></div>`;
+  const projects = `<section id="projects" class="plant-panel plant-section">${heading("Plant by Project", managementSort("projects", "Project A-Z"))}${sourceNote(model, ["plantAssets", "plantAssignments"])}${table("projects", ["Project / location", "Assets", "Hired", "Off road / hold", "Key warning"], projectRows)}</section>`;
+  const hires = rows.filter(row => row.hire).sort((a, b) => ui.sorts.hires === "alternate" ? (b.hire.estimate.weekly ?? -1) - (a.hire.estimate.weekly ?? -1) : model.hires.indexOf(a.hire) - model.hires.indexOf(b.hire)).map(row => [assetLink(row.asset, reference(row.asset)), escape(row.asset.supplierName || row.hire.hire?.supplierName || "Not recorded"), escape(row.allocation.label), escape(money(row.hire.estimate.weekly)), escape(date(row.hire.hire?.expectedOffHireDate)), escape(money(row.hire.estimate.estimatedCost)), escape(row.hire.reason), assetLink(row.asset, "Review")]);
+  const watch = `<section id="hire-watch" class="plant-panel plant-section">${heading("Hire Watch", model.access.costs ? managementSort("hires", "Weekly rate: highest first") : "")}${model.access.costs ? sourceNote(model, ["plantAssets", "plantHireRecords"]) + table("hires", ["Plant", "Supplier", "Project", "Weekly rate", "Expected off-hire", "Accrued exposure", "Status", "Action"], hires) : empty("Restricted")}</section>`;
+  const upcoming = model.upcoming.filter(item => (ui.filter.kind === "all" || ids.has(item.asset?.id)) && (!ui.upcoming || item.title === ui.upcoming)).sort((a, b) => ui.sorts.upcoming === "alternate" ? b.day - a.day : a.day - b.day).map(item => [escape(date(item.date)), escape(reference(item.asset)), `${escape(item.title)}${item.title === "Expected off-hire" ? '<small>Planning date. Charges continue until confirmed off-hire.</small>' : ""}`, escape(management.rows.find(row => row.asset.id === item.asset?.id)?.allocation.label || "Not established"), assetLink(item.asset)]);
+  return `${filterBar}${projects}${watch}<section id="upcoming" class="plant-panel plant-section">${heading("Upcoming", managementSort("upcoming", "Latest first"))}${ui.upcoming ? `<p class="plant-note">Filtered to ${escape(ui.upcoming)}. Reset filters to show all events.</p>` : ""}${table("upcoming", ["Date", "Plant", "Event", "Project", "Action"], upcoming)}<p class="plant-note">Next 30 days; recorded dates only. Missing dates and unavailable sources remain unassessed.</p></section>`;
+}
+
+function renderDataStatus(model) {
+  if (profile?.status !== "ACTIVE" || profile.roleCode !== "PLATFORM_ADMIN" || profile.accessLevel !== 99) return "";
+  const entries = Object.entries(model.sources);
+  return `<details class="plant-data-status"><summary>Data Status &middot; ${entries.filter(([, source]) => source.state !== "LOADING").length} sources checked <span>Details</span></summary><dl>${entries.map(([name, source]) => `<div><dt>${escape(SOURCE_NAMES[name])}</dt><dd>${escape(stateLabel(source))}</dd></div>`).join("")}</dl></details>`;
 }
 
 function render() {
@@ -123,20 +126,74 @@ function render() {
   const addLink = document.getElementById("addPlantLink");
   if (addLink) addLink.hidden = !canAddPlant(profile);
   if (model.context.state !== "READY") {
-    root.innerHTML = `<section class="plant-panel">${heading("Workspace access", model.context.state)}${empty(model.context.reason)}</section>`;
+    root.innerHTML = `<section class="plant-panel">${heading("Workspace unavailable")}${empty(model.context.reason)}</section>`;
     root.setAttribute("aria-busy", "false");
-    status.textContent = model.context.state;
+    status.textContent = "Workspace access or organisation context required";
     return;
   }
+  const management = buildManagement(model);
   const loading = Object.values(model.sources).some(source => source.state === "LOADING");
-  const unavailable = Object.entries(model.sources).some(([name, source]) => !(name === "plantHireRecords" && !model.access.costs) && !isComplete(source));
   root.setAttribute("aria-busy", String(loading));
-  status.textContent = loading ? "LOADING · Updating current position" : unavailable ? "DATA_UNAVAILABLE · Some information is incomplete; known records remain visible" : "Current records loaded · Safety and compliance remain unassessed";
-  root.innerHTML = `${renderPosition(model)}
-    <div class="plant-control-grid">${renderAttention(model, loading)}${renderFinance(model)}</div>
-    ${renderAssets(model)}${renderOperations(model)}${renderUpcoming(model)}
-    <details class="plant-coverage"><summary>Information coverage &amp; last successful reads</summary><ul>${Object.entries(model.sources).map(([name, source]) => `<li><strong>${escape(SOURCE_NAMES[name])}</strong> · ${escape(sourceLabel(source))} ${escape(source.reason)}${source.lastSuccess ? ` · ${escape(new Date(source.lastSuccess).toLocaleString("en-GB"))}` : ""}</li>`).join("")}</ul></details>`;
+  const latest = Object.values(model.sources).map(source => source.lastSuccess).filter(Boolean).sort().at(-1);
+  status.textContent = loading ? "Updating current position" : `Updated ${latest ? new Date(latest).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : "time unavailable"}${management.gaps.length ? " | Some information is incomplete" : ""}`;
+  root.innerHTML = `<p class="plant-management-summary">${escape(management.summary)}</p>${management.gaps.length ? `<p class="plant-information-notice">${management.gaps.map(([name, source]) => `${escape(SOURCE_NAMES[name])}: ${escape(stateLabel(source))}`).join(" &middot; ")}. Known blockers remain visible.</p>` : ""}${renderPosition(model, management)}${renderCharts(model, management)}${renderAttention(model, management)}${renderOperations(model, management)}${renderManagement(model, management)}${renderDataStatus(model)}`;
 }
+
+function applyFilter(kind, value, label) {
+  ui.filter = kind === "position" && ui.filter.kind === kind && ui.filter.value === value ? { kind: "all", label: "All Fleet" } : { kind, value, label };
+  ui.upcoming = null;
+  if (kind === "project" && value === "other") ui.filter.keys = buildManagement(buildOverview(sources, profile)).bars.find(group => group.key === "other")?.keys || [];
+  ui.pages = {};
+  render();
+}
+function resetFilters() {
+  ui.filter = { kind: "all", label: "All loaded records" };
+  ui.issue = "all";
+  ui.upcoming = null;
+  ui.order = "high";
+  ui.allActions = false;
+  ui.sorts = {};
+  ui.pages = {};
+  render();
+}
+function navigateTo(id) {
+  document.getElementById(id)?.scrollIntoView?.({ behavior: "auto", block: "start" });
+}
+root.addEventListener("click", event => {
+  const button = event.target.closest("button[data-filter], button[data-action], button[data-page], button[data-operation], button[data-concerns], circle[data-filter]");
+  if (!button) return;
+  if (button.dataset.concerns) {
+    const key = button.dataset.concerns;
+    if (ui.expanded.has(key)) ui.expanded.delete(key); else ui.expanded.add(key);
+    const detail = document.getElementById(button.getAttribute("aria-controls"));
+    if (detail) detail.hidden = !ui.expanded.has(key);
+    button.setAttribute("aria-expanded", String(ui.expanded.has(key)));
+  } else if (button.dataset.filter) {
+    applyFilter(button.dataset.filter, button.dataset.value, button.dataset.label);
+    navigateTo("management-filter");
+  } else if (button.dataset.action === "reset") resetFilters();
+  else if (button.dataset.action === "all-actions") { ui.allActions = true; ui.pages.attention = 0; render(); navigateTo("attention"); }
+  else if (button.dataset.page) { const id = button.dataset.page; ui.pages[id] = Math.max(0, (ui.pages[id] || 0) + Number(button.dataset.step)); render(); navigateTo(id === "hires" ? "hire-watch" : id); }
+  else if (button.dataset.operation) {
+    ui.issue = button.dataset.operation;
+    ui.pages.attention = 0;
+    ui.filter = { kind: "all", label: "All loaded records" };
+    ui.upcoming = ui.issue === "plantMovements" ? "Movement" : ui.issue === "plantMaintenance" ? "Maintenance" : null;
+    render();
+    const hasActions = buildManagement(buildOverview(sources, profile)).attention.some(item => item.source === ui.issue);
+    navigateTo(ui.upcoming && !hasActions ? "upcoming" : "attention");
+  }
+});
+root.addEventListener("keydown", event => {
+  if (["Enter", " "].includes(event.key) && event.target.matches("circle[data-filter]")) { event.preventDefault(); applyFilter(event.target.dataset.filter, event.target.dataset.value, event.target.dataset.label); navigateTo("management-filter"); }
+});
+root.addEventListener("change", event => {
+  if (event.target.dataset.managementSort) { ui.sorts[event.target.dataset.managementSort] = event.target.value; ui.pages[event.target.dataset.managementSort] = 0; }
+  if (event.target.id === "plantIssueFilter") ui.issue = event.target.value;
+  if (event.target.id === "plantPrioritySort") ui.order = event.target.value;
+  ui.pages.attention = 0;
+  render();
+});
 async function load() {
   const run = ++generation;
   const scope = profile?.organisationId;
@@ -163,7 +220,7 @@ async function load() {
   if (run === generation) refresh.disabled = false;
 }
 
-function initialise(nextProfile) { profile = nextProfile; return load(); }
+function initialise(nextProfile) { ui.expanded = new Set(); ui.sorts = {}; ui.filter = { kind: "all", label: "All loaded records" }; ui.issue = "all"; ui.upcoming = null; ui.pages = {}; ui.allActions = false; profile = nextProfile; return load(); }
 initialisePlantShell({ activePage: "overview", workspaceName: "Fleet & Transport Control" });
 refresh.addEventListener("click", () => load());
 window.addEventListener("normex:workspace-ready", event => initialise(event.detail.profile));
