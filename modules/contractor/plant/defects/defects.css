@@ -2235,3 +2235,71 @@
   }
 
 }
+
+
+/* ============================================================
+   CASE DIARY - FINAL ALIGNMENT
+============================================================ */
+
+.case-diary {
+  width: 100%;
+}
+
+.diary-entry {
+  grid-template-columns: 14px minmax(0, 1fr);
+  gap: 11px;
+}
+
+.diary-content {
+  width: 100%;
+  min-width: 0;
+}
+
+.diary-meta {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: baseline;
+  column-gap: 8px;
+  row-gap: 3px;
+}
+
+.diary-meta strong {
+  white-space: normal;
+  font-size: 11px;
+}
+
+.diary-meta span {
+  color: #7c8981;
+  font-size: 9px;
+}
+
+.diary-meta time {
+  justify-self: end;
+  margin-left: 0;
+  white-space: nowrap;
+  font-size: 9px;
+}
+
+.diary-content p {
+  max-width: 900px;
+  margin-top: 6px;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+@media (max-width: 700px) {
+
+  .diary-meta {
+    grid-template-columns: 1fr auto;
+  }
+
+  .diary-meta span {
+    grid-column: 1 / -1;
+  }
+
+  .diary-meta time {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+}

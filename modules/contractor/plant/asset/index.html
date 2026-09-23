@@ -16,7 +16,7 @@
   />
 
   <title>
-    Plant Asset | Colemans | NORMEX
+    Asset | Plant | Colemans | NORMEX
   </title>
 
 
@@ -116,7 +116,6 @@
 
               </div>
 
-
               <button
                 id="workspaceLogoutButton"
                 class="workspace-user__logout"
@@ -188,7 +187,11 @@
              ASSET HERO
         ================================================== -->
 
-        <section class="asset-hero">
+        <section
+          id="assetHero"
+          class="asset-hero"
+          data-asset-class=""
+        >
 
 
           <div class="asset-hero__top">
@@ -207,23 +210,54 @@
 
               <div class="asset-hero__heading">
 
-                <p class="asset-eyebrow">
-                  Plant Asset
-                </p>
-
-                <h2
-                  id="assetReference"
-                  class="asset-hero__title"
-                >
-                  Loading asset
-                </h2>
-
                 <p
-                  id="assetDescription"
-                  class="asset-hero__description"
+                  id="assetEyebrow"
+                  class="asset-eyebrow"
                 >
-                  Loading plant information
+                  Asset
                 </p>
+
+
+                <div class="asset-hero__identity-stack">
+
+                  <h2
+                    id="assetReference"
+                    class="asset-hero__title"
+                  >
+                    Loading asset
+                  </h2>
+
+                  <p
+                    id="assetDescription"
+                    class="asset-hero__description"
+                  >
+                    Loading asset information
+                  </p>
+
+
+                  <div
+                    id="assetIdentityMeta"
+                    class="asset-hero__identity-meta"
+                    hidden
+                  >
+
+                    <span
+                      id="assetInternalReference"
+                      class="asset-hero__internal-id"
+                    >
+                      —
+                    </span>
+
+                    <span
+                      id="assetClassLabel"
+                      class="asset-hero__class-label"
+                    >
+                      —
+                    </span>
+
+                  </div>
+
+                </div>
 
               </div>
 
@@ -232,7 +266,42 @@
 
 
             <div class="asset-hero__state">
-              <button id="assetEditButton" class="asset-edit-primary" type="button" hidden>Edit Asset</button>
+
+
+              <button
+                id="assetEditButton"
+                class="asset-edit-primary"
+                type="button"
+                hidden
+              >
+                Edit Asset
+              </button>
+
+
+              <div
+                id="assetLifecycleActions"
+                class="asset-lifecycle-actions"
+                hidden
+              >
+
+                <button
+                  id="assetArchiveButton"
+                  class="asset-lifecycle-action"
+                  type="button"
+                >
+                  Archive
+                </button>
+
+                <button
+                  id="assetDeleteButton"
+                  class="asset-lifecycle-action asset-lifecycle-action--danger"
+                  type="button"
+                >
+                  Delete
+                </button>
+
+              </div>
+
 
               <span
                 id="assetOwnershipChip"
@@ -248,18 +317,27 @@
                 Loading
               </span>
 
+
             </div>
 
 
           </div>
 
 
+          <!-- =================================================
+               CURRENT POSITION STRIP
+
+               Labels are intentionally dynamic.
+               Road vehicles, Plant and other asset classes can
+               present the same six slots differently.
+          ================================================== -->
+
           <div class="asset-hero__position">
 
 
             <div>
 
-              <span>
+              <span id="assetPositionLabel1">
                 Current Location
               </span>
 
@@ -272,7 +350,7 @@
 
             <div>
 
-              <span>
+              <span id="assetPositionLabel2">
                 Current Project
               </span>
 
@@ -285,7 +363,7 @@
 
             <div>
 
-              <span>
+              <span id="assetPositionLabel3">
                 Current Use
               </span>
 
@@ -298,11 +376,11 @@
 
             <div>
 
-              <span>
-                Supplier
+              <span id="assetPositionLabel4">
+                Current Assignment
               </span>
 
-              <strong id="assetSupplier">
+              <strong id="assetHeroAssignment">
                 —
               </strong>
 
@@ -311,7 +389,7 @@
 
             <div>
 
-              <span>
+              <span id="assetPositionLabel5">
                 Last Inspection
               </span>
 
@@ -324,8 +402,8 @@
 
             <div>
 
-              <span>
-                Next Movement
+              <span id="assetPositionLabel6">
+                Next Action
               </span>
 
               <strong id="assetHeroNextMovement">
@@ -350,6 +428,7 @@
           aria-label="Asset workspace navigation"
         >
 
+
           <button
             class="asset-subnav__link is-active"
             type="button"
@@ -373,7 +452,7 @@
             type="button"
             data-asset-view="deployment"
           >
-            Location & Deployment
+            Location &amp; Deployment
           </button>
 
 
@@ -391,7 +470,7 @@
             type="button"
             data-asset-view="defects"
           >
-            Defects & Repairs
+            Defects &amp; Repairs
           </button>
 
 
@@ -421,22 +500,28 @@
             Documents
           </button>
 
+
         </nav>
 
 
         <!-- =================================================
-             SINGLE DYNAMIC WORKSPACE
+             SINGLE DYNAMIC ASSET WORKSPACE
+
+             asset.js owns the content rendered inside here.
+
+             asset class is exposed through data-asset-class
+             so JS/CSS can distinguish vehicles, Plant,
+             equipment, attachments and other assets.
         ================================================== -->
 
         <section
           id="assetWorkspace"
           class="asset-workspace"
+          data-asset-class=""
         >
 
           <div class="asset-loading">
-
             Loading asset workspace...
-
           </div>
 
         </section>
@@ -454,6 +539,7 @@
     <div
       id="assetLoadError"
       class="asset-load-error"
+      role="alert"
       hidden
     ></div>
 
@@ -526,6 +612,7 @@
           id="mobileNavClose"
           class="workspace-mobile-nav__close"
           type="button"
+          aria-label="Close navigation"
         >
           ×
         </button>
@@ -536,12 +623,540 @@
       <nav
         id="contractorMobileNavLinks"
         class="workspace-mobile-nav__links"
+        aria-label="Mobile organisation navigation"
       ></nav>
 
     </div>
 
   </aside>
 
+
+  <!-- =====================================================
+       ASSET EDIT CONFIRMATION
+  ====================================================== -->
+
+  <p
+    id="assetEditConfirmation"
+    class="asset-edit-confirmation"
+    role="status"
+    aria-live="polite"
+    hidden
+  ></p>
+
+
+  <!-- =====================================================
+       EDIT ASSET
+
+       Asset class, permanent NORMEX Asset ID and ownership
+       are intentionally not changed from this editor.
+
+       asset.js will render class-specific editable fields
+       inside #assetEditFields.
+  ====================================================== -->
+
+  <dialog
+    id="assetEditDialog"
+    class="asset-edit-dialog"
+    aria-labelledby="assetEditTitle"
+    aria-describedby="assetEditDescription"
+  >
+
+    <form
+      id="assetEditForm"
+      novalidate
+    >
+
+
+      <header class="asset-edit-header">
+
+        <div>
+
+          <h2 id="assetEditTitle">
+            Edit Asset
+          </h2>
+
+          <p id="assetEditDescription">
+            Master asset information
+          </p>
+
+        </div>
+
+
+        <button
+          id="assetEditClose"
+          type="button"
+          aria-label="Close edit asset"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div class="asset-edit-identity">
+
+        <span>
+          Permanent NORMEX Asset ID
+        </span>
+
+        <strong id="assetEditIdentity"></strong>
+
+        <small id="assetEditOwnership"></small>
+
+
+        <div class="asset-edit-locks">
+
+          <span>
+            Asset class locked
+          </span>
+
+          <span>
+            Asset ID locked
+          </span>
+
+          <span>
+            Ownership controlled separately
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <fieldset
+        id="assetEditFields"
+        class="asset-edit-body"
+      ></fieldset>
+
+
+      <p
+        id="assetEditError"
+        class="asset-edit-error"
+        role="alert"
+        hidden
+      ></p>
+
+
+      <footer class="asset-edit-footer">
+
+        <span>
+          Asset class, permanent Asset ID and ownership are not changed from this editor.
+        </span>
+
+
+        <div class="asset-edit-footer__actions">
+
+          <button
+            id="assetEditCancel"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="assetEditSave"
+            class="asset-edit-primary"
+            type="submit"
+          >
+            Save changes
+          </button>
+
+        </div>
+
+      </footer>
+
+
+    </form>
+
+  </dialog>
+
+
+  <!-- =====================================================
+       DEPLOYMENT / ASSIGNMENT EDITOR
+
+       This remains separate from Edit Asset because project,
+       location and person allocation belong to operational
+       assignment / movement history, not master identity.
+  ====================================================== -->
+
+  <dialog
+    id="deploymentDialog"
+    class="asset-edit-dialog"
+    aria-labelledby="deploymentTitle"
+    aria-describedby="deploymentDescription"
+  >
+
+    <form
+      id="deploymentForm"
+      novalidate
+    >
+
+
+      <header class="asset-edit-header">
+
+        <div>
+
+          <h2 id="deploymentTitle">
+            Update Deployment
+          </h2>
+
+          <p id="deploymentDescription">
+            Recorded operational position
+          </p>
+
+        </div>
+
+
+        <button
+          id="deploymentClose"
+          type="button"
+          aria-label="Close deployment editor"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div class="asset-edit-identity">
+
+        <span>
+          Asset
+        </span>
+
+        <strong id="deploymentIdentity"></strong>
+
+        <small id="deploymentCurrentPosition"></small>
+
+      </div>
+
+
+      <fieldset
+        id="deploymentFields"
+        class="asset-edit-body"
+      ></fieldset>
+
+
+      <p
+        id="deploymentError"
+        class="asset-edit-error"
+        role="alert"
+        hidden
+      ></p>
+
+
+      <footer class="asset-edit-footer">
+
+        <span id="deploymentHelp"></span>
+
+
+        <div class="asset-edit-footer__actions">
+
+          <button
+            id="deploymentCancel"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="deploymentSave"
+            class="asset-edit-primary"
+            type="submit"
+          >
+            Save
+          </button>
+
+        </div>
+
+      </footer>
+
+
+    </form>
+
+  </dialog>
+
+
+  <!-- =====================================================
+       ARCHIVE ASSET DIALOG
+
+       Archive is the normal operational end-of-life action.
+       The asset record and its history remain available.
+       JS wiring comes in the Asset V2 integration pass.
+  ====================================================== -->
+
+  <dialog
+    id="assetArchiveDialog"
+    class="asset-edit-dialog asset-lifecycle-dialog"
+    aria-labelledby="assetArchiveTitle"
+  >
+
+    <form
+      id="assetArchiveForm"
+      novalidate
+    >
+
+      <header class="asset-edit-header">
+
+        <div>
+
+          <h2 id="assetArchiveTitle">
+            Archive Asset
+          </h2>
+
+          <p>
+            Retain the asset record and operational history while removing it from the active Fleet.
+          </p>
+
+        </div>
+
+        <button
+          id="assetArchiveClose"
+          type="button"
+          aria-label="Close archive asset"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div class="asset-edit-body">
+
+        <label class="asset-edit-field">
+
+          <span>
+            Archive reason
+          </span>
+
+          <select id="assetArchiveReason">
+
+            <option value="">
+              Select reason
+            </option>
+
+            <option value="SOLD">
+              Sold
+            </option>
+
+            <option value="RETURNED_TO_SUPPLIER">
+              Returned to supplier
+            </option>
+
+            <option value="DISPOSED">
+              Disposed
+            </option>
+
+            <option value="WRITTEN_OFF">
+              Written off
+            </option>
+
+            <option value="REPLACED">
+              Replaced
+            </option>
+
+            <option value="OTHER">
+              Other
+            </option>
+
+          </select>
+
+        </label>
+
+
+        <label class="asset-edit-field">
+
+          <span>
+            Effective date
+          </span>
+
+          <input
+            id="assetArchiveDate"
+            type="date"
+          />
+
+        </label>
+
+
+        <label class="asset-edit-field asset-edit-field--wide">
+
+          <span>
+            Notes
+          </span>
+
+          <textarea
+            id="assetArchiveNotes"
+            rows="4"
+            placeholder="Optional archive or disposal notes"
+          ></textarea>
+
+        </label>
+
+      </div>
+
+
+      <p
+        id="assetArchiveError"
+        class="asset-edit-error"
+        role="alert"
+        hidden
+      ></p>
+
+
+      <footer class="asset-edit-footer">
+
+        <span>
+          Archived assets retain their history and evidence.
+        </span>
+
+
+        <div class="asset-edit-footer__actions">
+
+          <button
+            id="assetArchiveCancel"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="assetArchiveConfirm"
+            class="asset-edit-primary"
+            type="submit"
+          >
+            Archive Asset
+          </button>
+
+        </div>
+
+      </footer>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- =====================================================
+       DELETE ASSET DIALOG
+
+       Development / Platform Admin recovery action only.
+       Later production use should favour Archive.
+  ====================================================== -->
+
+  <dialog
+    id="assetDeleteDialog"
+    class="asset-edit-dialog asset-lifecycle-dialog"
+    aria-labelledby="assetDeleteTitle"
+  >
+
+    <form
+      id="assetDeleteForm"
+      novalidate
+    >
+
+      <header class="asset-edit-header">
+
+        <div>
+
+          <h2 id="assetDeleteTitle">
+            Delete Asset
+          </h2>
+
+          <p>
+            Development recovery action for records created in error.
+          </p>
+
+        </div>
+
+        <button
+          id="assetDeleteClose"
+          type="button"
+          aria-label="Close delete asset"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div class="asset-edit-body">
+
+        <div class="asset-delete-warning">
+
+          <strong>
+            This action is different from Archive.
+          </strong>
+
+          <p>
+            Delete should only be used for test records or records created in error.
+            Genuine operational assets should normally be archived so their history remains available.
+          </p>
+
+        </div>
+
+
+        <label class="asset-edit-field asset-edit-field--wide">
+
+          <span>
+            Type the permanent Asset ID to confirm
+          </span>
+
+          <input
+            id="assetDeleteConfirmation"
+            type="text"
+            autocomplete="off"
+            placeholder="e.g. VAN-0001"
+          />
+
+        </label>
+
+      </div>
+
+
+      <p
+        id="assetDeleteError"
+        class="asset-edit-error"
+        role="alert"
+        hidden
+      ></p>
+
+
+      <footer class="asset-edit-footer">
+
+        <span>
+          Platform Admin / development use only.
+        </span>
+
+
+        <div class="asset-edit-footer__actions">
+
+          <button
+            id="assetDeleteCancel"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="assetDeleteConfirm"
+            class="asset-lifecycle-action asset-lifecycle-action--danger"
+            type="submit"
+          >
+            Delete Asset
+          </button>
+
+        </div>
+
+      </footer>
+
+    </form>
+
+  </dialog>
+
+
+  <!-- =====================================================
+       SCRIPTS
+  ====================================================== -->
 
   <script
     src="/modules/contractor/shared/js/config.js"
@@ -558,28 +1173,6 @@
   ></script>
 
 
-  <p id="assetEditConfirmation" class="asset-edit-confirmation" role="status" hidden></p>
-  <dialog id="assetEditDialog" class="asset-edit-dialog" aria-labelledby="assetEditTitle" aria-describedby="assetEditDescription">
-    <form id="assetEditForm" novalidate>
-      <header class="asset-edit-header">
-        <div><h2 id="assetEditTitle">Edit Asset</h2><p id="assetEditDescription">Master asset information</p></div>
-        <button id="assetEditClose" type="button" aria-label="Close edit asset">&#215;</button>
-      </header>
-      <div class="asset-edit-identity"><span>Permanent Plant ID</span><strong id="assetEditIdentity"></strong><small id="assetEditOwnership"></small></div>
-      <fieldset id="assetEditFields" class="asset-edit-body"></fieldset>
-      <p id="assetEditError" class="asset-edit-error" role="alert" hidden></p>
-      <footer class="asset-edit-footer"><span>Plant ID and ownership remain unchanged.</span><button id="assetEditCancel" type="button">Cancel</button><button id="assetEditSave" class="asset-edit-primary" type="submit">Save changes</button></footer>
-    </form>
-  </dialog>
-  <dialog id="deploymentDialog" class="asset-edit-dialog" aria-labelledby="deploymentTitle">
-    <form id="deploymentForm" novalidate>
-      <header class="asset-edit-header"><div><h2 id="deploymentTitle">Update deployment</h2><p id="deploymentDescription">Recorded operational position</p></div><button id="deploymentClose" type="button" aria-label="Close deployment editor">&#215;</button></header>
-      <div class="asset-edit-identity"><span>Plant</span><strong id="deploymentIdentity"></strong><small id="deploymentCurrentPosition"></small></div>
-      <fieldset id="deploymentFields" class="asset-edit-body"></fieldset>
-      <p id="deploymentError" class="asset-edit-error" role="alert" hidden></p>
-      <footer class="asset-edit-footer"><span id="deploymentHelp"></span><button id="deploymentCancel" type="button">Cancel</button><button id="deploymentSave" class="asset-edit-primary" type="submit">Save</button></footer>
-    </form>
-  </dialog>
 </body>
 
 </html>

@@ -54,66 +54,75 @@ service cloud.firestore {
     }
 
 
+    function currentProfileExists() {
+
+      return signedIn() &&
+        exists(
+          currentUserPath()
+        );
+
+    }
 
 
     function currentProfile() {
-      return signedIn() && exists(currentUserPath()) ? get(currentUserPath()).data : {};
-    }
 
-    function activeActor(actor) {
-      return actor.get("status", "") == "ACTIVE" &&
-        validRoleLevel(actor) &&
-        actor.get("organisationId", "") is string &&
-        actor.organisationId.size() > 0 &&
-        actor.get("permissions", null) is map;
-    }
+      return get(
+        currentUserPath()
+      ).data;
 
-    // These map predicates are used only after activeActor at the boundary.
-    function platformRole(actor) {
-      return actor.get("accessLevel", 0) == 99 &&
-        actor.get("roleCode", "") == "PLATFORM_ADMIN";
-    }
-
-    function organisationRole(actor) {
-      return actor.get("accessLevel", 0) == 6 &&
-        actor.get("roleCode", "") == "ORGANISATION_MANAGER" &&
-        permissionIn(actor, "canManageUsers") &&
-        permissionIn(actor, "canManageOrganisation");
-    }
-
-    function permissionIn(actor, name) {
-      return actor.get("permissions", {}).get(name, false) == true;
-    }
-
-    function hasPermission(name) {
-      let actor = currentProfile();
-      return activeActor(actor) && permissionIn(actor, name);
     }
 
 
     function currentLevel() {
-      return currentProfile().get("accessLevel", 0);
+
+      return currentProfileExists()
+        ? currentProfile().accessLevel
+        : 0;
+
     }
 
 
     function currentOrganisationId() {
-      return currentProfile().get("organisationId", "");
+
+      return currentProfileExists()
+        ? currentProfile().organisationId
+        : "";
+
     }
 
 
     function currentRoleCode() {
-      return currentProfile().get("roleCode", "");
+
+      return currentProfileExists() &&
+        currentProfile().keys().hasAny([
+          "roleCode"
+        ])
+          ? currentProfile().roleCode
+          : (
+              currentProfileExists() &&
+              currentProfile().keys().hasAny([
+                "role"
+              ])
+                ? currentProfile().role
+                : ""
+            );
+
     }
 
 
     function isActiveUser() {
-      return activeActor(currentProfile());
+
+      return currentProfileExists() &&
+        currentProfile().status == "ACTIVE";
+
     }
 
 
     function isPlatformAdmin() {
-      let actor = currentProfile();
-      return activeActor(actor) && platformRole(actor);
+
+      return isActiveUser() &&
+        currentLevel() >= 99;
+
     }
 
 
@@ -121,60 +130,156 @@ service cloud.firestore {
        PERMISSION MAP HELPERS
     ===================================================== */
 
+    function hasPermissionMap() {
+
+      return currentProfileExists() &&
+        currentProfile().keys().hasAny([
+          "permissions"
+        ]);
+
+    }
 
 
     function canViewAllProjectsPermission() {
-      return hasPermission("canViewAllProjects");
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canViewAllProjects"
+        ]) &&
+
+        currentProfile().permissions.canViewAllProjects == true;
+
     }
 
 
     function canCreateProjectsPermission() {
-      return hasPermission("canCreateProjects");
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canCreateProjects"
+        ]) &&
+
+        currentProfile().permissions.canCreateProjects == true;
+
     }
 
 
     function canManageOrganisationPermission() {
-      return hasPermission("canManageOrganisation");
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canManageOrganisation"
+        ]) &&
+
+        currentProfile().permissions.canManageOrganisation == true;
+
     }
 
 
     function canManageUsersPermission() {
-      return hasPermission("canManageUsers");
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canManageUsers"
+        ]) &&
+
+        currentProfile().permissions.canManageUsers == true;
+
     }
 
 
     function canManageAssurancePermission() {
-      return hasPermission("canManageAssurance");
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canManageAssurance"
+        ]) &&
+
+        currentProfile().permissions.canManageAssurance == true;
+
     }
 
 
     function canViewCommercialPermission() {
-      return hasPermission("canViewCommercial");
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canViewCommercial"
+        ]) &&
+
+        currentProfile().permissions.canViewCommercial == true;
+
     }
 
 
     function canManageCommercialPermission() {
-      return hasPermission("canManageCommercial");
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canManageCommercial"
+        ]) &&
+
+        currentProfile().permissions.canManageCommercial == true;
+
     }
 
 
     function canViewPlantPermission() {
-      return hasPermission("canViewPlant");
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canViewPlant"
+        ]) &&
+
+        currentProfile().permissions.canViewPlant == true;
+
     }
 
 
     function canRequestPlantPermission() {
-      return hasPermission("canRequestPlant");
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canRequestPlant"
+        ]) &&
+
+        currentProfile().permissions.canRequestPlant == true;
+
     }
 
 
     function canManagePlantPermission() {
-      return hasPermission("canManagePlant");
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canManagePlant"
+        ]) &&
+
+        currentProfile().permissions.canManagePlant == true;
+
     }
 
 
     function canManageTransportPermission() {
-      return hasPermission("canManageTransport");
+
+      return hasPermissionMap() &&
+
+        currentProfile().permissions.keys().hasAny([
+          "canManageTransport"
+        ]) &&
+
+        currentProfile().permissions.canManageTransport == true;
+
     }
 
 
@@ -182,10 +287,19 @@ service cloud.firestore {
        ORGANISATION
     ===================================================== */
 
-    function sameOrganisation(organisationId) {
-      let actor = currentProfile();
-      return activeActor(actor) &&
-        (platformRole(actor) || actor.organisationId == organisationId);
+    function sameOrganisation(
+      organisationId
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          organisationId ==
+            currentOrganisationId()
+        );
+
     }
 
 
@@ -203,8 +317,11 @@ service cloud.firestore {
 
 
     function isOrganisationManager() {
-      let actor = currentProfile();
-      return activeActor(actor) && organisationRole(actor);
+
+      return isActiveUser() &&
+        currentRoleCode() ==
+          "ORGANISATION_MANAGER";
+
     }
 
 
@@ -352,6 +469,126 @@ service cloud.firestore {
 
 
     /* =====================================================
+       PLANT ASSET V2 / COUNTER HELPERS
+    ===================================================== */
+
+    function validPlantAssetClass(data) {
+
+      return data.keys().hasAll([
+        "assetClass"
+      ]) &&
+
+        data.assetClass in [
+          "ROAD_VEHICLE",
+          "PLANT_MACHINERY",
+          "SMALL_PLANT",
+          "TRAILER_ATTACHMENT",
+          "OTHER"
+        ];
+
+    }
+
+
+    function validPlantAssetType(data) {
+
+      return
+
+        (
+          data.assetClass == "ROAD_VEHICLE" &&
+
+          data.keys().hasAll([
+            "vehicleType",
+            "registrationNumber",
+            "manufacturer",
+            "model"
+          ]) &&
+
+          data.vehicleType is string &&
+          data.vehicleType.size() > 0 &&
+
+          data.registrationNumber is string &&
+          data.registrationNumber.size() > 0 &&
+
+          data.manufacturer is string &&
+          data.manufacturer.size() > 0 &&
+
+          data.model is string &&
+          data.model.size() > 0
+        )
+
+        ||
+
+        (
+          data.assetClass == "PLANT_MACHINERY" &&
+
+          data.keys().hasAll([
+            "plantType"
+          ]) &&
+
+          data.plantType is string &&
+          data.plantType.size() > 0
+        )
+
+        ||
+
+        (
+          data.assetClass == "SMALL_PLANT" &&
+
+          data.keys().hasAll([
+            "equipmentType"
+          ]) &&
+
+          data.equipmentType is string &&
+          data.equipmentType.size() > 0
+        )
+
+        ||
+
+        (
+          data.assetClass == "TRAILER_ATTACHMENT" &&
+
+          data.keys().hasAll([
+            "attachmentType"
+          ]) &&
+
+          data.attachmentType is string &&
+          data.attachmentType.size() > 0
+        )
+
+        ||
+
+        (
+          data.assetClass == "OTHER" &&
+
+          data.keys().hasAll([
+            "otherAssetType"
+          ]) &&
+
+          data.otherAssetType is string &&
+          data.otherAssetType.size() > 0
+        );
+
+    }
+
+
+    function ownPlantCounterId(counterId) {
+
+      return isActiveUser() &&
+
+        canManagePlant(
+          currentOrganisationId()
+        ) &&
+
+        counterId.matches(
+          "^" +
+          currentOrganisationId() +
+          "_[A-Za-z0-9_-]+$"
+        );
+
+    }
+
+
+    /* =====================================================
        PROJECT
     ===================================================== */
 
@@ -377,17 +614,33 @@ service cloud.firestore {
     }
 
 
-    function projectData(projectId) {
-      return signedIn() && exists(projectPath(projectId))
-        ? get(projectPath(projectId)).data : {};
+    function projectData(
+      projectId
+    ) {
+
+      return get(
+        projectPath(
+          projectId
+        )
+      ).data;
+
     }
 
 
-    function projectOrganisationMatches(projectId) {
-      let actor = currentProfile();
-      let project = projectData(projectId);
-      return activeActor(actor) && project.keys().hasAny(["organisationId"]) &&
-        (platformRole(actor) || project.organisationId == actor.organisationId);
+    function projectOrganisationMatches(
+      projectId
+    ) {
+
+      return projectExists(
+        projectId
+      ) &&
+
+      sameOrganisation(
+        projectData(
+          projectId
+        ).organisationId
+      );
+
     }
 
 
@@ -448,58 +701,144 @@ service cloud.firestore {
     }
 
 
+    function projectMemberExists(
+      projectId
+    ) {
 
+      return signedIn() &&
 
-    function projectMember(projectId) {
-      return signedIn() && exists(projectMemberPath(projectId))
-        ? get(projectMemberPath(projectId)).data : {};
-    }
+        exists(
+          projectMemberPath(
+            projectId
+          )
+        );
 
-    function actorMembership(actor, membership) {
-      return membership.get("uid", "") == request.auth.uid &&
-        membership.get("roleCode", "") == actor.get("roleCode", "") &&
-        membership.get("active", false) == true;
-    }
-
-    function memberAllows(actor, projectId, name) {
-      return exists(projectMemberPath(projectId)) &&
-        existingMemberAllows(actor, get(projectMemberPath(projectId)).data, name);
-    }
-
-    function existingMemberAllows(actor, membership, name) {
-      return actorMembership(actor, membership) && membership.get(name, false) == true;
     }
 
 
-    function isProjectMember(projectId) {
-      return signedIn() && actorMembership(currentProfile(), projectMember(projectId));
+    function projectMember(
+      projectId
+    ) {
+
+      return get(
+        projectMemberPath(
+          projectId
+        )
+      ).data;
+
     }
 
 
+    function isProjectMember(
+      projectId
+    ) {
 
+      return projectMemberExists(
+        projectId
+      ) &&
 
-    function projectMemberCanManage(projectId) {
-      return signedIn() && memberAllows(currentProfile(), projectId, "canManageProject");
+      projectMember(
+        projectId
+      ).active == true;
+
     }
 
 
-    function projectMemberCanManageScopeProgress(projectId) {
-      return signedIn() && memberAllows(currentProfile(), projectId, "canManageScopeProgress");
+    function memberHasField(
+      projectId,
+      fieldName
+    ) {
+
+      return isProjectMember(
+        projectId
+      ) &&
+
+      projectMember(
+        projectId
+      ).keys().hasAny([
+        fieldName
+      ]);
+
     }
 
 
-    function projectMemberCanManageAssurance(projectId) {
-      return signedIn() && memberAllows(currentProfile(), projectId, "canManageAssurance");
+    function projectMemberCanManage(
+      projectId
+    ) {
+
+      return memberHasField(
+        projectId,
+        "canManageProject"
+      ) &&
+
+      projectMember(
+        projectId
+      ).canManageProject == true;
+
     }
 
 
-    function projectMemberCanViewCommercial(projectId) {
-      return signedIn() && memberAllows(currentProfile(), projectId, "canViewCommercial");
+    function projectMemberCanManageScopeProgress(
+      projectId
+    ) {
+
+      return memberHasField(
+        projectId,
+        "canManageScopeProgress"
+      ) &&
+
+      projectMember(
+        projectId
+      ).canManageScopeProgress == true;
+
     }
 
 
-    function projectMemberCanManageCommercial(projectId) {
-      return signedIn() && memberAllows(currentProfile(), projectId, "canManageCommercial");
+    function projectMemberCanManageAssurance(
+      projectId
+    ) {
+
+      return memberHasField(
+        projectId,
+        "canManageAssurance"
+      ) &&
+
+      projectMember(
+        projectId
+      ).canManageAssurance == true;
+
+    }
+
+
+    function projectMemberCanViewCommercial(
+      projectId
+    ) {
+
+      return memberHasField(
+        projectId,
+        "canViewCommercial"
+      ) &&
+
+      projectMember(
+        projectId
+      ).canViewCommercial == true;
+
+    }
+
+
+    function projectMemberCanManageCommercial(
+      projectId
+    ) {
+
+      return memberHasField(
+        projectId,
+        "canManageCommercial"
+      ) &&
+
+      projectMember(
+        projectId
+      ).canManageCommercial == true;
+
     }
 
 
@@ -507,17 +846,28 @@ service cloud.firestore {
        PROJECT VISIBILITY
     ===================================================== */
 
-    function canReadProject(projectId) {
-      return canReadProjectData(projectData(projectId), projectId);
-    }
+    function canReadProject(
+      projectId
+    ) {
 
-    function canReadProjectData(project, projectId) {
-      let actor = currentProfile();
-      return activeActor(actor) &&
-        (platformRole(actor) ||
-          (project.get("organisationId", "") == actor.organisationId &&
-            (permissionIn(actor, "canViewAllProjects") ||
-              actorMembership(actor, projectMember(projectId)))));
+      return isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          projectOrganisationMatches(
+            projectId
+          ) &&
+
+          (
+            canViewAllProjectsPermission() ||
+
+            isProjectMember(
+              projectId
+            )
+          )
+        );
+
     }
 
 
@@ -552,20 +902,28 @@ service cloud.firestore {
        PROJECT MANAGEMENT
     ===================================================== */
 
-    function canListProject(project) {
-      let actor = currentProfile();
-      return activeActor(actor) && (platformRole(actor) ||
-        (project.get("organisationId", "") == actor.organisationId &&
-          permissionIn(actor, "canViewAllProjects")));
-    }
+    function canManageProject(
+      projectId
+    ) {
 
-    function canManageProject(projectId) {
-      let actor = currentProfile();
-      return activeActor(actor) &&
-        (platformRole(actor) ||
-          (projectData(projectId).get("organisationId", "") == actor.organisationId &&
-            (permissionIn(actor, "canManageOrganisation") ||
-              memberAllows(actor, projectId, "canManageProject"))));
+      return isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          projectOrganisationMatches(
+            projectId
+          ) &&
+
+          (
+            canManageOrganisationPermission() ||
+
+            projectMemberCanManage(
+              projectId
+            )
+          )
+        );
+
     }
 
 
@@ -573,13 +931,28 @@ service cloud.firestore {
        ASSURANCE
     ===================================================== */
 
-    function canManageAssurance(projectId) {
-      let actor = currentProfile();
-      return activeActor(actor) &&
-        (platformRole(actor) ||
-          (projectData(projectId).get("organisationId", "") == actor.organisationId &&
-            (permissionIn(actor, "canManageAssurance") ||
-              memberAllows(actor, projectId, "canManageAssurance"))));
+    function canManageAssurance(
+      projectId
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          projectOrganisationMatches(
+            projectId
+          ) &&
+
+          (
+            canManageAssurancePermission() ||
+
+            projectMemberCanManageAssurance(
+              projectId
+            )
+          )
+        );
+
     }
 
 
@@ -587,31 +960,59 @@ service cloud.firestore {
        COMMERCIAL
     ===================================================== */
 
-    function canReadCommercial(projectId) {
-      let actor = currentProfile();
-      return activeActor(actor) &&
-        (platformRole(actor) ||
-          (projectData(projectId).get("organisationId", "") == actor.organisationId &&
-            (permissionIn(actor, "canViewCommercial") ||
-              permissionIn(actor, "canManageCommercial") ||
-              memberCommercialAccess(actor, projectId))));
+    function canReadCommercial(
+      projectId
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          projectOrganisationMatches(
+            projectId
+          ) &&
+
+          (
+            canViewCommercialPermission() ||
+
+            canManageCommercialPermission() ||
+
+            projectMemberCanViewCommercial(
+              projectId
+            ) ||
+
+            projectMemberCanManageCommercial(
+              projectId
+            )
+          )
+        );
+
     }
 
-    function memberCommercialAccess(actor, projectId) {
-      let membership = projectMember(projectId);
-      return actorMembership(actor, membership) &&
-        (membership.get("canViewCommercial", false) == true ||
-          membership.get("canManageCommercial", false) == true);
-    }
 
+    function canManageCommercial(
+      projectId
+    ) {
 
-    function canManageCommercial(projectId) {
-      let actor = currentProfile();
-      return activeActor(actor) &&
-        (platformRole(actor) ||
-          (projectData(projectId).get("organisationId", "") == actor.organisationId &&
-            (permissionIn(actor, "canManageCommercial") ||
-              memberAllows(actor, projectId, "canManageCommercial"))));
+      return isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          projectOrganisationMatches(
+            projectId
+          ) &&
+
+          (
+            canManageCommercialPermission() ||
+
+            projectMemberCanManageCommercial(
+              projectId
+            )
+          )
+        );
+
     }
 
 
@@ -619,262 +1020,64 @@ service cloud.firestore {
        USERS
     ===================================================== */
 
-
-    /* Canonical authority and fixed delegation. Roles identify function;
-       explicit permissions and membership determine capability and scope. */
-    function roleLevels() {
-      return {
-        "WORKER": 0, "SUPERVISOR": 1, "SITE_MANAGER": 2,
-        "PROJECT_MANAGER": 3, "SENIOR_PROJECT_MANAGER": 4,
-        "HEALTH_SAFETY": 4.5, "SENIOR_HEALTH_SAFETY": 4.6,
-        "CONTRACTS_MANAGER": 5, "PLANT_TRANSPORT_MANAGER": 5.5,
-        "ORGANISATION_MANAGER": 6, "PLATFORM_ADMIN": 99
-      };
-    }
-
-    function validRoleLevel(data) {
-      let role = data.get("roleCode", "");
-      let level = data.get("accessLevel", null);
-      let levels = roleLevels();
-      return role is string && level is number &&
-        levels.get(role, -1) == level && level >= 0;
-    }
-
-    function permissionKeys() {
-      return [
-        "canViewAllProjects", "canCreateProjects",
-        "canManageUsers", "canManageOrganisation",
-        "canManageAssurance", "canViewCommercial", "canManageCommercial",
-        "canViewPlant", "canRequestPlant", "canManagePlant", "canManageTransport"
-      ];
-    }
-
-    function validPermissions(p) {
-      return p is map && p.keys().hasOnly(permissionKeys()) &&
-        p.values().hasOnly([true, false]);
-    }
-
-    function validCanonicalProfile(data) {
-      return validRoleLevel(data) &&
-        data.get("organisationId", "") is string &&
-        data.organisationId.size() > 0 &&
-        data.get("status", "") in ["ACTIVE", "INACTIVE"] &&
-        validPermissions(data.get("permissions", null));
-    }
-
-    function operationalRoles() {
-      return ["WORKER", "SUPERVISOR", "SITE_MANAGER", "PROJECT_MANAGER",
-        "SENIOR_PROJECT_MANAGER", "HEALTH_SAFETY", "SENIOR_HEALTH_SAFETY",
-        "CONTRACTS_MANAGER", "PLANT_TRANSPORT_MANAGER"];
-    }
-
-    function eligibleTenantIdentity(data) {
-      return data.get("roleCode", "") in operationalRoles() &&
-        data.get("permissions", null) is map &&
-        data.permissions.get("canManageUsers", false) == false &&
-        data.permissions.get("canManageOrganisation", false) == false;
-    }
-
-    function tenantPermissionCeiling(data) {
-      let p = data.permissions;
-      let role = data.roleCode;
-      return
-        (!p.get("canViewAllProjects", false) ||
-          role in ["SENIOR_PROJECT_MANAGER", "SENIOR_HEALTH_SAFETY",
-            "CONTRACTS_MANAGER", "PLANT_TRANSPORT_MANAGER"]) &&
-        (!p.get("canCreateProjects", false) || role == "CONTRACTS_MANAGER") &&
-        (!p.get("canManageAssurance", false) || role == "SENIOR_HEALTH_SAFETY") &&
-        (!p.get("canViewCommercial", false) || role == "CONTRACTS_MANAGER") &&
-        (!p.get("canManageCommercial", false) ||
-          (role == "CONTRACTS_MANAGER" && p.get("canViewCommercial", false))) &&
-        (!p.get("canViewPlant", false) || role == "PLANT_TRANSPORT_MANAGER") &&
-        (!p.get("canRequestPlant", false) ||
-          (role == "PLANT_TRANSPORT_MANAGER" && p.get("canViewPlant", false))) &&
-        (!p.get("canManagePlant", false) ||
-          (role == "PLANT_TRANSPORT_MANAGER" && p.get("canViewPlant", false))) &&
-        (!p.get("canManageTransport", false) ||
-          (role == "PLANT_TRANSPORT_MANAGER" && p.get("canViewPlant", false)));
-    }
-
-    function tenantAuthorityStable(actor) {
-      return getAfter(currentUserPath()).data.diff(actor)
-        .affectedKeys().hasOnly(["displayName"]);
-    }
-
-
-    function safeDisplayName(data) {
-      return data.get("displayName", null) is string &&
-        data.displayName.size() > 0 && data.displayName.size() <= 120;
-    }
-
-    function newProfileShape(data, uid) {
-      return data.keys().hasOnly([
-        "organisationId", "status", "accessLevel", "roleCode", "permissions",
-        "displayName", "email", "uid",
-        "createdAt", "createdByUid", "updatedAt", "updatedByUid"
-      ]) && safeDisplayName(data) &&
-        data.get("uid", uid) == uid && data.get("email", "") is string;
-    }
-
-    function canCreateProfile(uid) {
-      let actor = currentProfile();
-      let next = request.resource.data;
-      return activeActor(actor) && newProfileShape(next, uid) &&
-        validCanonicalProfile(next) &&
-        (platformRole(actor) ||
-          (organisationRole(actor) && uid != request.auth.uid &&
-            next.organisationId == actor.organisationId &&
-            eligibleTenantIdentity(next) && tenantPermissionCeiling(next) &&
-            tenantAuthorityStable(actor)));
-    }
-
-    function canUpdateProfile(uid) {
-      let actor = currentProfile();
-      let next = request.resource.data;
-      let changed = next.diff(resource.data).affectedKeys();
-      return activeActor(actor) &&
-        ((uid == request.auth.uid && changed.hasOnly(["displayName"]) &&
-            safeDisplayName(next)) ||
-          (platformRole(actor) && validCanonicalProfile(next)) ||
-          (organisationRole(actor) && uid != request.auth.uid &&
-            tenantProfileUpdate(actor, next, changed)));
-    }
-
-    function tenantProfileUpdate(actor, next, changed) {
-      let before = resource.data;
-      let authorityChanged = changed.hasAny(["status", "accessLevel", "roleCode", "permissions"]);
-      return before.get("organisationId", "") == actor.organisationId &&
-        next.get("organisationId", "") == before.organisationId &&
-        changed.hasOnly(["displayName", "status", "accessLevel", "roleCode",
-          "permissions", "updatedAt", "updatedByUid"]) &&
-        validRoleLevel(before) && eligibleTenantIdentity(before) &&
-        (!changed.hasAny(["displayName"]) || safeDisplayName(next)) &&
-        (!authorityChanged ||
-          (validCanonicalProfile(before) && validCanonicalProfile(next) &&
-            eligibleTenantIdentity(next) && tenantPermissionCeiling(next))) &&
-        tenantAuthorityStable(actor);
-    }
-
-    function canReadProfile(data) {
-      let actor = currentProfile();
-      return activeActor(actor) &&
-        (platformRole(actor) ||
-          (data.get("organisationId", "") == actor.organisationId &&
-            (permissionIn(actor, "canManageUsers") ||
-              permissionIn(actor, "canManageAssurance"))));
-    }
-
-
-    function memberUserPath(uid) {
-      return /databases/$(database)/documents/users/$(uid);
-    }
-
-
-    function membershipShape(data, uid, targetRole) {
-      return data.keys().hasAll(["uid", "roleCode", "active"]) &&
-        data.keys().hasOnly([
-          "uid", "roleCode", "active", "assignedFrom", "assignedUntil",
-          "canManageProject", "canUpdateOperations", "canManageScopeProgress",
-          "canManageAssurance", "canViewCommercial", "canManageCommercial",
-          "createdAt", "createdByUid", "updatedAt", "updatedByUid"
-        ]) &&
-        data.uid == uid && data.roleCode == targetRole && data.active is bool &&
-        [data.get("canManageProject", false), data.get("canUpdateOperations", false), data.get("canManageScopeProgress", false), data.get("canManageAssurance", false), data.get("canViewCommercial", false), data.get("canManageCommercial", false)].hasOnly([true, false]) &&
-        (data.get("assignedFrom", null) == null || data.assignedFrom is timestamp) &&
-        (data.get("assignedUntil", null) == null || data.assignedUntil is timestamp);
-    }
-
-    function membershipCeiling(data) {
-      let role = data.roleCode;
-      let projectRoles = ["PROJECT_MANAGER", "SENIOR_PROJECT_MANAGER", "CONTRACTS_MANAGER"];
-      let operational = role in ["SUPERVISOR", "SITE_MANAGER",
-        "PROJECT_MANAGER", "SENIOR_PROJECT_MANAGER", "CONTRACTS_MANAGER"];
-      return
-        (!data.get("canManageProject", false) || role in projectRoles) &&
-        (!data.get("canUpdateOperations", false) || operational) &&
-        (!data.get("canManageScopeProgress", false) || operational) &&
-        (!data.get("canManageAssurance", false) ||
-          role in ["HEALTH_SAFETY", "SENIOR_HEALTH_SAFETY"]) &&
-        (!data.get("canViewCommercial", false) || role in projectRoles) &&
-        (!data.get("canManageCommercial", false) ||
-          (role in projectRoles && data.get("canViewCommercial", false)));
-    }
-
-    function ordinaryMembership(data) {
-      return data.roleCode in ["WORKER", "SUPERVISOR", "SITE_MANAGER",
-          "PROJECT_MANAGER", "SENIOR_PROJECT_MANAGER", "CONTRACTS_MANAGER"] &&
-        data.get("canManageProject", false) == false &&
-        data.get("canManageAssurance", false) == false &&
-        data.get("canViewCommercial", false) == false &&
-        data.get("canManageCommercial", false) == false;
-    }
-
-    function membershipManager(actor, projectId) {
-      return actor.roleCode in ["PROJECT_MANAGER", "SENIOR_PROJECT_MANAGER", "CONTRACTS_MANAGER"] &&
-        memberAllows(actor, projectId, "canManageProject");
-    }
-
-    function canWriteMembership(projectId, uid) {
-      return signedIn() && exists(memberUserPath(uid)) && exists(projectPath(projectId)) &&
-        canWriteExistingMembership(projectId, uid);
-    }
-
-    function canWriteExistingMembership(projectId, uid) {
-      let actor = currentProfile();
-      let target = get(memberUserPath(uid)).data;
-      let project = projectData(projectId);
-      let next = request.resource.data;
-      return activeActor(actor) && validCanonicalProfile(target) &&
-        membershipShape(next, uid, target.roleCode) &&
-        target.organisationId == project.get("organisationId", "") &&
-        (platformRole(actor)
-          ? getAfter(memberUserPath(uid)).data.organisationId ==
-              getAfter(projectPath(projectId)).data.organisationId
-          : tenantMemberWrite(actor, target, projectId, uid));
-    }
-
-    function tenantMemberWrite(actor, target, projectId, uid) {
-      let next = request.resource.data;
-      return eligibleTenantIdentity(target) && target.status == "ACTIVE" &&
-        target.organisationId == actor.organisationId &&
-        membershipCeiling(next) &&
-        (organisationRole(actor) ||
-          (membershipManager(actor, projectId) && ordinaryMembership(next) &&
-            (request.method == "create" ||
-              (membershipShape(resource.data, uid, target.roleCode) &&
-                ordinaryMembership(resource.data))))) &&
-        tenantAuthorityStable(actor) &&
-        getAfter(memberUserPath(uid)).data.diff(target).affectedKeys().hasOnly(["displayName"]) &&
-        getAfter(projectPath(projectId)).data.organisationId == target.organisationId;
-    }
-
-    function canDeleteMembership(projectId, uid) {
-      let actor = currentProfile();
-      return activeActor(actor) &&
-        (platformRole(actor) ||
-          (exists(memberUserPath(uid)) && exists(projectPath(projectId)) &&
-            tenantMemberDelete(actor, projectId, uid)));
-    }
-
-    function tenantMemberDelete(actor, projectId, uid) {
-      let target = get(memberUserPath(uid)).data;
-      return validCanonicalProfile(target) && eligibleTenantIdentity(target) &&
-        target.organisationId == actor.organisationId &&
-        projectData(projectId).get("organisationId", "") == actor.organisationId &&
-        (organisationRole(actor) ||
-          (membershipManager(actor, projectId) &&
-            membershipShape(resource.data, uid, target.roleCode) &&
-            ordinaryMembership(resource.data))) &&
-        tenantAuthorityStable(actor);
-    }
-
     match /users/{userId} {
-      allow get: if signedIn() &&
-        (request.auth.uid == userId || canReadProfile(resource.data));
-      allow list: if canReadProfile(resource.data);
-      allow create: if canCreateProfile(userId);
-      allow update: if canUpdateProfile(userId);
-      allow delete: if isPlatformAdmin();
+
+
+      allow get: if
+        signedIn() &&
+
+        (
+          request.auth.uid ==
+            userId ||
+
+          isPlatformAdmin() ||
+
+          (
+            sameOrganisation(
+              resource.data.organisationId
+            ) &&
+
+            (
+              canManageUsersPermission() ||
+
+              canManageAssurancePermission()
+            )
+          )
+        );
+
+
+      allow list: if
+        isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          resource.data.organisationId ==
+            currentOrganisationId() &&
+
+          (
+            canManageUsersPermission() ||
+
+            canManageAssurancePermission()
+          )
+        );
+
+
+      allow create, update, delete: if
+        isPlatformAdmin() ||
+
+        (
+          canManageUsersPermission() &&
+
+          (
+            request.method == "create"
+              ? request.resource.data.organisationId ==
+                  currentOrganisationId()
+              : resource.data.organisationId ==
+                  currentOrganisationId()
+          )
+        );
+
     }
 
 
@@ -967,8 +1170,38 @@ service cloud.firestore {
     match /projects/{projectId} {
 
 
-      allow get: if canReadProjectData(resource.data, projectId);
-      allow list: if canListProject(resource.data);
+      allow get: if
+        isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          sameOrganisation(
+            resource.data.organisationId
+          ) &&
+
+          (
+            canViewAllProjectsPermission() ||
+
+            isProjectMember(
+              projectId
+            )
+          )
+        );
+
+
+      allow list: if
+        isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          resource.data.organisationId ==
+            currentOrganisationId() &&
+
+          canViewAllProjectsPermission()
+        );
+
 
       allow create: if
         (
@@ -1047,9 +1280,20 @@ service cloud.firestore {
           );
 
 
-        allow create, update: if canWriteMembership(projectId, memberUid);
+        allow create, update, delete: if
+          isPlatformAdmin() ||
 
-        allow delete: if canDeleteMembership(projectId, memberUid);
+          (
+            projectOrganisationMatches(
+              projectId
+            ) &&
+
+            canManageOrganisationPermission()
+          ) ||
+
+          canManageProject(
+            projectId
+          );
 
       }
 
@@ -1288,22 +1532,55 @@ service cloud.firestore {
     /* =====================================================
        PLANT ASSETS
 
-       Master plant identity.
+       Master asset identity.
 
-       Read:
-       Plant viewers.
+       Existing read behaviour is intentionally preserved so
+       Fleet / Overview organisation queries keep working.
 
-       Manage:
-       Plant / Transport Manager
-       Organisation Manager
-       explicit permission
-       Level 99
+       New creates use the Fleet V2 assetClass contract.
+       Legacy existing Plant records remain update-compatible.
     ===================================================== */
 
     match /plantAssets/{plantId} {
 
 
-      allow read: if
+      /*
+       * Existing records:
+       * preserve the known-working organisation read behaviour.
+       *
+       * Missing document GET:
+       * Fleet allocation checks whether a candidate Asset ID
+       * exists before creating it. An authorised Plant manager
+       * may therefore GET a missing candidate document.
+       */
+      allow get: if
+
+        (
+          resource != null &&
+
+          canViewPlant(
+            resource.data.organisationId
+          )
+        )
+
+        ||
+
+        (
+          resource == null &&
+
+          isActiveUser() &&
+
+          canManagePlant(
+            currentOrganisationId()
+          )
+        );
+
+
+      /*
+       * Collection queries used by Fleet / Overview.
+       * This is the old working read condition, kept deliberately.
+       */
+      allow list: if
         canViewPlant(
           resource.data.organisationId
         );
@@ -1319,9 +1596,9 @@ service cloud.firestore {
 
         request.resource.data.keys().hasAll([
           "organisationId",
+          "assetClass",
           "plantId",
           "plantReference",
-          "plantType",
           "ownershipType",
           "status",
           "active",
@@ -1330,6 +1607,14 @@ service cloud.firestore {
           "updatedByUid",
           "updatedAt"
         ]) &&
+
+        validPlantAssetClass(
+          request.resource.data
+        ) &&
+
+        validPlantAssetType(
+          request.resource.data
+        ) &&
 
         request.resource.data.plantId ==
           plantId &&
@@ -1374,19 +1659,50 @@ service cloud.firestore {
     /* =====================================================
        PLANT COUNTERS
 
-       Used to allocate readable Plant IDs.
+       Used to allocate readable Asset IDs.
 
        Example:
+       colemans_VAN
        colemans_HRE
     ===================================================== */
 
     match /plantCounters/{counterId} {
 
 
-      allow read: if
-        canManagePlant(
-          resource.data.organisationId
+      /*
+       * Existing counter:
+       * normal Plant-management authority.
+       *
+       * Missing counter:
+       * Fleet must GET it before first creation. In that case
+       * authorise only a same-organisation counter path.
+       */
+      allow get: if
+
+        (
+          resource != null &&
+
+          canManagePlant(
+            resource.data.organisationId
+          )
+        )
+
+        ||
+
+        (
+          resource == null &&
+
+          ownPlantCounterId(
+            counterId
+          )
         );
+
+
+      /*
+       * Counters are allocation internals and are never listed.
+       */
+      allow list:
+        if false;
 
 
       allow create: if
@@ -1396,6 +1712,10 @@ service cloud.firestore {
 
         request.resource.data.organisationId ==
           currentOrganisationId() &&
+
+        ownPlantCounterId(
+          counterId
+        ) &&
 
         request.resource.data.nextNumber is number;
 
@@ -1407,6 +1727,10 @@ service cloud.firestore {
 
         request.resource.data.organisationId ==
           resource.data.organisationId &&
+
+        ownPlantCounterId(
+          counterId
+        ) &&
 
         request.resource.data.nextNumber is number;
 
@@ -2169,7 +2493,7 @@ service cloud.firestore {
        entityId   = Plant ID
     ===================================================== */
 
-match /documents/{documentId} {
+   match /documents/{documentId} {
 
 
   allow read: if

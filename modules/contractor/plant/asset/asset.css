@@ -1625,6 +1625,17 @@
 .asset-deployment-actions__buttons .asset-deployment-actions__release { border-color: #e5c8c0; background: #fff7f4; color: #8b4033; }
 .asset-deployment-actions__restricted { margin: 0; color: #69776e; font-size: 13px; line-height: 1.5; }
 .asset-detail strong { overflow-wrap: anywhere; white-space: pre-line; }
+.asset-action-bar { min-height: 54px; }
+.asset-action-button { white-space: nowrap; }
+.asset-action-button:disabled, .asset-edit-dialog button:disabled { cursor: not-allowed; opacity: .55; }
+.asset-hero .asset-edit-primary { order: -3; min-height: 34px; padding: 8px 13px; }
+.asset-lifecycle-actions { display: inline-flex; align-items: center; gap: 6px; }
+.asset-lifecycle-action { min-height: 31px; padding: 6px 10px; border: 1px solid #d8e2dc; border-radius: 9px; background: #fff; color: #496052; font: inherit; font-size: .58rem; font-weight: 800; cursor: pointer; }
+.asset-lifecycle-action--danger { border-color: #e3c4bc; background: #fff8f6; color: #8a4034; }
+.asset-document-storage-blocker { margin: 18px 0 0; padding: 12px 14px; border: 1px solid #ead1cb; border-radius: 9px; background: #fff7f4; color: #7e463d; font-size: 12px; line-height: 1.5; }
+.asset-document-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.asset-document-actions button { border: 1px solid #d8e2dc; border-radius: 7px; padding: 6px 8px; background: #f5f7f5; color: #718078; font: inherit; font-size: 10px; cursor: not-allowed; }
+.asset-action-row { display: flex; justify-content: flex-end; margin-bottom: 14px; }
 @media (max-width: 540px) {
   .asset-edit-dialog { width: calc(100vw - 16px); max-height: calc(100dvh - 16px); }
   .asset-edit-dialog form { max-height: calc(100dvh - 18px); }
@@ -1634,4 +1645,633 @@
   .asset-edit-identity { margin: 0 16px; }
   .asset-edit-footer { flex-wrap: wrap; }
   .asset-edit-footer span { flex-basis: 100%; }
+  .asset-action-bar { align-items: flex-start; flex-direction: column; }
+  .asset-action-bar__actions { width: 100%; }
+  .asset-action-button { flex: 1 1 auto; }
+}
+
+
+/* =========================================================
+   ASSET WORKSPACE V2
+   CLASS-AWARE IDENTITY / LIFECYCLE
+========================================================= */
+
+.asset-hero__identity-stack {
+  min-width: 0;
+}
+
+
+.asset-hero__identity-meta {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  flex-wrap: wrap;
+
+  margin-top: 8px;
+}
+
+
+.asset-hero__identity-meta[hidden] {
+  display: none;
+}
+
+
+.asset-hero__internal-id,
+.asset-hero__class-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 25px;
+
+  padding:
+    4px
+    8px;
+
+  border-radius: 999px;
+
+  font-size: 0.55rem;
+  font-weight: 900;
+
+  letter-spacing: 0.02em;
+}
+
+
+.asset-hero__internal-id {
+  border:
+    1px solid
+    #d9e3dd;
+
+  background:
+    #f4f7f5;
+
+  color:
+    #53665b;
+}
+
+
+.asset-hero__class-label {
+  border:
+    1px solid
+    #dce8e0;
+
+  background:
+    #edf5ef;
+
+  color:
+    #43604f;
+}
+
+
+/* =========================================================
+   HERO ACTIONS
+========================================================= */
+
+.asset-lifecycle-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+.asset-lifecycle-actions[hidden] {
+  display: none;
+}
+
+
+.asset-lifecycle-action {
+  min-height: 31px;
+
+  padding:
+    6px
+    10px;
+
+  border:
+    1px solid
+    var(--asset-line);
+
+  border-radius: 9px;
+
+  background:
+    #ffffff;
+
+  color:
+    #56675d;
+
+  font: inherit;
+
+  font-size: 0.58rem;
+  font-weight: 850;
+
+  cursor: pointer;
+}
+
+
+.asset-lifecycle-action:hover {
+  background:
+    #f5f8f6;
+}
+
+
+.asset-lifecycle-action--danger {
+  border-color:
+    #ead2cd;
+
+  color:
+    var(--asset-red);
+
+  background:
+    #fffafa;
+}
+
+
+.asset-lifecycle-action--danger:hover {
+  background:
+    var(--asset-red-soft);
+}
+
+
+/* =========================================================
+   CLASS-AWARE DETAIL GROUPS
+========================================================= */
+
+.asset-class-summary {
+  display: grid;
+
+  gap: 12px;
+}
+
+
+.asset-class-summary__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 12px;
+}
+
+
+.asset-class-summary__header h4 {
+  margin: 0;
+
+  color:
+    var(--asset-ink);
+
+  font-size: 0.88rem;
+}
+
+
+.asset-class-summary__header p {
+  margin:
+    4px
+    0
+    0;
+
+  color:
+    var(--asset-muted);
+
+  font-size: 0.64rem;
+
+  line-height: 1.45;
+}
+
+
+.asset-detail--priority {
+  border-color:
+    #d3e2d8;
+
+  background:
+    #f8fbf9;
+}
+
+
+.asset-detail--attention {
+  border-color:
+    #eadab3;
+
+  background:
+    #fffaf0;
+}
+
+
+.asset-detail--alert {
+  border-color:
+    #edd0ca;
+
+  background:
+    #fff8f6;
+}
+
+
+/* =========================================================
+   ASSET ACTION BAR
+========================================================= */
+
+.asset-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-bottom: 14px;
+
+  padding:
+    12px
+    14px;
+
+  border:
+    1px solid
+    var(--asset-line);
+
+  border-radius: 13px;
+
+  background:
+    #ffffff;
+}
+
+
+.asset-action-bar__context strong,
+.asset-action-bar__context span {
+  display: block;
+}
+
+
+.asset-action-bar__context strong {
+  color:
+    #31483b;
+
+  font-size: 0.68rem;
+}
+
+
+.asset-action-bar__context span {
+  margin-top: 2px;
+
+  color:
+    #7f8b84;
+
+  font-size: 0.58rem;
+}
+
+
+.asset-action-bar__actions {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  flex-wrap: wrap;
+}
+
+
+.asset-action-button {
+  min-height: 34px;
+
+  padding:
+    7px
+    11px;
+
+  border:
+    1px solid
+    #d8e2dc;
+
+  border-radius: 9px;
+
+  background:
+    #ffffff;
+
+  color:
+    #3e5749;
+
+  font: inherit;
+
+  font-size: 0.6rem;
+  font-weight: 850;
+
+  cursor: pointer;
+}
+
+
+.asset-action-button:hover {
+  background:
+    #f3f7f4;
+}
+
+
+.asset-action-button--primary {
+  border-color:
+    #27543e;
+
+  background:
+    #27543e;
+
+  color:
+    #ffffff;
+}
+
+
+.asset-action-button--primary:hover {
+  background:
+    #1f4634;
+}
+
+
+/* =========================================================
+   MAINTENANCE / MOT POSITION
+========================================================= */
+
+.asset-maintenance-position {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 9px;
+}
+
+
+.asset-maintenance-position__item {
+  min-width: 0;
+
+  padding:
+    12px;
+
+  border:
+    1px solid
+    var(--asset-line);
+
+  border-radius: 11px;
+
+  background:
+    #fbfcfb;
+}
+
+
+.asset-maintenance-position__item span,
+.asset-maintenance-position__item strong,
+.asset-maintenance-position__item small {
+  display: block;
+}
+
+
+.asset-maintenance-position__item span {
+  color:
+    #7d8982;
+
+  font-size: 0.55rem;
+  font-weight: 800;
+
+  text-transform: uppercase;
+}
+
+
+.asset-maintenance-position__item strong {
+  margin-top: 5px;
+
+  color:
+    #30463a;
+
+  font-size: 0.77rem;
+}
+
+
+.asset-maintenance-position__item small {
+  margin-top: 3px;
+
+  color:
+    #8b958f;
+
+  font-size: 0.55rem;
+
+  line-height: 1.35;
+}
+
+
+.asset-maintenance-position__item.is-watch {
+  border-color:
+    #ead8ab;
+
+  background:
+    #fffaf0;
+}
+
+
+.asset-maintenance-position__item.is-alert {
+  border-color:
+    #ebcbc4;
+
+  background:
+    #fff7f5;
+}
+
+
+/* =========================================================
+   DOCUMENT RECORDS
+========================================================= */
+
+.asset-document-list {
+  display: grid;
+
+  gap: 8px;
+}
+
+
+.asset-document-record {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  gap: 12px;
+
+  align-items: center;
+
+  padding:
+    11px
+    12px;
+
+  border:
+    1px solid
+    var(--asset-line);
+
+  border-radius: 11px;
+
+  background:
+    #ffffff;
+}
+
+
+.asset-document-record__main strong,
+.asset-document-record__main span,
+.asset-document-record__main small {
+  display: block;
+}
+
+
+.asset-document-record__main strong {
+  color:
+    #30483a;
+
+  font-size: 0.68rem;
+}
+
+
+.asset-document-record__main span {
+  margin-top: 3px;
+
+  color:
+    #748079;
+
+  font-size: 0.59rem;
+}
+
+
+.asset-document-record__main small {
+  margin-top: 3px;
+
+  color:
+    #949d98;
+
+  font-size: 0.54rem;
+}
+
+
+.asset-document-record__actions {
+  display: flex;
+
+  gap: 6px;
+
+  flex-wrap: wrap;
+
+  justify-content: flex-end;
+}
+
+
+/* =========================================================
+   EDIT ASSET V2
+========================================================= */
+
+.asset-edit-locks {
+  display: flex;
+
+  gap: 6px;
+
+  flex-wrap: wrap;
+
+  margin-top: 9px;
+}
+
+
+.asset-edit-locks span {
+  display: inline-flex;
+
+  padding:
+    4px
+    7px;
+
+  border:
+    1px solid
+    #dbe3de;
+
+  border-radius: 999px;
+
+  background:
+    #f7f9f8;
+
+  color:
+    #758179;
+
+  font-size: 0.52rem;
+  font-weight: 800;
+}
+
+
+.asset-edit-section-note {
+  margin:
+    -3px
+    0
+    10px;
+
+  color:
+    #87928c;
+
+  font-size: 0.58rem;
+
+  line-height: 1.4;
+}
+
+
+.asset-edit-footer__actions {
+  display: flex;
+
+  gap: 8px;
+}
+
+
+/* =========================================================
+   RESPONSIVE V2
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .asset-maintenance-position {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+@media (max-width: 700px) {
+
+  .asset-action-bar {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .asset-action-bar__actions {
+    width: 100%;
+  }
+
+
+  .asset-action-button {
+    flex: 1;
+  }
+
+
+  .asset-document-record {
+    grid-template-columns: 1fr;
+  }
+
+
+  .asset-document-record__actions {
+    justify-content: flex-start;
+  }
+
+}
+
+
+@media (max-width: 520px) {
+
+  .asset-maintenance-position {
+    grid-template-columns: 1fr;
+  }
+
+
+  .asset-hero__state {
+    align-items: flex-start;
+  }
+
+
+  .asset-lifecycle-actions {
+    width: 100%;
+  }
+
 }

@@ -67,6 +67,14 @@ let assetReadComplete = false;
 let stagedAttachments =
   [];
 
+let stagedDocuments = [];
+
+function omitUndefined(object) {
+  return Object.fromEntries(Object.entries(object).filter(([, value]) => value !== undefined));
+}
+
+const omit = omitUndefined;
+
 
 /* =========================================================
    BASIC HELPERS
@@ -1975,6 +1983,8 @@ function openAddPlantModal() {
   stagedAttachments =
     [];
 
+  stagedDocuments = [];
+
 
   getElement(
     "addPlantForm"
@@ -1984,6 +1994,8 @@ function openAddPlantModal() {
   hideModalMessage();
 
   renderAttachments();
+
+  renderStagedDocuments();
 
   updateHireDetails();
 
@@ -2028,6 +2040,10 @@ function closeAddPlantModal() {
 
   stagedAttachments =
     [];
+
+  stagedDocuments = [];
+
+  renderStagedDocuments();
 
 
   setSavingState(
@@ -2655,6 +2671,31 @@ async function createPlant(
                 )?.value
               ),
 
+            motExpiry:
+              nullableString(
+                getElement("plantMotExpiry")?.value
+              ),
+
+            assignedToName:
+              nullableString(
+                getElement("plantAssignedToName")?.value
+              ),
+
+            lastServiceDate:
+              nullableString(
+                getElement("plantLastServiceDate")?.value
+              ),
+
+            lastServiceMileage:
+              nullableNumber(
+                getElement("plantLastServiceMileage")?.value
+              ),
+
+            currentMileage:
+              nullableNumber(
+                getElement("plantCurrentMileage")?.value
+              ),
+
             operatingWeight:
               nullableString(
                 getElement(
@@ -3179,3 +3220,48 @@ function openRequestedPlantAction() {
     openAddPlantModal();
   }
 }
+
+/* Fleet V2 approved modal controller. It only controls existing V2 hooks. */
+const FLEET_ASSET_CLASSES = ["ROAD_VEHICLE", "PLANT_MACHINERY", "SMALL_PLANT", "TRAILER_ATTACHMENT", "OTHER"];
+function getSelectedAssetClass() { return document.querySelector('input[name="assetClass"]:checked')?.value || "ROAD_VEHICLE"; }
+function assetPrefixForClass(assetClass = getSelectedAssetClass()) {
+  const value = id => String(getElement(id)?.value || "").trim().toUpperCase();
+  if (assetClass === "ROAD_VEHICLE") return ({ CAR:"CAR", VAN:"VAN", PICKUP:"PUP", HGV:"HGV", MINIBUS:"MIN", OTHER_ROAD_VEHICLE:"VEH" })[value("vehicleType")] || "VEH";
+  if (assetClass === "SMALL_PLANT") return ({ GRINDER:"GRD", CUT_OFF_SAW:"SAW", BREAKER:"BRK", WELDER:"WLD", PUMP:"PMP", VACUUM_EXTRACTION:"VAC", SMALL_GENERATOR:"GEN", COMPRESSOR:"COM" })[value("equipmentType")] || "SPL";
+  if (assetClass === "TRAILER_ATTACHMENT") return value("attachmentType") === "TRAILER" ? "TRL" : "ATT";
+  if (assetClass === "OTHER") return "AST";
+  return getPlantPrefix(value("plantType")) || "PLT";
+}
+function applyAssetClassUI() {
+  const assetClass = getSelectedAssetClass();
+  document.querySelectorAll(".asset-class-card").forEach(card => card.classList.toggle("is-selected", card.querySelector('input[name="assetClass"]')?.checked));
+  ["asset-class-section", "specification-for", "maintenance-for", "position-for"].forEach(attribute => document.querySelectorAll(`[data-${attribute}]`).forEach(section => {
+    const visible = String(section.dataset[attribute.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] || "").split(/\s+/).includes(assetClass);
+    section.hidden = !visible;
+    section.querySelectorAll("[required]").forEach(input => { if (!visible) input.dataset.v2Required = "true"; input.required = visible && input.dataset.v2Required === "true"; });
+  }));
+  updateV2ReferencePreview();
+}
+function updateV2ReferencePreview() { const preview = getElement("plantReferencePreview"); if (preview) preview.textContent = `${assetPrefixForClass()}-XXXX`; }
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll('input[name="assetClass"]').forEach(input => input.addEventListener("change", () => { applyAssetClassUI(); updateV2ReferencePreview(); }));
+  ["vehicleType", "plantType", "equipmentType", "attachmentType"].forEach(id => getElement(id)?.addEventListener("change", updateV2ReferencePreview));
+  if (document.querySelector('input[name="assetClass"]')) applyAssetClassUI();
+});
+
+function buildAssetPayload(assetClass, allocatedReference) {
+  const value=id=>nullableString(getElement(id)?.value), number=id=>nullableNumber(getElement(id)?.value), ownershipType=value("plantOwnershipType"), status=value("plantInitialStatus")||"AVAILABLE";
+  const base={organisationId,assetClass,plantId:allocatedReference,plantReference:allocatedReference,ownershipType,homeBase:value("assetHomeBase")||"Colemans Yard",currentLocationLabel:value("plantCurrentLocation"),status,safeToUse:status!=="OFF_ROAD",offRoad:status==="OFF_ROAD",complianceHold:false,attachments:[...stagedAttachments],notes:value("plantNotes"),active:true};
+  if(assetClass==="ROAD_VEHICLE")return {...base,vehicleType:value("vehicleType"),registrationNumber:value("plantRegistrationNumber"),manufacturer:value("plantManufacturer"),model:value("plantModel"),vin:value("vehicleVin"),serialNumber:value("plantSerialNumber"),year:number("plantYear"),fuelType:value("plantFuelType"),operatingWeight:value("vehicleOperatingWeight"),capacity:value("vehicleCapacity"),specification:value("vehicleSpecification"),assignedToName:value("plantAssignedToName"),currentMileage:number("plantCurrentMileage"),motExpiry:value("plantMotExpiry"),lastServiceDate:value("plantLastServiceDate"),lastServiceMileage:number("plantLastServiceMileage"),nextServiceDate:value("vehicleNextServiceDate")};
+  if(assetClass==="PLANT_MACHINERY")return {...base,plantType:value("plantType"),manufacturer:value("plantManufacturerPlant"),model:value("plantModelPlant"),serialNumber:value("plantSerialNumberPlant"),year:number("plantYearPlant"),fuelType:value("plantFuelTypePlant"),operatingWeight:value("plantOperatingWeight"),capacity:value("plantCapacity"),operatingHours:number("plantOperatingHours"),operatingHoursAt:value("plantOperatingHoursAt"),specification:value("plantSpecification"),lastServiceDate:value("plantLastServiceDatePlant"),lastServiceHours:number("plantLastServiceHours"),nextServiceDate:value("plantNextServiceDate")};
+  return base;
+}
+function validateAssetV2(assetClass){const value=id=>cleanString(getElement(id)?.value), ownership=value("plantOwnershipType");const required=assetClass==="ROAD_VEHICLE"?["vehicleType","plantRegistrationNumber","plantManufacturer","plantModel"]:assetClass==="PLANT_MACHINERY"?["plantType"]:[];if(!ownership||required.some(id=>!value(id)))throw Error("Complete the required fields for this asset class.");if(isHireOwnership(ownership)&&!value("plantSupplierName"))throw Error("Hire supplier is required for hired or leased assets.");}
+async function createAssetV2(event){event.preventDefault();const assetClass=getSelectedAssetClass();if(!["ROAD_VEHICLE","PLANT_MACHINERY"].includes(assetClass))return;event.stopImmediatePropagation();try{validateAssetV2(assetClass);const uid=currentUid(),prefix=assetPrefixForClass(assetClass),counterRef=doc(db,"plantCounters",`${organisationId}_${prefix}`);let reference;await runTransaction(db,async transaction=>{const user=await transaction.get(doc(db,"users",uid)),counter=await transaction.get(counterRef);const p=user.data();if(!user.exists()||!(p?.status==="ACTIVE"&&(p.roleCode==="PLATFORM_ADMIN"&&p.accessLevel===99||p.roleCode==="PLANT_TRANSPORT_MANAGER"||p.permissions?.canManagePlant||p.permissions?.canManageTransport||p.permissions?.canManageOrganisation)))throw Error("Plant management permission required.");let n=counter.exists()?Number(counter.data().nextNumber)||1:1;reference=`${prefix}-${String(n).padStart(4,"0")}`;const assetRef=doc(db,"plantAssets",reference);if((await transaction.get(assetRef)).exists())throw Error("Asset ID collision. Try saving again.");transaction.set(counterRef,{organisationId,prefix,nextNumber:n+1,updatedByUid:uid,updatedAt:serverTimestamp()});transaction.set(assetRef,omit({...buildAssetPayload(assetClass,reference),createdByUid:uid,createdByName:currentUserName(),createdAt:serverTimestamp(),updatedByUid:uid,updatedAt:serverTimestamp()}));});console.info(`NORMEX Asset created: ${reference}`);closeAddPlantModal();await loadPlantAssets();}catch(error){console.error("NORMEX Asset save failed",error);showModalMessage(error.message||"The asset record could not be saved.");}}
+document.addEventListener("submit",event=>{if(event.target?.id==="addPlantForm")createAssetV2(event);},true);
+
+function readableFileSize(size){return size>=1048576?`${(size/1048576).toFixed(1)} MB`:`${Math.max(1,Math.round(size/1024))} KB`;}
+function renderStagedDocuments(){const queue=getElement("assetDocumentQueue");if(!queue)return;queue.innerHTML=stagedDocuments.length?stagedDocuments.map((item,index)=>`<div class="asset-document-queue__item"><strong>${escapeHtml(item.documentType)}</strong><span>${escapeHtml(item.fileName)} · ${readableFileSize(item.size)}</span><button type="button" data-remove-staged-document="${index}">Remove</button></div>`).join(""):"<span class=\"fleet-muted-text\">No documents staged</span>";}
+function removeStagedDocument(index){stagedDocuments.splice(index,1);renderStagedDocuments();}
+function stageAssetDocuments(){const type=cleanString(getElement("assetDocumentType")?.value),input=getElement("assetDocumentFiles"),files=[...(input?.files||[])];if(!type){showModalMessage("Select a document type before staging files.");return;}if(!files.length){showModalMessage("Select one or more PDF files.");return;}for(const file of files){if(!(file.type==="application/pdf"||/\.pdf$/i.test(file.name))){showModalMessage("Only PDF documents can be staged.");return;}if(!stagedDocuments.some(item=>item.fileName===file.name&&item.size===file.size&&item.file.lastModified===file.lastModified))stagedDocuments.push({documentType:type,file,fileName:file.name,size:file.size});}input.value="";renderStagedDocuments();hideModalMessage();}
+document.addEventListener("DOMContentLoaded",()=>{getElement("stageAssetDocument")?.addEventListener("click",stageAssetDocuments);getElement("assetDocumentQueue")?.addEventListener("click",event=>{const button=event.target.closest("[data-remove-staged-document]");if(button)removeStagedDocument(Number(button.dataset.removeStagedDocument));});renderStagedDocuments();});

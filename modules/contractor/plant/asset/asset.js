@@ -71,6 +71,11 @@ let issues =
 let documents =
   [];
 
+let documentsReadComplete =
+  false;
+
+const relatedReadStatus = {};
+
 
 let canManagePlant =
   false;
@@ -127,6 +132,69 @@ function cleanString(
     ""
   ).trim();
 
+}
+
+function resolvedAssetClass(
+  record
+) {
+
+  const explicitClass =
+    cleanString(
+      record?.assetClass
+    ).toUpperCase();
+
+
+  if (
+    [
+      "ROAD_VEHICLE",
+      "PLANT_MACHINERY",
+      "SMALL_PLANT",
+      "TRAILER_ATTACHMENT",
+      "OTHER"
+    ].includes(
+      explicitClass
+    )
+  ) {
+
+    return explicitClass;
+
+  }
+
+
+  return cleanString(
+    record?.plantType
+  )
+    ? "PLANT_MACHINERY"
+    : "OTHER";
+
+}
+
+
+function isRoadVehicle() {
+  return resolvedAssetClass(asset) === "ROAD_VEHICLE";
+}
+
+
+function isPlantMachinery() {
+  return resolvedAssetClass(asset) === "PLANT_MACHINERY";
+}
+
+
+function assetClassLabel() {
+  const labels = {
+    ROAD_VEHICLE: "Road Vehicle",
+    PLANT_MACHINERY: "Plant & Machinery",
+    SMALL_PLANT: "Small Plant",
+    TRAILER_ATTACHMENT: "Trailer / Attachment",
+    OTHER: "Other Asset"
+  };
+
+  return labels[resolvedAssetClass(asset)] || labels.OTHER;
+}
+
+
+function unknownValue(value) {
+  return cleanString(value) || "Not recorded";
 }
 
 
@@ -437,7 +505,8 @@ function recordBelongsToAsset(
 
     record.plantId,
     record.plantReference,
-    record.assetId
+    record.assetId,
+    record.entityId
 
   ]
     .map(
@@ -684,6 +753,7 @@ async function initialiseAsset(
   bindAssetNavigation();
   bindAssetEditing();
   bindDeploymentWorkflow();
+  bindLifecycleWorkflow();
 
 
   await loadAssetWorkspace();
@@ -904,6 +974,7 @@ async function loadOrganisationCollection(
       );
 
 
+    relatedReadStatus[collectionName] = true;
     return snapshot.docs
       .map(
         (
@@ -929,6 +1000,7 @@ async function loadOrganisationCollection(
     );
 
 
+    relatedReadStatus[collectionName] = false;
     return [];
 
   }
@@ -1052,12 +1124,29 @@ async function loadIssues() {
 
 async function loadDocuments() {
 
+  documentsReadComplete = false;
+
   try {
 
-    const records =
-      await loadOrganisationCollection(
-        "documents"
+    const snapshot =
+      await getDocs(
+        query(
+          collection(
+            db,
+            "documents"
+          ),
+          where(
+            "organisationId",
+            "==",
+            organisationId
+          )
+        )
       );
+
+    const records = snapshot.docs.map(item => ({
+      id: item.id,
+      ...item.data()
+    }));
 
 
     documents =
@@ -1112,6 +1201,8 @@ async function loadDocuments() {
         }
       );
 
+    documentsReadComplete = true;
+
 
   } catch (
     error
@@ -1125,6 +1216,8 @@ async function loadDocuments() {
 
     documents =
       [];
+
+    documentsReadComplete = false;
 
   }
 
@@ -1147,6 +1240,7 @@ function selectCurrentHireRecord() {
 
 function renderHero() {
   getElement("assetEditButton").hidden = !canEditAsset(currentProfile, organisationId, asset);
+  renderLifecycleVisibility();
 
   if (
     !asset
@@ -1156,25 +1250,36 @@ function renderHero() {
 
   }
 
+  const assetClass = resolvedAssetClass(asset);
+  const hero = getElement("assetHero");
+  const workspace = getElement("assetWorkspace");
+  if (hero) hero.dataset.assetClass = assetClass;
+  if (workspace) workspace.dataset.assetClass = assetClass;
+
+  const roadVehicle = assetClass === "ROAD_VEHICLE";
+  const currentAssignment = getCurrentAssignment(assignments);
+
+  setText(
+    "assetEyebrow",
+    roadVehicle ? "Road Vehicle" : isPlantMachinery() ? "Plant & Machinery" : assetClassLabel()
+  );
 
   setText(
     "assetReference",
-    asset.plantReference ||
-    asset.plantId ||
-    asset.id
+    roadVehicle
+      ? asset.registrationNumber || asset.plantReference || asset.plantId || asset.id
+      : asset.plantReference || asset.plantId || asset.id
   );
 
 
   setText(
     "assetDescription",
     [
-
       asset.manufacturer,
       asset.model,
-      getPlantTypeLabel(
-        asset.plantType
-      )
-
+      roadVehicle
+        ? asset.vehicleType
+        : getPlantTypeLabel(asset.plantType)
     ]
       .filter(
         Boolean
@@ -1183,35 +1288,35 @@ function renderHero() {
         " · "
       )
     ||
-    "Plant asset"
+    roadVehicle ? "Road vehicle details not recorded" : "Plant asset details not recorded"
   );
+
+  setText("assetInternalReference", asset.plantReference || asset.plantId || asset.id);
+  setText("assetClassLabel", assetClassLabel());
+  const identityMeta = getElement("assetIdentityMeta");
+  if (identityMeta) identityMeta.hidden = false;
+
+  const positionLabels = roadVehicle
+    ? ["Current Location", "Current Project", "Current Use", "Assigned To", "Last Inspection", "Next Action"]
+    : ["Current Location", "Current Project", "Current Use", "Assigned To", "Last Inspection", "Next Action"];
+  positionLabels.forEach((label, index) => setText(`assetPositionLabel${index + 1}`, label));
 
 
   setText(
     "assetCurrentLocation",
-    asset.currentLocationLabel ||
-    "Not confirmed"
+    unknownValue(asset.currentLocationLabel)
   );
 
 
   setText(
     "assetCurrentProject",
-    asset.currentProjectName ||
-    "Not allocated"
+    unknownValue(asset.currentProjectName)
   );
 
 
   setText(
     "assetCurrentUse",
     deriveCurrentUse()
-  );
-
-
-  setText(
-    "assetSupplier",
-    asset.supplierName ||
-    currentHireRecord?.supplierName ||
-    "Not applicable"
   );
 
 
@@ -1229,7 +1334,7 @@ function renderHero() {
         )
       : (
           asset.lastInspectionLabel ||
-          "No record"
+          "Not recorded"
         )
   );
 
@@ -1250,7 +1355,7 @@ function renderHero() {
                 nextMovement.plannedDate
               )
         )
-      : "Not planned"
+      : "Not recorded"
   );
 
 
@@ -1287,7 +1392,7 @@ function renderHero() {
     status.textContent =
       getPlantStatusLabel(
         asset.status ||
-        "AVAILABLE"
+          "AVAILABLE"
       );
 
 
@@ -1301,11 +1406,28 @@ function renderHero() {
 
   document.title =
     `${
-      asset.plantReference ||
-      asset.plantId ||
-      "Plant Asset"
+      roadVehicle
+        ? asset.registrationNumber || asset.plantReference || asset.plantId || "Road Vehicle"
+        : asset.plantReference || asset.plantId || "Plant Asset"
     } | NORMEX`;
 
+}
+
+
+function isCanonicalPlatformAdmin(profile) {
+  return Number(profile?.accessLevel) >= 99 && cleanString(profile?.roleCode).toUpperCase() === "PLATFORM_ADMIN";
+}
+
+
+function renderLifecycleVisibility() {
+  const actions = getElement("assetLifecycleActions");
+  const archiveButton = getElement("assetArchiveButton");
+  const deleteButton = getElement("assetDeleteButton");
+  const canArchive = canManagePlant === true;
+  const canDelete = isCanonicalPlatformAdmin(currentProfile);
+  if (actions) actions.hidden = !canArchive && !canDelete;
+  if (archiveButton) archiveButton.hidden = !canArchive;
+  if (deleteButton) deleteButton.hidden = !canDelete;
 }
 
 
@@ -1771,6 +1893,17 @@ function renderSelectedView() {
 
   }
 
+  bindAssetShortcuts();
+
+}
+
+
+function bindAssetShortcuts() {
+  getElement("assetWorkspace")?.querySelectorAll("[data-asset-shortcut]").forEach(button => {
+    button.addEventListener("click", () => {
+      if (button.dataset.assetShortcut && button.dataset.assetShortcut !== "#") window.location.href = button.dataset.assetShortcut;
+    });
+  });
 }
 
 
@@ -1826,109 +1959,18 @@ function renderOverviewView() {
     ${sectionHeading(
       "Asset Control",
       "Overview",
-      "Current operational and financial position for this plant asset."
+      isRoadVehicle() ? "Current operational and service position for this road vehicle." : "Current operational and financial position for this plant asset."
     )}
 
 
     <div class="asset-control-grid">
-
-
-      ${controlCard(
-        "Operational State",
-        deriveCurrentUse(),
-        asset.currentProjectName ||
-        "Current asset position",
-        isOffRoad()
-          ? "alert"
-          : ""
+      ${renderClassAwareOverviewControls(
+        latestInspection,
+        nextMaintenance,
+        nextMovement,
+        primaryIssue,
+        openDefects
       )}
-
-
-      ${controlCard(
-        "Location",
-        asset.currentLocationLabel ||
-        "Not confirmed",
-        asset.currentLocationConfirmedAt
-          ? `Confirmed ${formatDate(
-              asset.currentLocationConfirmedAt
-            )}`
-          : "Location confirmation required",
-        asset.currentLocationLabel
-          ? ""
-          : "watch"
-      )}
-
-
-      ${controlCard(
-        "Last Inspection",
-        latestInspection
-          ? formatDate(
-              latestInspection.inspectionDate ||
-              latestInspection.completedAt ||
-              latestInspection.createdAt
-            )
-          : (
-              asset.lastInspectionLabel ||
-              "No record"
-            ),
-        latestInspection
-          ? formatText(
-              latestInspection.result ||
-              "Recorded"
-            )
-          : "No inspection history",
-        latestInspection
-          ? ""
-          : "watch"
-      )}
-
-
-      ${controlCard(
-        "Open Defects",
-        String(
-          openDefects.length
-        ),
-        openDefects.length
-          ? "Unresolved plant faults"
-          : "No open defects recorded",
-        openDefects.length
-          ? "alert"
-          : ""
-      )}
-
-
-      ${controlCard(
-        "Compliance",
-        asset.complianceLabel ||
-        deriveComplianceLabel(),
-        "Current evidence position",
-        (
-          asset.complianceHold ===
-            true
-        )
-          ? "alert"
-          : ""
-      )}
-
-
-      ${controlCard(
-        "Next Action",
-        deriveNextAction(
-          primaryIssue,
-          nextMaintenance,
-          nextMovement
-        ),
-        deriveNextActionNote(
-          primaryIssue,
-          nextMaintenance,
-          nextMovement
-        ),
-        primaryIssue
-          ? "watch"
-          : ""
-      )}
-
-
     </div>
 
 
@@ -1947,11 +1989,11 @@ function renderOverviewView() {
           <div>
 
             <h4>
-              Current Plant Position
+              ${isRoadVehicle() ? "Vehicle Details / Current Position" : "Current Plant Position"}
             </h4>
 
             <p>
-              Identity, deployment and present control state.
+              ${isRoadVehicle() ? "Vehicle identity, service baseline and present control state." : "Identity, deployment and present control state."}
             </p>
 
           </div>
@@ -2006,6 +2048,40 @@ function renderOverviewView() {
 
   `;
 
+}
+
+
+function renderClassAwareOverviewControls(
+  latestInspection,
+  nextMaintenance,
+  nextMovement,
+  primaryIssue,
+  openDefects
+) {
+
+  const inspectionDate = latestInspection
+    ? formatDate(latestInspection.inspectionDate || latestInspection.completedAt || latestInspection.createdAt)
+    : unknownValue(asset.lastInspectionLabel);
+
+  if (isRoadVehicle()) {
+    return [
+      controlCard("Availability", deriveCurrentUse(), "Current vehicle state", isOffRoad() ? "alert" : ""),
+      controlCard("MOT", asset.motExpiry ? formatDate(asset.motExpiry) : "Not recorded", asset.motExpiry ? "Expiry date" : "MOT evidence required", asset.motExpiry ? "" : "watch"),
+      controlCard("Service", relatedReadStatus.plantMaintenance === false ? "Unknown" : asset.nextServiceDate ? formatDate(asset.nextServiceDate) : "Not recorded", relatedReadStatus.plantMaintenance === false ? "Maintenance read failed" : asset.lastServiceDate ? `Last ${formatDate(asset.lastServiceDate)}` : "Service baseline incomplete", relatedReadStatus.plantMaintenance === false || !asset.nextServiceDate ? "watch" : ""),
+      controlCard("Inspection", inspectionDate, latestInspection ? formatText(latestInspection.result || "Recorded") : "No inspection history", latestInspection ? "" : "watch"),
+      controlCard("Defects", relatedReadStatus.plantDefects === false ? "Unknown" : String(openDefects.length), relatedReadStatus.plantDefects === false ? "Defect read failed" : openDefects.length ? "Unresolved vehicle faults" : "No open defects recorded", relatedReadStatus.plantDefects === false ? "watch" : openDefects.length ? "alert" : ""),
+      controlCard("Assignment", asset.currentProjectName || "Not allocated", asset.assignedPersonName || "No person recorded")
+    ].join("");
+  }
+
+  return [
+    controlCard("Availability", deriveCurrentUse(), asset.currentProjectName || "Current asset position", isOffRoad() ? "alert" : ""),
+    controlCard("Compliance", deriveComplianceLabel(), "Current evidence position", asset.complianceHold === true ? "alert" : ""),
+    controlCard("Maintenance", relatedReadStatus.plantMaintenance === false ? "Unknown" : nextMaintenance ? formatDate(nextMaintenance.dueDate || nextMaintenance.plannedDate) : "Not recorded", relatedReadStatus.plantMaintenance === false ? "Maintenance read failed" : nextMaintenance ? "Next planned service" : "Maintenance baseline incomplete", relatedReadStatus.plantMaintenance === false || !nextMaintenance ? "watch" : ""),
+    controlCard("Inspection", inspectionDate, latestInspection ? formatText(latestInspection.result || "Recorded") : "No inspection history", latestInspection ? "" : "watch"),
+    controlCard("Defects", relatedReadStatus.plantDefects === false ? "Unknown" : String(openDefects.length), relatedReadStatus.plantDefects === false ? "Defect read failed" : openDefects.length ? "Unresolved Plant faults" : "No open defects recorded", relatedReadStatus.plantDefects === false ? "watch" : openDefects.length ? "alert" : ""),
+    controlCard("Deployment", asset.currentProjectName || "Not allocated", nextMovement ? `Next movement ${formatDate(nextMovement.plannedDate)}` : "No movement planned")
+  ].join("");
 }
 
 
@@ -2149,7 +2225,7 @@ function renderOverviewFinancialPanel() {
           </h4>
 
           <p>
-            Current rate, duration and hire exposure for this machine.
+            Current rate, duration and hire exposure for this ${isRoadVehicle() ? "vehicle" : "machine"}.
           </p>
 
         </div>
@@ -2455,7 +2531,7 @@ function renderHiredFinancialView(
             </h4>
 
             <p>
-              All hire periods recorded against this Plant ID.
+              All hire periods recorded against this ${isRoadVehicle() ? "vehicle asset" : "Plant ID"}.
             </p>
 
           </div>
@@ -2570,105 +2646,24 @@ function renderOwnedFinancialView(
 
 function renderDeploymentView() {
 
-  const root =
-    getElement(
-      "assetWorkspace"
-    );
-
-
-  if (
-    !root
-  ) {
-
-    return;
-
-  }
-
-
+  const root = getElement("assetWorkspace");
+  if (!root) return;
   const timeline = buildDeploymentTimeline();
   const currentAssignment = getCurrentAssignment(assignments);
   const canManageDeployment = canEditAsset(currentProfile, organisationId, asset);
-
-
   root.innerHTML = `
-
-    ${sectionHeading(
-      "Operational Location",
-      "Location & Deployment",
-      "Where the plant is, where it has been and what is planned next."
-    )}
-
-
+    ${sectionHeading("Operational Location", "Location & Deployment", isRoadVehicle() ? "Where the vehicle is, where it has been and what is planned next." : "Where the plant is, where it has been and what is planned next.")}
+    ${renderDeploymentActionBar(canManageDeployment, currentAssignment)}
     <div class="asset-summary-grid">
-
-
       ${summaryCard("Current Position", asset.currentProjectName || "Not allocated", asset.currentLocationLabel || "Location not confirmed")}
-
-
       ${summaryCard("Assignment Status", currentAssignment ? formatText(currentAssignment.status) : "Unassigned", currentAssignment ? `Since ${formatDate(currentAssignment.assignedFrom)}` : "No active assignment")}
-
-
       ${summaryCard("Location Confirmed", asset.currentLocationConfirmedAt ? formatDate(asset.currentLocationConfirmedAt) : "Not recorded", asset.currentLocationConfirmedByName || asset.currentLocationConfirmedByUid || "Confirmation required")}
-
-
       ${summaryCard("Operational State", deriveCurrentUse(), getPlantStatusLabel(asset.status || "AVAILABLE"))}
-
-
     </div>
-
-    <section class="asset-panel asset-deployment-actions">
-      <div class="asset-panel__header"><div><h4>Deployment Actions</h4><p>Assignment records preserve project deployment history. Location confirmation records where the asset is; it does not create a movement.</p></div></div>
-      ${canManageDeployment ? `<div class="asset-deployment-actions__buttons">
-        <button type="button" data-deployment-action="location">Confirm / Update Location</button>
-        ${currentAssignment ? `<button type="button" data-deployment-action="reassign">Reassign</button><button type="button" data-deployment-action="release" class="asset-deployment-actions__release">Release</button>` : `<button type="button" data-deployment-action="assign">Assign to Project</button>`}
-      </div>` : `<p class="asset-deployment-actions__restricted">You can view the current position. Plant-management permission is required to change it.</p>`}
-    </section>
-
-
     <section class="asset-panel">
-
-      <div class="asset-panel__header">
-
-        <div>
-
-          <h4>
-            Location & Deployment History
-          </h4>
-
-          <p>
-            Assignment and movement records are presented together as one asset history.
-          </p>
-
-        </div>
-
-      </div>
-
-
-      ${
-        timeline.length
-          ? `
-
-            <div class="asset-timeline">
-
-              ${timeline
-                .map(
-                  renderTimelineRecord
-                )
-                .join("")}
-
-            </div>
-
-          `
-          : emptyState(
-              "No deployment history yet",
-              "Assignments, completed movements and location confirmations will build the location history for this machine."
-            )
-      }
-
-    </section>
-
-  `;
-
+      <div class="asset-panel__header"><div><h4>Location & Deployment History</h4><p>Assignment and movement records are presented together as one asset history.</p></div></div>
+      ${timeline.length ? `<div class="asset-timeline">${timeline.map(renderTimelineRecord).join("")}</div>` : emptyState("No deployment history yet", isRoadVehicle() ? "Assignments, completed movements and location confirmations will build this vehicle history." : "Assignments, completed movements and location confirmations will build the location history for this machine.")}
+    </section>`;
   root.querySelectorAll("[data-deployment-action]").forEach(button => button.addEventListener("click", () => openDeploymentEditor(button.dataset.deploymentAction)));
 
 }
@@ -2698,6 +2693,8 @@ function renderInspectionsView() {
       "Pre-use, on-hire, off-hire, formal and return-to-service inspection history.",
       `${inspections.length} records`
     )}
+
+    ${renderAssetActionBar("Assurance history", "Create the next inspection in the owning workflow.", "+ New Inspection", "/modules/contractor/plant/compliance/")}
 
 
     <div class="asset-summary-grid">
@@ -2742,20 +2739,17 @@ function renderInspectionsView() {
 
       ${summaryCard(
         "Total Inspections",
-        String(
-          inspections.length
-        ),
-        "Permanent asset history"
+        relatedReadStatus.plantInspections === false ? "Unknown" : String(inspections.length),
+        relatedReadStatus.plantInspections === false ? "Inspection read failed" : "Permanent asset history",
+        relatedReadStatus.plantInspections === false ? "watch" : ""
       )}
 
 
       ${summaryCard(
         "Open Defects",
-        String(
-          getOpenDefects().length
-        ),
-        "Defects currently unresolved",
-        getOpenDefects().length
+        relatedReadStatus.plantDefects === false ? "Unknown" : String(getOpenDefects().length),
+        relatedReadStatus.plantDefects === false ? "Defect read failed" : "Defects currently unresolved",
+        relatedReadStatus.plantDefects === false ? "watch" : getOpenDefects().length
           ? "alert"
           : ""
       )}
@@ -2765,7 +2759,7 @@ function renderInspectionsView() {
 
 
     ${
-      inspections.length
+      relatedReadStatus.plantInspections !== false && inspections.length
         ? `
 
           <div class="asset-timeline">
@@ -2837,8 +2831,8 @@ function renderInspectionsView() {
 
         `
         : emptyState(
-            "No inspections recorded",
-            "Once pre-use, on-hire, off-hire or formal inspections are linked to this Plant ID, the complete history will appear here."
+            relatedReadStatus.plantInspections === false ? "Inspections unavailable" : isRoadVehicle() ? "No inspections recorded for this vehicle" : "No inspections recorded",
+            relatedReadStatus.plantInspections === false ? "The inspection query failed; no empty state is inferred." : isRoadVehicle() ? "Pre-use, on-hire, off-hire and formal inspection history will appear here." : "Once pre-use, on-hire, off-hire or formal inspections are linked to this asset, the complete history will appear here."
           )
     }
 
@@ -2869,8 +2863,10 @@ function renderDefectsView() {
       "Reliability Control",
       "Defects & Repairs",
       "Faults, repair progress, downtime and reliability history.",
-      `${open.length} open`
+      relatedReadStatus.plantDefects === false ? "Read failed" : `${open.length} open`
     )}
+
+    ${renderAssetActionBar("Reliability history", "Report a fault in the owning defects workflow.", "+ Report Defect", "/modules/contractor/plant/defects/")}
 
 
     <div class="asset-summary-grid">
@@ -2878,11 +2874,9 @@ function renderDefectsView() {
 
       ${summaryCard(
         "Open Defects",
-        String(
-          open.length
-        ),
-        "Unresolved faults",
-        open.length
+        relatedReadStatus.plantDefects === false ? "Unknown" : String(open.length),
+        relatedReadStatus.plantDefects === false ? "Defect read failed" : "Unresolved faults",
+        relatedReadStatus.plantDefects === false ? "watch" : open.length
           ? "alert"
           : ""
       )}
@@ -2990,8 +2984,8 @@ function renderDefectsView() {
 
         `
         : emptyState(
-            "No defects recorded",
-            "Reported faults, repairs, parts, downtime and return-to-service history will remain permanently linked to this machine."
+            isRoadVehicle() ? "No defects recorded for this vehicle" : "No defects recorded",
+            isRoadVehicle() ? "Reported faults, repairs, downtime and return-to-service history will remain linked to this vehicle." : "Reported faults, repairs, parts, downtime and return-to-service history will remain permanently linked to this machine."
           )
     }
 
@@ -3024,30 +3018,38 @@ function renderMaintenanceView() {
       "Service planning, repairs and maintenance history."
     )}
 
+    ${canManagePlant ? `<div class="asset-action-bar">
+      <div class="asset-action-bar__context"><strong>Maintenance control</strong><span>Record service history and plan the next intervention.</span></div>
+      <div class="asset-action-bar__actions">
+        <button type="button" class="asset-action-button asset-action-button--primary" data-maintenance-action="plan">Plan Maintenance</button>
+        ${isRoadVehicle() ? `<button type="button" class="asset-action-button" data-maintenance-action="service">Record Service</button><button type="button" class="asset-action-button" data-maintenance-action="mot">Record MOT</button><button type="button" class="asset-action-button" data-maintenance-action="mileage">Update Mileage</button>` : ""}
+      </div>
+    </div>` : ""}
+
+    <div class="asset-summary-grid">
+      ${renderMaintenanceBaseline()}
+    </div>
+
 
     <div class="asset-summary-grid">
 
 
       ${summaryCard(
         "Next Service",
-        next
+        relatedReadStatus.plantMaintenance === false
+          ? "Unknown"
+          : next
           ? formatDate(
               next.dueDate ||
               next.plannedDate
             )
           : "Not planned",
-        next?.maintenanceType ||
-        "No future maintenance recorded"
+        relatedReadStatus.plantMaintenance === false ? "Maintenance read failed" : next?.maintenanceType || "No future maintenance recorded",
+        relatedReadStatus.plantMaintenance === false ? "watch" : ""
       )}
 
 
-      ${summaryCard(
-        "Maintenance Records",
-        String(
-          maintenanceRecords.length
-        ),
-        "Permanent maintenance history"
-      )}
+      ${summaryCard("Maintenance Records", relatedReadStatus.plantMaintenance === false ? "Unknown" : String(maintenanceRecords.length), relatedReadStatus.plantMaintenance === false ? "Maintenance read failed" : "Permanent maintenance history", relatedReadStatus.plantMaintenance === false ? "watch" : "")}
 
 
       ${summaryCard(
@@ -3074,7 +3076,7 @@ function renderMaintenanceView() {
 
 
     ${
-      maintenanceRecords.length
+      relatedReadStatus.plantMaintenance !== false && maintenanceRecords.length
         ? `
 
           <div class="asset-timeline">
@@ -3143,13 +3145,36 @@ function renderMaintenanceView() {
 
         `
         : emptyState(
-            "No maintenance history",
-            "Services, repairs, parts and planned maintenance will build the permanent asset record here."
+            relatedReadStatus.plantMaintenance === false ? "Maintenance unavailable" : "No maintenance history",
+            relatedReadStatus.plantMaintenance === false ? "The maintenance query failed; no empty state is inferred." : "Services, repairs, parts and planned maintenance will build the permanent asset record here."
           )
     }
 
   `;
 
+  root.querySelectorAll("[data-maintenance-action]").forEach(button => button.addEventListener("click", () => openMaintenanceDialog(button.dataset.maintenanceAction)));
+
+}
+
+
+function renderMaintenanceBaseline() {
+
+  const fields = isRoadVehicle()
+    ? [
+        ["Current Mileage", asset.currentMileage],
+        ["MOT Expiry", formatDate(asset.motExpiry)],
+        ["Last Service Date", formatDate(asset.lastServiceDate)],
+        ["Last Service Mileage", asset.lastServiceMileage],
+        ["Next Service", formatDate(asset.nextServiceDate)]
+      ]
+    : [
+        ["Operating Hours", asset.operatingHours],
+        ["Last Service Date", formatDate(asset.lastServiceDate)],
+        ["Last Service Hours", asset.lastServiceHours],
+        ["Next Service", formatDate(asset.nextServiceDate)]
+      ];
+
+  return fields.map(([label, value]) => summaryCard(label, unknownValue(value), "Asset master baseline")).join("");
 }
 
 
@@ -3165,12 +3190,11 @@ function renderComplianceView() {
     );
 
 
-  const types = [
-    "LOLER",
-    "PUWER",
-    "MOT",
-    "INSURANCE"
-  ];
+  const types = isRoadVehicle()
+    ? ["MOT", "INSURANCE"]
+    : isPlantMachinery()
+      ? ["LOLER", "PUWER", "INSURANCE"]
+      : ["LOLER", "PUWER", "MOT", "INSURANCE"];
 
 
   const cards =
@@ -3250,10 +3274,12 @@ function renderComplianceView() {
   root.innerHTML = `
 
     ${sectionHeading(
-      "Plant Assurance",
+      isRoadVehicle() ? "Vehicle Assurance" : "Plant Assurance",
       "Compliance",
-      "Derived evidence position answering whether this machine can remain in service."
+      isRoadVehicle() ? "MOT and insurance evidence relevant to this road vehicle." : "Derived evidence position answering whether this machine can remain in service."
     )}
+
+    ${isRoadVehicle() && canManagePlant ? `<div class="asset-action-bar"><div class="asset-action-bar__context"><strong>Evidence actions</strong><span>Evidence is stored through the controlled Documents workflow.</span></div><div class="asset-action-bar__actions"><button type="button" class="asset-action-button" data-document-action="MOT_CERTIFICATE">Add MOT Evidence</button><button type="button" class="asset-action-button" data-document-action="INSURANCE">Add Insurance</button></div></div>` : ""}
 
 
     <div class="asset-summary-grid">
@@ -3270,22 +3296,14 @@ function renderComplianceView() {
 
       ${summaryCard(
         "Evidence Records",
-        String(
-          documents.length
-        ),
-        "Documents linked to this asset"
+        documentsReadComplete ? String(documents.length) : "Unknown",
+        documentsReadComplete ? "Documents linked to this asset" : "Document query failed"
       )}
 
       ${summaryCard(
         "Compliance Hold",
-        asset.complianceHold ===
-          true
-          ? "Yes"
-          : "No",
-        asset.complianceHold ===
-          true
-          ? "Plant use restricted"
-          : "No compliance hold recorded",
+        asset.complianceHold === true ? "Yes" : asset.complianceHold === false ? "No" : "Not recorded",
+        asset.complianceHold === true ? "Plant use restricted" : asset.complianceHold === false ? "No compliance hold recorded" : "Compliance hold state unknown",
         asset.complianceHold ===
           true
           ? "alert"
@@ -3294,11 +3312,8 @@ function renderComplianceView() {
 
       ${summaryCard(
         "Safe to Use",
-        asset.safeToUse ===
-          false
-          ? "No"
-          : "Yes",
-        "Current cached safety state",
+        asset.safeToUse === true ? "Yes" : asset.safeToUse === false ? "No" : "Not recorded",
+        asset.safeToUse === undefined || asset.safeToUse === null ? "Current cached safety state unavailable" : "Current cached safety state",
         asset.safeToUse ===
           false
           ? "alert"
@@ -3315,6 +3330,8 @@ function renderComplianceView() {
     </div>
 
   `;
+
+  root.querySelectorAll("[data-document-action]").forEach(button => button.addEventListener("click", () => openDocumentDialog(button.dataset.documentAction)));
 
 }
 
@@ -3341,13 +3358,13 @@ function renderDocumentsView() {
       "Controlled Evidence",
       "Documents",
       "Certificates, contracts, condition evidence, repair records, transport evidence and commercial documents.",
-      `${documents.length} records`
+      documentsReadComplete ? `${documents.length} records` : "Read failed"
     )}
 
+    ${canManagePlant ? `<div class="asset-action-bar"><div class="asset-action-bar__context"><strong>Controlled evidence</strong><span>Add a PDF only when the Storage upload path is available.</span></div><div class="asset-action-bar__actions"><button type="button" class="asset-action-button asset-action-button--primary" data-document-action="">+ Add Document</button></div></div>` : ""}
 
-    ${
-      documents.length
-
+    ${documentsReadComplete
+      ? (documents.length
         ? Object.entries(
             groups
           )
@@ -3443,6 +3460,13 @@ function renderDocumentsView() {
                               }
                             </small>
 
+                            <div class="asset-document-actions">
+                              <button type="button" disabled title="Unavailable while Firebase Storage rules deny reads">View</button>
+                              <button type="button" disabled title="Metadata actions are held until the controlled document path is enabled">Edit Metadata</button>
+                              <button type="button" disabled title="Unavailable while Firebase Storage rules deny writes">Replace / New Version</button>
+                              <button type="button" disabled title="Metadata lifecycle action is not enabled in this pass">Archive</button>
+                            </div>
+
                           </article>
 
                         `
@@ -3459,11 +3483,14 @@ function renderDocumentsView() {
 
         : emptyState(
             "No documents linked",
-            "LOLER certificates, hire contracts, condition photographs, repair evidence, invoices and manuals will be retained against this Plant ID."
-          )
+            `LOLER certificates, hire contracts, condition photographs, repair evidence, invoices and manuals will be retained against this ${isRoadVehicle() ? "vehicle asset" : "Plant ID"}.`
+          ))
+      : emptyState("Documents unavailable", "The document query failed. No document count or health state is inferred.")
     }
 
   `;
+
+  root.querySelectorAll("[data-document-action]").forEach(button => button.addEventListener("click", () => openDocumentDialog(button.dataset.documentAction || "")));
 
 }
 
@@ -3523,6 +3550,46 @@ function sectionHeading(
 
   `;
 
+}
+
+
+function renderAssetActionBar(
+  context,
+  explanation,
+  label,
+  path,
+  secondary = ""
+) {
+
+  return `<div class="asset-action-bar"><div class="asset-action-bar__context"><strong>${escapeHtml(context)}</strong><span>${escapeHtml(explanation)}</span></div><div class="asset-action-bar__actions"><button type="button" class="asset-action-button asset-action-button--primary" data-asset-shortcut="${escapeHtml(`${path}?assetId=${encodeURIComponent(asset.id)}&assetReference=${encodeURIComponent(asset.plantReference || asset.plantId || "")}`)}">${escapeHtml(label)}</button>${secondary}</div></div>`;
+}
+
+
+function renderDeploymentActionBar(
+  canManageDeployment,
+  currentAssignment
+) {
+
+  if (!canManageDeployment) {
+    return `<div class="asset-action-bar"><div class="asset-action-bar__context"><strong>Deployment is read-only</strong><span>Plant-management permission is required to change this asset's position.</span></div></div>`;
+  }
+
+  return `<div class="asset-action-bar"><div class="asset-action-bar__context"><strong>${isRoadVehicle() ? "Vehicle deployment" : "Plant deployment"}</strong><span>Assignment history and location confirmations are retained.</span></div><div class="asset-action-bar__actions"><button type="button" class="asset-action-button asset-action-button--primary" data-deployment-action="assign">Update Deployment</button><button type="button" class="asset-action-button" data-deployment-action="location">Confirm Location</button>${currentAssignment ? `<button type="button" class="asset-action-button" data-deployment-action="release">Release</button>` : ""}</div></div>`;
+}
+
+
+function assetShortcut(
+  label,
+  path,
+  disabled = false
+) {
+
+  const target =
+    path === "#"
+      ? "#"
+      : `${path}${path.includes("?") ? "&" : "?"}assetId=${encodeURIComponent(asset.id)}`;
+
+  return `<div class="asset-action-row"><button type="button" class="asset-edit-primary" data-asset-shortcut="${escapeHtml(target)}" ${disabled ? "disabled title=\"Coming next\"" : ""}>${escapeHtml(label)}</button></div>`;
 }
 
 
@@ -3698,62 +3765,44 @@ function emptyState(
 
 function renderIdentityDetails() {
 
-  const fields = [
-    ["Year", asset.year || "Not recorded"],
-    ["Specification", asset.specification || "Not recorded"],
-    ["Notes", asset.notes || "Not recorded"],
-
-    [
-      "Plant Type",
-      getPlantTypeLabel(
-        asset.plantType
-      )
-    ],
-
-    [
-      "Manufacturer",
-      asset.manufacturer ||
-      "Not recorded"
-    ],
-
-    [
-      "Model",
-      asset.model ||
-      "Not recorded"
-    ],
-
-    [
-      "Serial Number",
-      asset.serialNumber ||
-      "Not recorded"
-    ],
-
-    [
-      "Registration",
-      asset.registrationNumber ||
-      "Not applicable"
-    ],
-
-    [
-      "Operating Weight",
-      asset.operatingWeight ||
-      "Not recorded"
-    ],
-
-    [
-      "Capacity / Reach",
-      asset.capacity ||
-      "Not recorded"
-    ],
-
-    [
-      "Fuel / Power",
-      formatText(
-        asset.fuelType
-      )
-    ]
-
-  ];
+  const fields = isRoadVehicle()
+    ? [
+        ["Registration", asset.registrationNumber],
+        ["Make", asset.manufacturer],
+        ["Model", asset.model],
+        ["Vehicle Type", asset.vehicleType],
+        ["VIN", asset.vin],
+        ["Year", asset.year],
+        ["Fuel", formatText(asset.fuelType)],
+        ["Home Base", asset.homeBase],
+        ["Current Mileage", asset.currentMileage],
+        ["MOT Expiry", formatDate(asset.motExpiry)],
+        ["Last Service Date", formatDate(asset.lastServiceDate)],
+        ["Last Service Mileage", asset.lastServiceMileage],
+        ["Next Service / Review", formatDate(asset.nextServiceDate)],
+        ["Current Project", asset.currentProjectName],
+        ["Current Location", asset.currentLocationLabel],
+        ["Assigned Person", asset.assignedPersonName],
+        ["Status", getPlantStatusLabel(asset.status || "AVAILABLE")]
+      ]
+    : [
+        ["Plant ID", asset.plantReference || asset.plantId],
+        ["Plant Type", getPlantTypeLabel(asset.plantType)],
+        ["Manufacturer", asset.manufacturer],
+        ["Model", asset.model],
+        ["Serial Number", asset.serialNumber],
+        ["Year", asset.year],
+        ["Fuel", formatText(asset.fuelType)],
+        ["Operating Weight", asset.operatingWeight],
+        ["Capacity / Reach", asset.capacity],
+        ["Operating Hours", asset.operatingHours],
+        ["Home Base", asset.homeBase],
+        ["Current Project", asset.currentProjectName],
+        ["Current Location", asset.currentLocationLabel],
+        ["Status", getPlantStatusLabel(asset.status || "AVAILABLE")],
+        ["Specification", asset.specification],
+        ["Notes", asset.notes]
+      ];
 
 
   return `
@@ -3779,7 +3828,7 @@ function renderIdentityDetails() {
 
               <strong>
                 ${escapeHtml(
-                  value
+                  unknownValue(value)
                 )}
               </strong>
 
@@ -4067,7 +4116,7 @@ function renderHireHistory() {
 
     return emptyState(
       "No hire history",
-      "Hire periods will remain permanently linked to this Plant ID."
+      `Hire periods will remain permanently linked to this ${isRoadVehicle() ? "vehicle asset" : "Plant ID"}.`
     );
 
   }
@@ -4350,6 +4399,8 @@ function renderTimelineRecord(
 
 function calculateRepairSpend() {
 
+  if (relatedReadStatus.plantDefects === false) return "Unknown";
+
   const total =
     defects.reduce(
       (
@@ -4407,6 +4458,8 @@ function calculateRepairSpend() {
 
 function calculateMaintenanceSpend() {
 
+  if (relatedReadStatus.plantMaintenance === false) return "Unknown";
+
   const total =
     maintenanceRecords.reduce(
       (
@@ -4444,6 +4497,8 @@ function calculateMaintenanceSpend() {
 
 function calculateTransportSpend() {
 
+  if (relatedReadStatus.plantMovements === false) return "Unknown";
+
   const total =
     movements.reduce(
       (
@@ -4480,6 +4535,8 @@ function calculateTransportSpend() {
 
 
 function calculateRecordedDowntime() {
+
+  if (relatedReadStatus.plantDefects === false) return "Unknown";
 
   let totalHours =
     0;
@@ -4628,6 +4685,15 @@ function deriveDocumentStatus(
   record
 ) {
 
+  const lifecycleStatus = cleanString(
+    record.lifecycleStatus ||
+    record.documentStatus
+  ).toUpperCase();
+
+  if (record.archived === true || ["ARCHIVED", "REPLACED", "SUPERSEDED"].includes(lifecycleStatus)) {
+    return lifecycleStatus === "REPLACED" || lifecycleStatus === "SUPERSEDED" ? "Replaced" : "Archived";
+  }
+
   if (
     cleanString(
       record.status
@@ -4692,15 +4758,14 @@ function findLatestDocumentByType(
   type
 ) {
 
+  const types = type === "MOT" ? ["MOT", "MOT_CERTIFICATE"] : [type];
+
   return documents
     .filter(
       (
         record
       ) =>
-        cleanString(
-          record.documentType
-        ).toUpperCase() ===
-          type
+        types.includes(cleanString(record.documentType).toUpperCase())
     )
     .sort(
       newestFirstBy([
@@ -4740,6 +4805,7 @@ function groupDocuments() {
           "LOLER",
           "PUWER",
           "MOT",
+          "MOT_CERTIFICATE",
           "INSURANCE"
         ].includes(
           type
@@ -5169,15 +5235,28 @@ function showLoadError(
 ========================================================= */
 
 /* Master-data editing stays local to the Asset workspace. */
-const ASSET_EDIT_FIELDS = Object.freeze({
-  plantType: ["Plant type", 60], manufacturer: ["Manufacturer", 120], model: ["Model", 120],
-  serialNumber: ["Serial number", 160], registrationNumber: ["Registration", 40],
-  year: ["Year", 4], fuelType: ["Fuel / power", 80], operatingWeight: ["Operating weight", 100],
-  capacity: ["Capacity / reach", 100], attachments: ["Attachments / equipment", 160],
-  specification: ["Specification", 4000], notes: ["Notes", 4000]
+const ASSET_EDIT_SCHEMAS = Object.freeze({
+  ROAD_VEHICLE: {
+    vehicleType: ["Vehicle type", 80], registrationNumber: ["Registration", 40], manufacturer: ["Manufacturer", 120],
+    model: ["Model", 120], vin: ["VIN", 80], serialNumber: ["Serial number", 160], year: ["Year", 4],
+    fuelType: ["Fuel", 80], homeBase: ["Home base", 160], currentMileage: ["Current mileage", 20],
+    motExpiry: ["MOT expiry", 10], lastServiceDate: ["Last service date", 10], lastServiceMileage: ["Last service mileage", 20],
+    nextServiceDate: ["Next service date", 10], specification: ["Specification", 4000], notes: ["Notes", 4000]
+  },
+  PLANT_MACHINERY: {
+    plantType: ["Plant type", 60], manufacturer: ["Manufacturer", 120], model: ["Model", 120], serialNumber: ["Serial number", 160],
+    year: ["Year", 4], fuelType: ["Fuel / power", 80], operatingWeight: ["Operating weight", 100], capacity: ["Capacity / reach", 100],
+    operatingHours: ["Operating hours", 20], operatingHoursAt: ["Operating hours at", 10], homeBase: ["Home base", 160],
+    lastServiceDate: ["Last service date", 10], lastServiceHours: ["Last service hours", 20], nextServiceDate: ["Next service date", 10],
+    specification: ["Specification", 4000], notes: ["Notes", 4000]
+  }
 });
 let assetEditBaseline = null;
 let assetEditSaving = false;
+
+function assetEditFields() {
+  return ASSET_EDIT_SCHEMAS[resolvedAssetClass(asset)] || ASSET_EDIT_SCHEMAS.PLANT_MACHINERY;
+}
 
 function canEditAsset(profile, org, record) {
   const bands = { WORKER: 0, SUPERVISOR: 1, SITE_MANAGER: 2, PROJECT_MANAGER: 3,
@@ -5191,11 +5270,6 @@ function canEditAsset(profile, org, record) {
 }
 
 function normaliseAssetEditValue(key, value) {
-  if (key === "attachments") {
-    const entries = Array.isArray(value) ? value : String(value ?? "").split(/\r?\n/);
-    return [...new Set(entries.map(item => String(item).trim()).filter(Boolean))];
-  }
-
   const text = String(value ?? "").trim();
   return key === "year" && /^\d{4}$/.test(text) ? Number(text) : text || null;
 }
@@ -5203,18 +5277,17 @@ function normaliseAssetEditValue(key, value) {
 function buildAssetEditUpdate(input, baseline, current, profile, org, uid, timestamp) {
   if (!uid || !canEditAsset(profile, org, current) || baseline.organisationId !== org)
     throw new Error("You no longer have permission to edit this asset in this organisation.");
-  for (const key of ["id", "plantId", "plantReference", "organisationId"])
+  for (const key of ["id", "assetClass", "plantId", "plantReference", "organisationId", "ownershipType", "createdByUid", "createdAt"])
     if (baseline[key] !== current[key]) throw new Error("Asset identity changed. Close the editor and refresh before editing.");
   const changes = {};
-  for (const [key, [label, maximum]] of Object.entries(ASSET_EDIT_FIELDS)) {
+  const fields = assetEditFields();
+  for (const [key, [label, maximum]] of Object.entries(fields)) {
     const value = normaliseAssetEditValue(key, input[key]);
     if (["plantType", "manufacturer", "model"].includes(key) && !value) throw new Error(`${label} is required.`);
     if (key === "plantType" && !PLANT_TYPES.some(type => type.code === value)) throw new Error("Choose a known plant type.");
     if (key === "year" && value !== null && (!Number.isInteger(value) || value < 1900 || value > new Date().getFullYear() + 1))
       throw new Error("Enter a four-digit year from 1900 to next year, or leave it blank.");
-    if (key === "attachments") {
-      if (value.length > 50 || value.some(item => item.length > maximum)) throw new Error("Use at most 50 attachments, each up to 160 characters.");
-    } else if (String(value ?? "").length > maximum) throw new Error(`${label} must be ${maximum} characters or fewer.`);
+    if (String(value ?? "").length > maximum) throw new Error(`${label} must be ${maximum} characters or fewer.`);
     const previous = normaliseAssetEditValue(key, baseline[key]);
     if (JSON.stringify(value) === JSON.stringify(previous)) continue;
     if (JSON.stringify(normaliseAssetEditValue(key, current[key])) !== JSON.stringify(previous))
@@ -5226,13 +5299,13 @@ function buildAssetEditUpdate(input, baseline, current, profile, org, uid, times
 }
 
 function readAssetEditForm() {
-  return Object.fromEntries(Object.keys(ASSET_EDIT_FIELDS).map(key => [key, getElement(`assetEdit_${key}`).value]));
+  return Object.fromEntries(Object.keys(assetEditFields()).map(key => [key, getElement(`assetEdit_${key}`).value]));
 }
 
 function hasAssetEditChanges() {
   if (!assetEditBaseline) return false;
   const input = readAssetEditForm();
-  return Object.keys(ASSET_EDIT_FIELDS).some(key => JSON.stringify(normaliseAssetEditValue(key, input[key])) !==
+  return Object.keys(assetEditFields()).some(key => JSON.stringify(normaliseAssetEditValue(key, input[key])) !==
     JSON.stringify(normaliseAssetEditValue(key, assetEditBaseline[key])));
 }
 
@@ -5245,19 +5318,23 @@ function closeAssetEditor() {
 function openAssetEditor() {
   if (!auth.currentUser || !canEditAsset(currentProfile, organisationId, asset)) return;
   assetEditBaseline = { ...asset, attachments: Array.isArray(asset.attachments) ? [...asset.attachments] : [] };
-  const sections = [ ["Identity", ["plantType", "manufacturer", "model", "serialNumber", "registrationNumber"]],
-    ["Specification", ["year", "fuelType", "operatingWeight", "capacity"]],
-    ["Attachments / equipment", ["attachments"]], ["Additional information", ["specification", "notes"]] ];
+  const fields = assetEditFields();
+  const keys = Object.keys(fields);
+  const sections = [
+    ["Identity", keys.filter(key => ["vehicleType", "plantType", "registrationNumber", "manufacturer", "model", "vin", "serialNumber"].includes(key))],
+    ["Operational baseline", keys.filter(key => !["vehicleType", "plantType", "registrationNumber", "manufacturer", "model", "vin", "serialNumber", "specification", "notes"].includes(key))],
+    ["Additional information", keys.filter(key => ["specification", "notes"].includes(key))]
+  ].filter(([, sectionKeys]) => sectionKeys.length);
   getElement("assetEditFields").innerHTML = sections.map(([title, keys]) => `<section><h3>${title}</h3><div class="asset-edit-grid">${keys.map(key => {
-    const [label, maximum] = ASSET_EDIT_FIELDS[key];
-    const value = key === "attachments" ? assetEditBaseline.attachments.join("\n") : asset[key] ?? "";
+    const [label, maximum] = fields[key];
+    const value = asset[key] ?? "";
     const required = ["plantType", "manufacturer", "model"].includes(key);
     const attributes = `id="assetEdit_${key}" name="${key}" ${required ? "required" : ""}`;
     let control;
     if (key === "plantType") control = `<select ${attributes}><option value="">Select plant type</option>${PLANT_TYPES.map(type => `<option value="${type.code}" ${type.code === value ? "selected" : ""}>${escapeHtml(type.label)}</option>`).join("")}</select>`;
-    else if (["attachments", "specification", "notes"].includes(key)) control = `<textarea ${attributes} rows="3" maxlength="${key === "attachments" ? 8050 : maximum}">${escapeHtml(value)}</textarea>`;
-    else control = `<input ${attributes} value="${escapeHtml(value)}" maxlength="${maximum}" ${key === "year" ? 'inputmode="numeric"' : ""}>`;
-    return `<label class="${["attachments", "specification", "notes"].includes(key) ? "asset-edit-wide" : ""}" for="assetEdit_${key}">${label}${required ? " *" : ""}${control}${key === "attachments" ? "<small>One attachment per line.</small>" : key === "capacity" ? "<small>Include units, for example 4 tonnes / 17 metres.</small>" : ""}</label>`;
+    else if (["specification", "notes"].includes(key)) control = `<textarea ${attributes} rows="3" maxlength="${maximum}">${escapeHtml(value)}</textarea>`;
+    else control = `<input ${attributes} type="${key.toLowerCase().includes("date") || key === "motExpiry" ? "date" : "text"}" value="${escapeHtml(value)}" maxlength="${maximum}" ${key === "year" || key.toLowerCase().includes("mileage") || key.toLowerCase().includes("hours") ? 'inputmode="numeric"' : ""}>`;
+    return `<label class="${["specification", "notes"].includes(key) ? "asset-edit-wide" : ""}" for="assetEdit_${key}">${label}${required ? " *" : ""}${control}${key === "capacity" ? "<small>Include units, for example 4 tonnes / 17 metres.</small>" : ""}</label>`;
   }).join("")}</div></section>`).join("");
   setText("assetEditIdentity", asset.plantReference || asset.plantId || asset.id);
   setText("assetEditOwnership", `${getPlantOwnershipLabel(asset.ownershipType)} · Ownership locked`);
@@ -5289,18 +5366,21 @@ async function saveAssetEdit(event) {
       const snapshot = await transaction.get(reference);
       if (!profileSnapshot.exists() || !snapshot.exists()) throw new Error("Your profile or this asset is no longer available.");
       const latest = { ...snapshot.data(), id: snapshot.id };
-      const update = buildAssetEditUpdate(input, baseline, latest, profileSnapshot.data(), organisationId, uid, serverTimestamp());
+      const freshProfile = { uid, ...profileSnapshot.data() };
+      if (freshProfile.organisationId !== organisationId || latest.organisationId !== organisationId) throw new Error("This asset is outside your organisation.");
+      const update = buildAssetEditUpdate(input, baseline, latest, freshProfile, organisationId, uid, serverTimestamp());
       if (auth.currentUser?.uid !== uid) throw new Error("Your signed-in user changed. Close and reopen the editor.");
       if (Object.keys(update).length) transaction.update(reference, update);
       return { latest, update };
     });
     asset = { ...result.latest, ...result.update };
-    const changed = Object.keys(result.update).filter(key => Object.hasOwn(ASSET_EDIT_FIELDS, key));
+    const fields = assetEditFields();
+    const changed = Object.keys(result.update).filter(key => Object.hasOwn(fields, key));
     assetEditBaseline = null;
     getElement("assetEditDialog").close();
     renderHero();
     renderSelectedView();
-    setText("assetEditConfirmation", changed.length ? `Asset updated · ${changed.map(key => ASSET_EDIT_FIELDS[key][0]).join(", ")}` : "No changes to save.");
+    setText("assetEditConfirmation", changed.length ? `Asset updated · ${changed.map(key => fields[key][0]).join(", ")}` : "No changes to save.");
     getElement("assetEditConfirmation").hidden = false;
   } catch (error) {
     errorElement.textContent = error.code?.includes("permission-denied") ? "Save denied. Your permission may have changed. Your entries have been retained." :
@@ -5320,6 +5400,7 @@ function bindAssetEditing() {
   getElement("assetEditCancel").onclick = closeAssetEditor;
   getElement("assetEditForm").onsubmit = saveAssetEdit;
   getElement("assetEditDialog").oncancel = event => { event.preventDefault(); closeAssetEditor(); };
+  getElement("assetEditDialog").addEventListener("click", event => { if (event.target === event.currentTarget) closeAssetEditor(); });
   window.addEventListener("beforeunload", event => {
     if (assetEditSaving || hasAssetEditChanges()) { event.preventDefault(); event.returnValue = ""; }
   });
@@ -5329,6 +5410,8 @@ function bindAssetEditing() {
 let deploymentMode = null;
 let deploymentProjects = [];
 let deploymentSaving = false;
+let assetWorkflowMode = null;
+let assetWorkflowSaving = false;
 
 function localCalendarDay() { return new Date().toISOString().slice(0, 10); }
 function activeAssignment(record) {
@@ -5337,6 +5420,122 @@ function activeAssignment(record) {
 }
 function getCurrentAssignment(records) { return records.filter(activeAssignment).sort((a, b) => String(b.assignedFrom || "").localeCompare(String(a.assignedFrom || "")))[0] || null; }
 function deploymentActor(profile, record) { return canEditAsset(profile, organisationId, record); }
+
+function freshPlantManager(profile, record) {
+  return profile?.status === "ACTIVE" && profile.organisationId === organisationId && record?.organisationId === organisationId && (
+    Number(profile.accessLevel) >= 99 || profile.roleCode === "PLANT_TRANSPORT_MANAGER" || profile.roleCode === "ORGANISATION_MANAGER" || profile.permissions?.canManagePlant === true || profile.permissions?.canManageOrganisation === true
+  );
+}
+
+function workflowDialog() {
+  let dialog = getElement("assetWorkflowDialog");
+  if (dialog) return dialog;
+  dialog = document.createElement("dialog");
+  dialog.id = "assetWorkflowDialog";
+  dialog.className = "asset-edit-dialog";
+  dialog.innerHTML = `<form id="assetWorkflowForm" novalidate><header class="asset-edit-header"><div><h2 id="assetWorkflowTitle"></h2><p id="assetWorkflowDescription"></p></div><button type="button" id="assetWorkflowClose" aria-label="Close">×</button></header><fieldset id="assetWorkflowFields" class="asset-edit-body"></fieldset><p id="assetWorkflowError" class="asset-edit-error" role="alert" hidden></p><footer class="asset-edit-footer"><span>Changes are recorded against this asset history.</span><div class="asset-edit-footer__actions"><button type="button" id="assetWorkflowCancel">Cancel</button><button type="submit" id="assetWorkflowSave" class="asset-edit-primary">Save</button></div></footer></form>`;
+  document.body.append(dialog);
+  const close = () => { if (!assetWorkflowSaving && dialog.open) dialog.close(); };
+  getElement("assetWorkflowClose").onclick = close;
+  getElement("assetWorkflowCancel").onclick = close;
+  dialog.oncancel = event => { event.preventDefault(); close(); };
+  dialog.addEventListener("click", event => { if (event.target === dialog) close(); });
+  getElement("assetWorkflowForm").onsubmit = saveAssetWorkflow;
+  return dialog;
+}
+
+function workflowField(key, label, type = "text", required = false, options = []) {
+  const attrs = `id="assetWorkflow_${key}" name="${key}" ${required ? "required" : ""}`;
+  const control = type === "select"
+    ? `<select ${attrs}><option value="">Select ${escapeHtml(label.toLowerCase())}</option>${options.map(option => `<option value="${escapeHtml(option)}">${escapeHtml(formatText(option))}</option>`).join("")}</select>`
+    : type === "textarea"
+      ? `<textarea ${attrs} rows="3"></textarea>`
+      : `<input ${attrs} type="${type}">`;
+  return `<label class="${type === "textarea" ? "asset-edit-wide" : ""}"><span>${escapeHtml(label)}${required ? " *" : ""}</span>${control}</label>`;
+}
+
+function openMaintenanceDialog(mode) {
+  if (!canManagePlant || !asset) return;
+  assetWorkflowMode = mode;
+  const dialog = workflowDialog();
+  const definitions = {
+    plan: ["Plan Maintenance", "Schedule a maintenance intervention.", [workflowField("maintenanceType", "Maintenance type", "select", true, ["SERVICE", "REPAIR", "MOT_TEST", "INSPECTION", "TYRES", "OTHER"]), workflowField("plannedDate", "Planned date", "date", true), workflowField("provider", "Provider"), workflowField("expectedReturnDate", "Expected return date", "date"), workflowField("estimatedCost", "Estimated cost", "number"), workflowField("notes", "Notes", "textarea")]],
+    service: ["Record Service", "Record a completed service, including historical work.", [workflowField("serviceDate", "Service date", "date", true), workflowField("mileage", "Mileage", "number", true), workflowField("provider", "Provider"), workflowField("workCompleted", "Work completed", "textarea", true), workflowField("cost", "Cost", "number"), workflowField("nextServiceDate", "Next service date", "date"), workflowField("nextServiceMileage", "Next service mileage", "number"), workflowField("notes", "Notes", "textarea")]],
+    mot: ["Record MOT", "Record a completed MOT test, including historical tests.", [workflowField("testDate", "Test date", "date", true), workflowField("mileage", "Mileage", "number"), workflowField("provider", "Test station / provider"), workflowField("result", "Result", "select", true, ["PASS", "FAIL", "ADVISORY_PASS"]), workflowField("cost", "Cost", "number"), workflowField("newExpiryDate", "New expiry date", "date"), workflowField("notes", "Notes", "textarea")]],
+    mileage: ["Update Mileage", "Update the current vehicle mileage.", [workflowField("currentMileage", "Current mileage", "number", true), workflowField("recordedDate", "Recorded date", "date", true), workflowField("note", "Note", "textarea")]]
+  };
+  const definition = definitions[mode];
+  if (!definition) return;
+  setText("assetWorkflowTitle", definition[0]);
+  setText("assetWorkflowDescription", definition[1]);
+  getElement("assetWorkflowFields").innerHTML = `<div class="asset-edit-grid">${definition[2].join("")}</div>`;
+  getElement("assetWorkflowError").hidden = true;
+  setText("assetWorkflowSave", mode === "mileage" ? "Update mileage" : "Save");
+  dialog.showModal();
+}
+
+function workflowInput(key) {
+  return cleanString(getElement(`assetWorkflow_${key}`)?.value);
+}
+
+function omitUndefined(record) {
+  return Object.fromEntries(Object.entries(record).filter(([, value]) => value !== undefined));
+}
+
+async function saveAssetWorkflow(event) {
+  event.preventDefault();
+  if (assetWorkflowSaving || !assetWorkflowMode || !asset) return;
+  const error = getElement("assetWorkflowError");
+  error.hidden = true;
+  assetWorkflowSaving = true;
+  getElement("assetWorkflowFields").disabled = true;
+  getElement("assetWorkflowSave").disabled = true;
+  try {
+    const uid = auth.currentUser?.uid;
+    if (!uid) throw new Error("Your session has ended. Sign in again before saving.");
+    const mode = assetWorkflowMode;
+    const values = Object.fromEntries(["maintenanceType", "plannedDate", "provider", "expectedReturnDate", "estimatedCost", "notes", "serviceDate", "mileage", "workCompleted", "cost", "nextServiceDate", "nextServiceMileage", "testDate", "result", "newExpiryDate", "currentMileage", "recordedDate", "note"].map(key => [key, workflowInput(key)]));
+    if (mode === "plan" && (!values.maintenanceType || !values.plannedDate)) throw new Error("Choose a maintenance type and planned date.");
+    if (mode === "service" && (!values.serviceDate || !values.mileage || !values.workCompleted)) throw new Error("Enter the service date, mileage and work completed.");
+    if (mode === "mot" && (!values.testDate || !values.result)) throw new Error("Enter the test date and result.");
+    if (mode === "mileage" && (!values.currentMileage || !values.recordedDate)) throw new Error("Enter the current mileage and recorded date.");
+    const result = await runTransaction(db, async transaction => {
+      const profileSnapshot = await transaction.get(doc(db, "users", uid));
+      const assetReference = doc(db, "plantAssets", asset.id);
+      const assetSnapshot = await transaction.get(assetReference);
+      if (!profileSnapshot.exists() || !assetSnapshot.exists()) throw new Error("Your profile or this asset is no longer available.");
+      const freshProfile = { uid, ...profileSnapshot.data() };
+      const latest = { id: assetSnapshot.id, ...assetSnapshot.data() };
+      if (!freshPlantManager(freshProfile, latest)) throw new Error("Plant-management permission is required for this action.");
+      const timestamp = serverTimestamp();
+      if (mode === "mileage") {
+        const update = omitUndefined({ currentMileage: Number(values.currentMileage), currentMileageRecordedDate: values.recordedDate, currentMileageNote: values.note || null, updatedByUid: uid, updatedByName: cleanString(freshProfile.displayName) || null, updatedAt: timestamp });
+        transaction.update(assetReference, update);
+        return { assetUpdate: update, maintenance: null };
+      }
+      const completed = mode !== "plan";
+      const maintenance = omitUndefined({ organisationId, assetId: latest.id, plantId: latest.plantId || latest.plantReference || latest.id, plantReference: latest.plantReference || latest.plantId || latest.id, assetClass: resolvedAssetClass(latest), status: completed ? "COMPLETED" : "SCHEDULED", maintenanceType: mode === "service" ? "SERVICE" : mode === "mot" ? "MOT_TEST" : values.maintenanceType, plannedDate: mode === "plan" ? values.plannedDate : mode === "service" ? values.serviceDate : values.testDate, serviceDate: mode === "service" ? values.serviceDate : undefined, testDate: mode === "mot" ? values.testDate : undefined, provider: values.provider || undefined, expectedReturnDate: values.expectedReturnDate || undefined, estimatedCost: values.estimatedCost ? Number(values.estimatedCost) : undefined, mileage: values.mileage ? Number(values.mileage) : undefined, result: values.result || undefined, cost: values.cost ? Number(values.cost) : undefined, workCompleted: values.workCompleted || undefined, nextServiceDate: values.nextServiceDate || undefined, nextServiceMileage: values.nextServiceMileage ? Number(values.nextServiceMileage) : undefined, newExpiryDate: values.newExpiryDate || undefined, notes: values.notes || undefined, createdByUid: uid, createdByName: cleanString(freshProfile.displayName) || null, createdAt: timestamp, updatedByUid: uid, updatedByName: cleanString(freshProfile.displayName) || null, updatedAt: timestamp });
+      transaction.set(doc(collection(db, "plantMaintenance")), maintenance);
+      const assetUpdate = mode === "service" ? omitUndefined({ lastServiceDate: values.serviceDate, lastServiceMileage: Number(values.mileage), nextServiceDate: values.nextServiceDate || null, nextServiceMileage: values.nextServiceMileage ? Number(values.nextServiceMileage) : undefined, updatedByUid: uid, updatedByName: cleanString(freshProfile.displayName) || null, updatedAt: timestamp }) : mode === "mot" ? omitUndefined({ motExpiry: values.newExpiryDate || null, updatedByUid: uid, updatedByName: cleanString(freshProfile.displayName) || null, updatedAt: timestamp }) : {};
+      if (Object.keys(assetUpdate).length) transaction.update(assetReference, assetUpdate);
+      return { assetUpdate, maintenance };
+    });
+    asset = { ...asset, ...result.assetUpdate };
+    await loadMaintenance();
+    renderHero();
+    renderSelectedView();
+    workflowDialog().close();
+    setText("assetEditConfirmation", mode === "mileage" ? "Mileage updated" : "Maintenance history updated");
+    getElement("assetEditConfirmation").hidden = false;
+  } catch (workflowError) {
+    error.textContent = workflowError.code?.includes("permission-denied") ? "Save denied by Firestore rules. No changes were made." : workflowError.message || "Unable to save. No changes were made.";
+    error.hidden = false;
+  } finally {
+    assetWorkflowSaving = false;
+    getElement("assetWorkflowFields").disabled = false;
+    getElement("assetWorkflowSave").disabled = false;
+  }
+}
 
 async function loadDeploymentProjects() {
   try {
@@ -5351,28 +5550,28 @@ async function loadDeploymentProjects() {
 
 function openDeploymentEditor(mode) {
   if (!auth.currentUser || !deploymentActor(currentProfile, asset)) return;
-  deploymentMode = mode;
   const dialog = getElement("deploymentDialog");
   const current = getCurrentAssignment(assignments);
+  deploymentMode = mode === "assign" && current ? "reassign" : mode;
   setText("deploymentIdentity", asset.plantReference || asset.plantId || asset.id);
   setText("deploymentCurrentPosition", `${asset.currentProjectName || "No project"} · ${asset.currentLocationLabel || "Location not confirmed"}`);
   getElement("deploymentError").hidden = true;
   const titles = { location: ["Confirm / Update Location", "Record the asset's current location. This does not create a transport movement."], assign: ["Assign to Project", "Create a project deployment record and update the current project."], reassign: ["Reassign Asset", "Release the active assignment and create a new project deployment record."], release: ["Release Asset", "Close the active assignment and clear the current project."] };
-  setText("deploymentTitle", titles[mode][0]); setText("deploymentDescription", titles[mode][1]);
-  setText("deploymentHelp", mode === "location" ? "A location confirmation is retained in the asset history." : "Assignment history is retained; this action does not create a movement.");
-  if (mode === "location") {
+  setText("deploymentTitle", titles[deploymentMode][0]); setText("deploymentDescription", titles[deploymentMode][1]);
+  setText("deploymentHelp", deploymentMode === "location" ? "A location confirmation is retained in the asset history." : "Assignment history is retained; this action does not create a movement.");
+  if (deploymentMode === "location") {
     getElement("deploymentFields").innerHTML = `<section><h3>Current Location</h3><div class="asset-edit-grid"><label class="asset-edit-wide">Location *<input id="deploymentLocation" maxlength="160" value="${escapeHtml(asset.currentLocationLabel || "")}" required><small>Use a clear site, depot or supplier location.</small></label></div></section>`;
     getElement("deploymentSave").textContent = "Confirm location";
     dialog.showModal(); return;
   }
-  if (mode === "release") {
+  if (deploymentMode === "release") {
     if (!current) return;
     getElement("deploymentFields").innerHTML = `<section><h3>Release from project</h3><p class="asset-deployment-actions__restricted">This will close the active assignment to ${escapeHtml(current.projectName || current.projectId)} today. Physical collection or relocation belongs in Movements.</p></section>`;
     getElement("deploymentSave").textContent = "Release asset";
     dialog.showModal(); return;
   }
   getElement("deploymentFields").innerHTML = `<section><h3>Project</h3><div class="asset-edit-grid"><label class="asset-edit-wide">Project *<select id="deploymentProject" required><option value="">Loading projects…</option></select><small>Only projects in this organisation can be selected.</small></label></div></section>`;
-  getElement("deploymentSave").textContent = mode === "reassign" ? "Reassign asset" : "Assign asset";
+  getElement("deploymentSave").textContent = deploymentMode === "reassign" ? "Reassign asset" : "Assign asset";
   dialog.showModal();
   loadDeploymentProjects().then(projects => {
     const select = getElement("deploymentProject"); if (!select || !dialog.open) return;
@@ -5430,6 +5629,128 @@ async function saveDeployment(event) {
 function bindDeploymentWorkflow() {
   getElement("deploymentClose").onclick = closeDeploymentEditor; getElement("deploymentCancel").onclick = closeDeploymentEditor; getElement("deploymentForm").onsubmit = saveDeployment;
   getElement("deploymentDialog").oncancel = event => { event.preventDefault(); closeDeploymentEditor(); };
+  getElement("deploymentDialog").addEventListener("click", event => { if (event.target === event.currentTarget) closeDeploymentEditor(); });
+}
+
+
+function bindLifecycleWorkflow() {
+  const archiveDialog = getElement("assetArchiveDialog");
+  const deleteDialog = getElement("assetDeleteDialog");
+  const close = dialog => () => { if (dialog?.open) dialog.close(); };
+  getElement("assetArchiveButton").onclick = () => { getElement("assetArchiveError").hidden = true; archiveDialog.showModal(); };
+  getElement("assetDeleteButton").onclick = () => { getElement("assetDeleteError").hidden = true; deleteDialog.showModal(); };
+  getElement("assetArchiveClose").onclick = close(archiveDialog);
+  getElement("assetArchiveCancel").onclick = close(archiveDialog);
+  getElement("assetDeleteClose").onclick = close(deleteDialog);
+  getElement("assetDeleteCancel").onclick = close(deleteDialog);
+  getElement("assetArchiveForm").onsubmit = saveAssetArchive;
+  getElement("assetDeleteForm").onsubmit = saveAssetDelete;
+  archiveDialog.oncancel = event => { event.preventDefault(); close(archiveDialog)(); };
+  deleteDialog.oncancel = event => { event.preventDefault(); close(deleteDialog)(); };
+  archiveDialog.addEventListener("click", event => { if (event.target === archiveDialog) close(archiveDialog)(); });
+  deleteDialog.addEventListener("click", event => { if (event.target === deleteDialog) close(deleteDialog)(); });
+}
+
+let lifecycleSaving = false;
+
+async function saveAssetArchive(event) {
+  event.preventDefault();
+  if (lifecycleSaving || !asset || !canManagePlant) return;
+  const error = getElement("assetArchiveError");
+  const reason = cleanString(getElement("assetArchiveReason")?.value);
+  if (!reason) { error.textContent = "Select an archive reason."; error.hidden = false; return; }
+  lifecycleSaving = true;
+  getElement("assetArchiveConfirm").disabled = true;
+  try {
+    const uid = auth.currentUser?.uid;
+    if (!uid) throw new Error("Your session has ended. Sign in again before archiving.");
+    const result = await runTransaction(db, async transaction => {
+      const profileSnapshot = await transaction.get(doc(db, "users", uid));
+      const reference = doc(db, "plantAssets", asset.id);
+      const assetSnapshot = await transaction.get(reference);
+      if (!profileSnapshot.exists() || !assetSnapshot.exists()) throw new Error("Your profile or this asset is no longer available.");
+      const profile = { uid, ...profileSnapshot.data() };
+      const latest = { id: assetSnapshot.id, ...assetSnapshot.data() };
+      if (!freshPlantManager(profile, latest)) throw new Error("Plant-management permission is required to archive this asset.");
+      const timestamp = serverTimestamp();
+      const update = { archived: true, active: false, status: "ARCHIVED", archivedAt: timestamp, archivedByUid: uid, archivedByName: cleanString(profile.displayName) || null, archiveReason: reason, archiveNotes: cleanString(getElement("assetArchiveNotes")?.value) || null, updatedByUid: uid, updatedByName: cleanString(profile.displayName) || null, updatedAt: timestamp };
+      transaction.update(reference, update);
+      return update;
+    });
+    asset = { ...asset, ...result };
+    archiveDialogClose();
+    renderHero();
+    renderSelectedView();
+    setText("assetEditConfirmation", "Asset archived");
+    getElement("assetEditConfirmation").hidden = false;
+  } catch (archiveError) {
+    error.textContent = archiveError.code?.includes("permission-denied") ? "Archive denied by Firestore rules. No changes were made." : archiveError.message || "Unable to archive. No changes were made.";
+    error.hidden = false;
+  } finally {
+    lifecycleSaving = false;
+    getElement("assetArchiveConfirm").disabled = false;
+  }
+}
+
+function archiveDialogClose() { getElement("assetArchiveDialog")?.close(); }
+
+function openDocumentDialog(preselectedType = "") {
+  if (!canManagePlant) return;
+  let dialog = getElement("assetDocumentDialog");
+  if (!dialog) {
+    dialog = document.createElement("dialog");
+    dialog.id = "assetDocumentDialog";
+    dialog.className = "asset-edit-dialog";
+    dialog.innerHTML = `<form id="assetDocumentForm" novalidate><header class="asset-edit-header"><div><h2>Add Document</h2><p>Prepare controlled evidence for this asset.</p></div><button type="button" id="assetDocumentClose" aria-label="Close">×</button></header><div class="asset-edit-body"><div class="asset-edit-grid"><label><span>Document type *</span><select id="assetDocumentType" required></select></label><label><span>Title *</span><input id="assetDocumentTitle" required maxlength="160"></label><label><span>PDF file *</span><input id="assetDocumentFile" type="file" accept="application/pdf" required></label><label><span>Issue date</span><input id="assetDocumentIssueDate" type="date"></label><label><span>Expiry date</span><input id="assetDocumentExpiryDate" type="date"></label><label class="asset-edit-wide"><span>Notes</span><textarea id="assetDocumentNotes" rows="3"></textarea></label></div><p class="asset-document-storage-blocker">Upload is currently unavailable: <strong>storage.rules denies all Firebase Storage reads and writes</strong>. No Firestore document will be created without a safely uploaded PDF.</p></div><p id="assetDocumentError" class="asset-edit-error" role="alert" hidden></p><footer class="asset-edit-footer"><span>Binary evidence is never stored in Firestore.</span><div class="asset-edit-footer__actions"><button type="button" id="assetDocumentCancel">Cancel</button><button type="submit" id="assetDocumentSave" class="asset-edit-primary" disabled title="Blocked by current Firebase Storage rules">Upload document</button></div></footer></form>`;
+    document.body.append(dialog);
+    const close = () => dialog.close();
+    getElement("assetDocumentClose").onclick = close;
+    getElement("assetDocumentCancel").onclick = close;
+    dialog.oncancel = event => { event.preventDefault(); close(); };
+    dialog.addEventListener("click", event => { if (event.target === dialog) close(); });
+    getElement("assetDocumentForm").onsubmit = event => { event.preventDefault(); getElement("assetDocumentError").textContent = "Upload blocked: storage.rules currently denies all Firebase Storage reads and writes."; getElement("assetDocumentError").hidden = false; };
+  }
+  const types = isRoadVehicle() ? ["INSURANCE", "MOT_CERTIFICATE", "V5C", "SERVICE_RECORD", "OWNERSHIP_EVIDENCE", "WARRANTY", "MANUAL", "OTHER"] : ["LOLER", "PUWER", "OWNERSHIP_EVIDENCE", "PURCHASE_INVOICE", "MANUAL", "WARRANTY", "SERVICE_RECORD", "OTHER"];
+  getElement("assetDocumentType").innerHTML = `<option value="">Select document type</option>${types.map(type => `<option value="${type}">${formatText(type)}</option>`).join("")}`;
+  getElement("assetDocumentType").value = types.includes(preselectedType) ? preselectedType : "";
+  getElement("assetDocumentError").hidden = true;
+  dialog.showModal();
+}
+
+async function saveAssetDelete(event) {
+  event.preventDefault();
+  if (lifecycleSaving || !asset || !isCanonicalPlatformAdmin(currentProfile)) return;
+  const error = getElement("assetDeleteError");
+  const confirmation = cleanString(getElement("assetDeleteConfirmation")?.value);
+  const permanentId = asset.plantReference || asset.plantId || asset.id;
+  if (confirmation !== permanentId) { error.textContent = "Type the permanent Asset ID exactly to confirm deletion."; error.hidden = false; return; }
+  lifecycleSaving = true;
+  getElement("assetDeleteConfirm").disabled = true;
+  try {
+    const uid = auth.currentUser?.uid;
+    const result = await runTransaction(db, async transaction => {
+      const profileSnapshot = await transaction.get(doc(db, "users", uid));
+      const reference = doc(db, "plantAssets", asset.id);
+      const assetSnapshot = await transaction.get(reference);
+      if (!profileSnapshot.exists() || !assetSnapshot.exists()) throw new Error("Your profile or this asset is no longer available.");
+      const profile = { uid, ...profileSnapshot.data() };
+      const latest = { id: assetSnapshot.id, ...assetSnapshot.data() };
+      if (!isCanonicalPlatformAdmin(profile) || profile.organisationId !== organisationId || latest.organisationId !== organisationId) throw new Error("Platform Admin authority is required to delete this asset.");
+      const collectionNames = ["plantMaintenance", "plantDefects", "plantInspections", "plantMovements", "plantAssignments", "documents"];
+      const linkedSnapshots = [];
+      for (const collectionName of collectionNames) linkedSnapshots.push(await transaction.get(query(collection(db, collectionName), where("organisationId", "==", organisationId))));
+      if (linkedSnapshots.some(snapshot => snapshot.docs.some(item => recordBelongsToAsset({ id: item.id, ...item.data() })))) throw new Error("Linked operational history exists. Archive the asset instead of deleting it.");
+      transaction.delete(reference);
+      return true;
+    });
+    if (result) window.location.href = "/modules/contractor/plant/fleet/";
+  } catch (deleteError) {
+    error.textContent = deleteError.code?.includes("permission-denied") ? "Delete denied by Firestore rules. No changes were made." : deleteError.message || "Unable to delete. No changes were made.";
+    error.hidden = false;
+  } finally {
+    lifecycleSaving = false;
+    getElement("assetDeleteConfirm").disabled = false;
+  }
 }
 
 waitForWorkspace();

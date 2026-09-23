@@ -1,0 +1,30 @@
+import assert from "node:assert/strict";
+import { before, beforeEach, after, test } from "node:test";
+import { readFile } from "node:fs/promises";
+import { initializeTestEnvironment, assertSucceeds, assertFails } from "@firebase/rules-unit-testing";
+import { doc, setDoc, updateDoc, Timestamp, writeBatch, runTransaction } from "firebase/firestore";
+
+const projectId="demo-normex-security", host="127.0.0.1:8089";
+let env;
+const admin={organisationId:"colemans",status:"ACTIVE",roleCode:"PLATFORM_ADMIN",accessLevel:99,permissions:{},displayName:"Test Admin"};
+const viewer={organisationId:"colemans",status:"ACTIVE",roleCode:"SUPERVISOR",accessLevel:1,permissions:{},displayName:"Viewer"};
+const client=uid=>env.authenticatedContext(uid).firestore();
+const ts=Timestamp.fromMillis(1);
+const asset=(overrides={})=>({organisationId:"colemans",assetClass:"ROAD_VEHICLE",plantId:"VAN-0001",plantReference:"VAN-0001",vehicleType:"VAN",registrationNumber:"TEST VAN",manufacturer:"Ford",model:"Transit",ownershipType:"OWNED",status:"AVAILABLE",active:true,createdByUid:"admin",updatedByUid:"admin",createdAt:ts,updatedAt:ts,...overrides});
+async function seed(data){await env.withSecurityRulesDisabled(async c=>{const b=writeBatch(c.firestore());for(const [path,value] of Object.entries(data))b.set(doc(c.firestore(),path),value);await b.commit();});}
+before(async()=>{assert.equal(process.env.FIRESTORE_EMULATOR_HOST,host);const rules=await readFile(new URL("./firestore.generated.rules",import.meta.url),"utf8");env=await initializeTestEnvironment({projectId,firestore:{host:"127.0.0.1",port:8089,rules}});});
+beforeEach(async()=>{await env.clearFirestore();await seed({"users/admin":admin,"users/viewer":viewer,"users/foreign":{...admin,organisationId:"other"}});});
+after(async()=>env?.cleanup());
+test("Platform Admin creates VAN counter",async()=>assertSucceeds(setDoc(doc(client("admin"),"plantCounters","colemans_VAN"),{organisationId:"colemans",prefix:"VAN",nextNumber:2,updatedByUid:"admin",updatedAt:ts})));
+test("Fleet counter allocation transactions support first and subsequent counters",async t=>{
+  await t.test("first same-organisation allocation reads missing counter then writes counter and asset",async()=>{const db=client("admin"),counter=doc(db,"plantCounters","colemans_VAN"),vehicle=doc(db,"plantAssets","VAN-0001");await assertSucceeds(runTransaction(db,async transaction=>{await transaction.get(counter);transaction.set(counter,{organisationId:"colemans",prefix:"VAN",nextNumber:2,updatedByUid:"admin",updatedAt:ts});transaction.set(vehicle,asset());}));});
+  await t.test("cross-tenant and viewer missing counter gets deny",async()=>{const adminDb=client("admin"),foreignCounter=doc(adminDb,"plantCounters","anotherorg_VAN"),viewerDb=client("viewer"),sameOrgCounter=doc(viewerDb,"plantCounters","colemans_VAN");await assertFails(runTransaction(adminDb,transaction=>transaction.get(foreignCounter)));await assertFails(runTransaction(viewerDb,transaction=>transaction.get(sameOrgCounter)));});
+  await t.test("existing same-organisation counter reads and updates",async()=>{await seed({"plantCounters/colemans_VAN":{organisationId:"colemans",prefix:"VAN",nextNumber:2,updatedByUid:"admin",updatedAt:ts}});const db=client("admin"),counter=doc(db,"plantCounters","colemans_VAN");await assertSucceeds(runTransaction(db,async transaction=>{const snapshot=await transaction.get(counter);transaction.update(counter,{nextNumber:snapshot.data().nextNumber+1,updatedByUid:"admin",updatedAt:ts});}));});
+});
+test("V2 asset class creates validate by class and tenant",async t=>{
+  await t.test("road vehicle allows no plantType",async()=>assertSucceeds(setDoc(doc(client("admin"),"plantAssets","VAN-0001"),asset())));
+  await t.test("road vehicle missing vehicle type or registration denies",async()=>{await assertFails(setDoc(doc(client("admin"),"plantAssets","VAN-0002"),asset({plantId:"VAN-0002",plantReference:"VAN-0002",vehicleType:""})));await assertFails(setDoc(doc(client("admin"),"plantAssets","VAN-0003"),asset({plantId:"VAN-0003",plantReference:"VAN-0003",registrationNumber:""})));});
+  await t.test("plant, small plant, trailer and other accept their type",async()=>{for(const [id,data] of [["HRE-0001",asset({assetClass:"PLANT_MACHINERY",plantId:"HRE-0001",plantReference:"HRE-0001",plantType:"HIGH_REACH_EXCAVATOR"})],["SPL-0001",asset({assetClass:"SMALL_PLANT",plantId:"SPL-0001",plantReference:"SPL-0001",equipmentType:"GRINDER"})],["ATT-0001",asset({assetClass:"TRAILER_ATTACHMENT",plantId:"ATT-0001",plantReference:"ATT-0001",attachmentType:"BUCKET"})],["AST-0001",asset({assetClass:"OTHER",plantId:"AST-0001",plantReference:"AST-0001",otherAssetType:"TOOLING"})]])await assertSucceeds(setDoc(doc(client("admin"),"plantAssets",id),data));});
+  await t.test("missing plant type, cross tenant and viewer deny",async()=>{await assertFails(setDoc(doc(client("admin"),"plantAssets","HRE-0002"),asset({assetClass:"PLANT_MACHINERY",plantId:"HRE-0002",plantReference:"HRE-0002",plantType:""})));await assertFails(setDoc(doc(client("foreign"),"plantAssets","VAN-0004"),asset({plantId:"VAN-0004",plantReference:"VAN-0004",organisationId:"colemans",createdByUid:"foreign",updatedByUid:"foreign"})));await assertFails(setDoc(doc(client("viewer"),"plantAssets","VAN-0005"),asset({plantId:"VAN-0005",plantReference:"VAN-0005",createdByUid:"viewer",updatedByUid:"viewer"})));});
+});
+test("asset immutable identifiers and legacy update protection",async()=>{await seed({"plantAssets/legacy":{organisationId:"colemans",plantId:"LEG-0001",plantReference:"LEG-0001",plantType:"EXCAVATOR",ownershipType:"OWNED",status:"AVAILABLE",active:true,createdByUid:"admin",createdAt:ts,updatedByUid:"admin",updatedAt:ts},"plantAssets/VAN-0001":asset()});await assertSucceeds(updateDoc(doc(client("admin"),"plantAssets","legacy"),{status:"OFF_ROAD",updatedByUid:"admin",updatedAt:ts}));await assertFails(updateDoc(doc(client("admin"),"plantAssets","VAN-0001"),{organisationId:"other"}));await assertFails(updateDoc(doc(client("admin"),"plantAssets","VAN-0001"),{plantId:"VAN-9999",plantReference:"VAN-9999"}));});

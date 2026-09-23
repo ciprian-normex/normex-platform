@@ -1,0 +1,12 @@
+/* Development-only, opt-in Plant seed. Import in a signed-in development console and call seedPlantMaintenanceDemo(). */
+import { auth, db } from "/js/firebase.js";
+import { doc, getDoc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+const ORG="colemans",SET="plant-maintenance-demo-v1";
+const assets=[
+ ["VAN-001","OWNED","Ford","Transit Custom","YK24 ABC",14], ["PUP-001","OWNED","Ford","Ranger","DN73 XYZ",62], ["VAN-002","OWNED","Volkswagen","Transporter","KM22 TUV",180],
+ ["HRE-0004","OWNED","Hitachi","ZX350",null,null,"HIGH_REACH_EXCAVATOR"],["EXC-0005","OWNED","Hitachi","ZX225",null,null,"EXCAVATOR"],["TEL-0006","OWNED","JCB","540-140",null,null,"TELEHANDLER"],["SSL-0007","OWNED","Bobcat","S650",null,null,"SKID_STEER"],["MEWP-0008","OWNED","Genie","GS-1930",null,null,"SCISSOR_LIFT"],
+ ["HRE-0009","HIRED","Hitachi","ZX490",null,null,"HIGH_REACH_EXCAVATOR"],["TEL-0010","HIRED","JCB","540-140",null,null,"TELEHANDLER"]
+];
+const day=n=>new Date(Date.now()+n*864e5).toISOString().slice(0,10);
+export async function seedPlantMaintenanceDemo(){const uid=auth.currentUser?.uid;if(!uid)throw Error("Sign in before running the development seed.");for(const [plantId,ownershipType,manufacturer,model,registrationNumber,motDays,plantType="ROAD_VEHICLE"] of assets){const ref=doc(db,"plantAssets",plantId),existing=await getDoc(ref);if(existing.exists())continue;await setDoc(ref,{organisationId:ORG,plantId,plantReference:plantId,manufacturer,model,registrationNumber:registrationNumber||null,plantType,ownershipType,status:"AVAILABLE",active:true,currentProjectName:plantId==="VAN-001"?"Castle Bromwich":null,currentLocationLabel:plantId==="VAN-001"?"Main yard":null,assignedToName:plantId==="VAN-001"?"Development Driver":null,motExpiry:motDays?day(motDays):null,lastServiceDate:ownershipType==="OWNED"?day(-120):null,lastServiceMileage:registrationNumber?58000:null,currentMileage:registrationNumber?64200:null,operatingHours:registrationNumber?null:900,seedData:true,seedSet:SET,createdByUid:uid,createdAt:serverTimestamp(),updatedByUid:uid,updatedAt:serverTimestamp()});if(ownershipType==="HIRED")await setDoc(doc(db,"plantHireRecords",`${plantId}-seed-hire`),{organisationId:ORG,assetId:plantId,plantId,plantReference:plantId,supplierName:"Demo Hire Partner",hireStartDate:day(-10),expectedOffHireDate:day(30),rate:480,rateUnit:"DAY",seedData:true,seedSet:SET,createdByUid:uid,createdAt:serverTimestamp(),updatedByUid:uid,updatedAt:serverTimestamp()});}return {organisationId:ORG,seedSet:SET};}

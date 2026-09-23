@@ -251,9 +251,7 @@ export function renderPlantShell({
                       : ""
                   }
                 "
-                ${["overview", "fleet", "movements", "defects"].includes(item.key)
-                  ? `href="${item.href}"`
-                  : 'aria-disabled="true" title="Coming later"'}
+                href="${item.href}"
                 ${
                   item.key ===
                     activePage

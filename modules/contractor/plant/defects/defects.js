@@ -28,7 +28,216 @@ function suggested(){const g=n=>document.querySelector(`input[name="${n}"]:check
 function openReport(){$("reportDefectForm").reset();$("defectReportedAt").value=new Date().toISOString().slice(0,16);$("defectDowntimeStartedAt").value=new Date().toISOString().slice(0,16);$("defectReportedBy").textContent=profile?.displayName||profile?.email||"Authenticated user";$("selectedAssetContext").hidden=true;$("reportDefectDialog").showModal();suggested();}
 function buildReport(){const a=asset($("defectAssetSelect").value),pos=suggested();if(!a||!clean($("defectDescription").value))throw Error("Select an asset and enter a defect description.");if(!$("confirmDefectPosition").checked)throw Error("Confirm the suggested operational position.");return omit({assetId:a.id,plantId:a.plantId||a.plantReference||a.id,plantReference:a.plantReference||a.plantId||a.id,description:clean($("defectDescription").value),reportedAt:$("defectReportedAt").value,productiveUse:document.querySelector('input[name="productiveUse"]:checked')?.value,mobility:document.querySelector('input[name="mobility"]:checked')?.value,safeOperation:document.querySelector('input[name="safeOperation"]:checked')?.value,workImpact:document.querySelector('input[name="workImpact"]:checked')?.value,restrictedFunction:clean($("restrictedFunction").value)||null,operationalPosition:pos,operationalHold:pos==="OUT_OF_SERVICE",immediateControls:[...document.querySelectorAll(".control-option-grid input:checked")].map(x=>x.value),immediateActionNotes:clean($("defectImmediateNotes").value)||null,caseContactName:clean($("defectCaseContactName").value)||null,caseContactDetail:clean($("defectCaseContactDetail").value)||null,downtimeStartedAt:clean($("defectDowntimeStartedAt").value)||null,responsibilityRoute:clean($("defectResponsibilityRoute").value)||null,currentProjectId:a.currentProjectId||null,currentProjectName:a.currentProjectName||null,currentLocationLabel:a.currentLocationLabel||null,repairSupplier:a.supplierName||null});}
 async function save(e){e.preventDefault();if(saving)return;saving=true;try{const d=buildReport(),uid=auth.currentUser?.uid;if(!uid||!reporter(profile))throw Error("You are not authorised to report defects.");await runTransaction(db,async t=>{const p=await t.get(doc(db,"users",uid)),ar=await t.get(doc(db,"plantAssets",d.assetId));if(!p.exists()||!ar.exists()||ar.data().organisationId!==org)throw Error("Asset unavailable.");const a=p.data(),at=new Date().toISOString(),ref=doc(collection(db,"plantDefects")),prev=ar.data();t.set(ref,omit({organisationId:org,...d,status:"REPORTED",statusHistory:[{status:"REPORTED",at,actorUid:uid,actorName:a.displayName||null}],caseUpdates:[{at,actorUid:uid,actorName:a.displayName||null,note:"Defect reported"}],previousAssetState:{status:prev.status,safeToUse:prev.safeToUse,offRoad:prev.offRoad},createdByUid:uid,createdByName:a.displayName||null,createdAt:serverTimestamp(),updatedByUid:uid,updatedByName:a.displayName||null,updatedAt:serverTimestamp()}));if(d.operationalHold)t.update(doc(db,"plantAssets",d.assetId),assetPatch(d,a,uid,serverTimestamp()));});$("reportDefectDialog").close();await reload();}catch(err){$("defectStatus").textContent=err.message;}finally{saving=false;}}
-function openCase(d){selectedCase=d;const a=asset(d.assetId),dr=$("repairCaseDrawer");$("repairCaseBackdrop").hidden=false;dr.hidden=false;dr.setAttribute("aria-hidden","false");dr.querySelector(".drawer-plant-id").textContent=d.plantReference||d.plantId||"Plant";dr.querySelector("h2").textContent=d.description||"Defect repair case";const v=dr.querySelectorAll(".position-detail-grid dd");[d.currentProjectName||"Not recorded",d.currentLocationLabel||"Not recorded",d.reportedByName||"Not recorded",d.responsibleName||"Unassigned",d.repairSupplier||a?.supplierName||"Not recorded",d.downtimeStartedAt?dateTime(d.downtimeStartedAt):"Not recorded",label(d.responsibilityRoute||"Plant / Transport team"),label(d.mobility||"Not recorded")].forEach((x,i)=>{if(v[i])v[i].textContent=x;});$("repairCaseDiary").innerHTML=(d.caseUpdates||[]).map(x=>`<article class="diary-entry"><div class="diary-content"><strong>${esc(x.actorName||"User")}</strong><time>${esc(dateTime(x.at))}</time><p>${esc(x.note||"")}</p></div></article>`).join("")||"<p class=\"defect-note\">No updates recorded.</p>";$("returnToServiceAction").hidden=!manage(profile,d)||normal(d.status)!=="AWAITING_RTS";}
+function openCase(d) {
+  selectedCase = d;
+
+  const a = asset(d.assetId);
+  const drawer = $("repairCaseDrawer");
+
+  $("repairCaseBackdrop").hidden = false;
+  drawer.hidden = false;
+  drawer.setAttribute("aria-hidden", "false");
+
+  /* ----------------------------------------------------------
+     CASE HEADER
+  ---------------------------------------------------------- */
+
+  drawer.querySelector(".drawer-plant-id").textContent =
+    d.plantReference || d.plantId || "Plant";
+
+  const modelText = [a?.manufacturer, a?.model]
+    .filter(Boolean)
+    .join(" ");
+
+  const titleLineParts = drawer.querySelectorAll(".drawer-title-line span");
+
+  if (titleLineParts[2]) {
+    titleLineParts[2].textContent = modelText || "Plant asset";
+  }
+
+  drawer.querySelector("h2").textContent =
+    d.description || "Defect repair case";
+
+
+  /* ----------------------------------------------------------
+     CURRENT POSITION
+  ---------------------------------------------------------- */
+
+  const positionValues = drawer.querySelectorAll(
+    ".position-detail-grid dd"
+  );
+
+  const positionData = [
+    d.currentProjectName || "Not recorded",
+    d.currentLocationLabel || "Not recorded",
+    d.reportedByName ||
+      d.createdByName ||
+      d.caseUpdates?.[0]?.actorName ||
+      "Not recorded",
+    d.responsibleName || "Unassigned",
+    d.repairSupplier ||
+      a?.supplierName ||
+      "Not recorded",
+    d.downtimeStartedAt
+      ? dateTime(d.downtimeStartedAt)
+      : "Not recorded",
+    label(d.responsibilityRoute || "Plant / Transport team"),
+    label(d.mobility || "Not recorded"),
+  ];
+
+  positionData.forEach((value, index) => {
+    if (positionValues[index]) {
+      positionValues[index].textContent = value;
+    }
+  });
+
+
+  /* ----------------------------------------------------------
+     CASE DIARY
+  ---------------------------------------------------------- */
+
+  const updates = Array.isArray(d.caseUpdates)
+    ? [...d.caseUpdates]
+    : [];
+
+  updates.sort((a, b) => {
+    const aTime = new Date(a?.at || 0).getTime();
+    const bTime = new Date(b?.at || 0).getTime();
+
+    return aTime - bTime;
+  });
+
+  const markerClass = update => {
+    const status = normal(update?.status || "");
+
+    if (
+      status === "CLOSED" ||
+      status === "AWAITING_RTS" ||
+      status === "REPAIR_COMPLETE"
+    ) {
+      return "diary-marker--green";
+    }
+
+    if (status === "REPAIR_IN_PROGRESS") {
+      return "diary-marker--orange";
+    }
+
+    if (
+      status === "AWAITING_ATTENDANCE" ||
+      status === "AWAITING_PARTS" ||
+      status === "AWAITING_REPLACEMENT" ||
+      status === "REPLACEMENT_REQUESTED"
+    ) {
+      return "diary-marker--amber";
+    }
+
+    if (
+      status === "ACKNOWLEDGED"
+    ) {
+      return "diary-marker--blue";
+    }
+
+    return "diary-marker--red";
+  };
+
+  const diaryRole = update => {
+    if (update?.actorRoleName) {
+      return update.actorRoleName;
+    }
+
+    if (update?.actorRole) {
+      return label(update.actorRole);
+    }
+
+    if (
+      update?.status === "REPORTED" ||
+      update?.note === "Defect reported"
+    ) {
+      return "Defect report";
+    }
+
+    return "";
+  };
+
+  const diaryHtml = updates.map(update => {
+    const role = diaryRole(update);
+
+    return `
+      <article class="diary-entry">
+
+        <div class="diary-marker ${markerClass(update)}"></div>
+
+        <div class="diary-content">
+
+          <div class="diary-meta">
+
+            <strong>
+              ${esc(update.actorName || "NORMEX user")}
+            </strong>
+
+            ${
+              role
+                ? `<span>${esc(role)}</span>`
+                : ""
+            }
+
+            <time>
+              ${esc(dateTime(update.at))}
+            </time>
+
+          </div>
+
+          <p>
+            ${esc(update.note || "Case updated")}
+          </p>
+
+        </div>
+
+      </article>
+    `;
+  }).join("");
+
+  $("repairCaseDiary").innerHTML =
+    diaryHtml ||
+    `<p class="defect-note">No case updates recorded.</p>`;
+
+
+  /* ----------------------------------------------------------
+     LATEST POSITION
+  ---------------------------------------------------------- */
+
+  const latest = updates.length
+    ? updates[updates.length - 1]
+    : null;
+
+  const latestCard = drawer.querySelector(".latest-position-card");
+
+  if (latestCard) {
+    const latestText = latestCard.querySelector("strong");
+    const latestMeta = latestCard.querySelector(":scope > span");
+
+    if (latestText) {
+      latestText.textContent =
+        latest?.note ||
+        "Defect reported. Awaiting Plant action.";
+    }
+
+    if (latestMeta) {
+      latestMeta.textContent = latest
+        ? `Updated by ${latest.actorName || "NORMEX user"} · ${age(latest.at)}`
+        : "No further update recorded";
+    }
+  }
+
+
+  /* ----------------------------------------------------------
+     RETURN TO SERVICE
+  ---------------------------------------------------------- */
+
+  $("returnToServiceAction").hidden =
+    !manage(profile, d) ||
+    normal(d.status) !== "AWAITING_RTS";
+}
 function bind() {
   $("reportDefect").onclick = openReport;
   $("reportDefectForm").onsubmit = save;
@@ -107,10 +316,13 @@ function closeCase(){$("repairCaseBackdrop").hidden=true;$("repairCaseDrawer").h
 async function returnService(rts={}){if(!selectedCase)throw Error("No repair case selected.");const uid=auth.currentUser?.uid;if(!uid)throw Error("Session expired.");await runTransaction(db,async t=>{const p=await t.get(doc(db,"users",uid)),r=await t.get(doc(db,"plantDefects",selectedCase.id)),ar=await t.get(doc(db,"plantAssets",selectedCase.assetId));if(!p.exists()||!r.exists()||!ar.exists())throw Error("Case or asset unavailable.");const actor=p.data(),x=r.data();if(actor.organisationId!==org||x.organisationId!==org||ar.data().organisationId!==org||!manage(actor,x))throw Error("Management permission or organisation check failed.");if(normal(x.status)!=="AWAITING_RTS")throw Error("Only a case awaiting return to service can be released.");const all=await t.get(query(collection(db,"plantDefects"),where("organisationId","==",org)));if(all.docs.some(v=>v.id!==selectedCase.id&&v.data().assetId===selectedCase.assetId&&v.data().operationalHold&&normal(v.data().status)!=="CLOSED"))throw Error("Another active restricted defect remains.");const at=new Date().toISOString(),note=clean(rts.note)||"Return to service confirmed",remaining=rts.remainingRestriction==="YES";t.update(doc(db,"plantDefects",selectedCase.id),{status:"CLOSED",rtsNote:note,rtsChecksConfirmed:rts.checksConfirmed,rtsTestOperated:rts.testOperated,rtsRepairComplete:rts.repairComplete,rtsRemainingRestriction:rts.remainingRestriction,confirmedByUid:uid,confirmedByName:actor.displayName||null,confirmedAt:serverTimestamp(),returnToServiceConfirmedAt:serverTimestamp(),caseUpdates:[...(x.caseUpdates||[]),{at,actorUid:uid,actorName:actor.displayName||null,note}],statusHistory:[...(x.statusHistory||[]),{status:"CLOSED",at,actorUid:uid,actorName:actor.displayName||null}]});if(x.operationalHold&&!remaining)t.update(doc(db,"plantAssets",selectedCase.assetId),returnPatch(ar.data(),x.previousAssetState,actor,uid,serverTimestamp()));if(remaining)t.update(doc(db,"plantAssets",selectedCase.assetId),{safeToUse:false,offRoad:true,remainingDefectRestriction:true,updatedByUid:uid,updatedByName:actor.displayName||null,updatedAt:serverTimestamp()});});await reload();closeCase();}async function persistCase(patch){if(!selectedCase)throw Error("Select a repair case first.");const uid=auth.currentUser?.uid;if(!uid)throw Error("Your session has ended.");await runTransaction(db,async transaction=>{const user=await transaction.get(doc(db,"users",uid)),record=await transaction.get(doc(db,"plantDefects",selectedCase.id));if(!user.exists()||!record.exists())throw Error("Case or user profile is unavailable.");const actor=user.data(),defect=record.data();if(actor.organisationId!==org||defect.organisationId!==org||!manage(actor,defect))throw Error("Case management permission required.");if(patch.status&&!valid(defect.status,patch.status))throw Error("Invalid status transition.");const at=new Date().toISOString(),event={at,actorUid:uid,actorName:actor.displayName||null,note:patch.note||"Case updated",status:patch.status||null};transaction.update(record.ref,omit({...patch,caseUpdates:[...(defect.caseUpdates||[]),event],statusHistory:patch.status?[...(defect.statusHistory||[]),{status:patch.status,at,actorUid:uid,actorName:actor.displayName||null}]:defect.statusHistory,updatedAt:serverTimestamp(),updatedByUid:uid,updatedByName:actor.displayName||null}));});await reload();selectedCase=defects.find(x=>x.id===selectedCase.id)||selectedCase;openCase(selectedCase);}function openUpdate(){if(!selectedCase)return;$("repairUpdateNote").value="";$("repairResponsiblePerson").value=selectedCase.responsibleName||"";$("repairExpectedNextAction").value=selectedCase.expectedNextAction||"";$("repairUpdateDialog").showModal();}
 function openFeedback(){if(!selectedCase)return;$("repairCompletedAt").value=new Date().toISOString().slice(0,16);$("repairFeedbackDialog").showModal();}
 function openRts(){if(!selectedCase)return;$("returnToServiceDialog").showModal();}
+async function confirmRts(event){event.preventDefault();try{if(!selectedCase)throw Error("Select a repair case first.");const checks=[...$("returnToServiceDialog").querySelectorAll(".rts-checks input[type=checkbox]")];if(checks.length!==3||checks.some(check=>!check.checked))throw Error("Confirm repair completion, operational checks and test operation before returning Plant to service.");const note=clean($("rtsNote").value);if(!note)throw Error("Add a return-to-service note.");await returnService({repairComplete:true,checksConfirmed:true,testOperated:true,remainingRestriction:$("rtsRemainingRestriction").value,note});$("returnToServiceDialog").close();}catch(error){$("defectStatus").textContent=error.message;console.error("Return to service failed",error);}}
 async function saveUpdate(e){e.preventDefault();try{const note=clean($("repairUpdateNote").value);if(!note)throw Error("Add a meaningful case update before saving.");const raw=$("repairUpdateStatus").value,status=raw?raw.toUpperCase().replaceAll(" ","_"):undefined;await persistCase({note,status,expectedNextAction:clean($("repairExpectedNextAction").value)||null,responsibleName:clean($("repairResponsiblePerson").value)||null,responsibleUid:auth.currentUser?.uid||null,responsibilityRoute:clean($("repairRoute").value)||null});$("repairUpdateDialog").close();}catch(error){$("defectStatus").textContent=error.message;console.error("Defect case update failed",error);}}
 async function saveFeedback(e){e.preventDefault();try{if(!selectedCase)throw Error("Select a repair case first.");const checked=document.querySelector('input[name="repairOutcome"]:checked'),labels=["FULLY_RESOLVED","PARTIALLY_RESOLVED","ADDITIONAL_FAULT_IDENTIFIED","UNABLE_TO_REPAIR","REPLACEMENT_SUPPLIED"],outcome=checked?labels[[...document.querySelectorAll('input[name="repairOutcome"]')].indexOf(checked)]:"";if(!outcome)throw Error("Select a repair outcome.");await persistCase({note:clean($("repairCompletionNotes").value)||"Repair feedback recorded",repairOutcome:outcome,repairCompletedAt:$("repairCompletedAt").value||null,availabilityAfterRepair:$("repairAvailablePosition").value,completedByUid:auth.currentUser?.uid||null,completedByName:profile?.displayName||null,completionRecordedAt:serverTimestamp(),status:["REPAIR_IN_PROGRESS","AWAITING_REPLACEMENT"].includes(normal(selectedCase.status))?"REPAIR_COMPLETE":undefined});$("repairFeedbackDialog").close();}catch(error){$("defectStatus").textContent=error.message;console.error("Defect repair feedback failed",error);}}function repairCostAccess(p){return manage(p)||p?.permissions?.canViewCommercial===true||p?.permissions?.canManageCommercial===true;}
 function money(value){return new Intl.NumberFormat("en-GB",{style:"currency",currency:"GBP"}).format(Number(value||0));}
 function costTotal(){const fields=["repairCostCallout","repairCostLabour","repairCostParts","repairCostTransport","repairCostOther"];const total=fields.reduce((sum,id)=>sum+(Number($(id).value)||0),0);$("repairCostTotal").textContent=money(total);return total;}
 function openCosts(){if(!selectedCase)return;const costs=selectedCase.repairCosts||{};[["repairCostCallout","callout"],["repairCostLabour","labour"],["repairCostParts","parts"],["repairCostTransport","transport"],["repairCostOther","other"]].forEach(([id,key])=>$(id).value=costs[key]??"");costTotal();$("repairCostDialog").showModal();}
 async function saveCosts(event){event.preventDefault();try{if(!selectedCase)throw Error("Select a repair case first.");const uid=auth.currentUser?.uid;if(!uid)throw Error("Your session has ended.");const keys=[["callout","repairCostCallout"],["labour","repairCostLabour"],["parts","repairCostParts"],["transport","repairCostTransport"],["other","repairCostOther"]],costs={};keys.forEach(([key,id])=>{const value=clean($(id).value);if(value!=="")costs[key]=Number(value);});costs.total=costTotal();await runTransaction(db,async transaction=>{const user=await transaction.get(doc(db,"users",uid)),record=await transaction.get(doc(db,"plantDefects",selectedCase.id));if(!user.exists()||!record.exists())throw Error("Case or user profile is unavailable.");const actor=user.data(),defect=record.data();if(actor.organisationId!==org||defect.organisationId!==org||!manage(actor,defect))throw Error("Cost update is not authorised.");transaction.update(record.ref,omit({repairCosts:costs,costUpdatedAt:serverTimestamp(),costUpdatedByUid:uid,costUpdatedByName:actor.displayName||null,updatedAt:serverTimestamp(),updatedByUid:uid,updatedByName:actor.displayName||null}));});$("repairCostDialog").close();await reload();selectedCase=defects.find(d=>d.id===selectedCase.id);if(selectedCase)openCase(selectedCase);}catch(error){$("defectStatus").textContent=error.message;console.error("Defect cost update failed",error);}}function wireSecondaryDialogControls(){["reportDefectDialog","repairUpdateDialog","repairFeedbackDialog","returnToServiceDialog","repairCostDialog"].map($).filter(Boolean).forEach(dialog=>{const close=()=>{if(dialog.open)dialog.close();$("repairCaseClose")?.focus();};dialog.querySelectorAll(".dialog-close, .button-secondary[type=button]").forEach(button=>button.addEventListener("click",close));dialog.addEventListener("cancel",event=>{event.preventDefault();close();});dialog.addEventListener("click",event=>{if(event.target===dialog)close();});});document.querySelector(".drawer-footer .button-success")?.addEventListener("click",openRts);$("addDiaryUpdate")?.addEventListener("click",openUpdate);$("editRepairDetails")?.addEventListener("click",openUpdate);$("updateRepairCosts")?.addEventListener("click",openCosts);$("repairCostForm")?.addEventListener("submit",saveCosts);["repairCostCallout","repairCostLabour","repairCostParts","repairCostTransport","repairCostOther"].forEach(id=>$(id)?.addEventListener("input",costTotal));$("createDefectMovement")?.addEventListener("click",()=>{if(selectedCase)window.location.href=`/modules/contractor/plant/movements/index.html?assetId=${encodeURIComponent(selectedCase.assetId)}&defectId=${encodeURIComponent(selectedCase.id)}`;});document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!document.querySelector("dialog[open]")&&!$("repairCaseDrawer")?.hidden)closeCase();});}
+const baseRender=render;
+render=function(){baseRender();$("defectCount").textContent=String(defects.length);const total=defects.filter(active).length,heading=document.querySelector(".insight-panel--repair-position .panel-heading-stat strong");if(heading)heading.textContent=String(total);};
 function wait(){wireSecondaryDialogControls();if(window.NORMEX_CURRENT_USER)init(window.NORMEX_CURRENT_USER);else window.addEventListener("normex:workspace-ready",e=>init(e.detail.profile),{once:true});}wait();

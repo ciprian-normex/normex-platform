@@ -191,19 +191,19 @@
 
 
         <div class="fleet-register-page" id="fleetWorkspace">
-          <header class="fleet-register-header"><div><p class="fleet-eyebrow">Plant register</p><h2>Fleet</h2><p>Organisation Plant register and current asset position.</p></div><div class="fleet-register-actions"><a class="fleet-secondary-action" href="../overview/index.html">Overview</a><button id="addPlantButton" class="fleet-primary-action" type="button" hidden>+ Add Plant</button></div></header>
+          <header class="fleet-register-header"><div><p class="fleet-eyebrow">Fleet &amp; Asset Register</p><h2>Fleet</h2><p>Organisation vehicles, Plant, machinery and equipment with their current recorded position.</p></div><div class="fleet-register-actions"><a class="fleet-secondary-action" href="../overview/index.html">Overview</a><button id="addPlantButton" class="fleet-primary-action" type="button" hidden>+ Add Asset</button></div></header>
           <p id="fleetLoadStatus" class="fleet-register-note" role="status" aria-live="polite">Loading Fleet...</p>
           <div id="fleetMetrics" class="fleet-quick-filters" aria-label="Quick Fleet filters"></div>
           <section class="fleet-register-surface" aria-label="Organisation Plant register">
             <div class="fleet-register-filters">
-              <label class="fleet-register-search">Search<input id="fleetSearchInput" type="search" placeholder="Plant ID, make, model, serial, registration, supplier or location"></label>
+              <label class="fleet-register-search">Search<input id="fleetSearchInput" type="search" placeholder="Asset ID, registration, make, model, serial, supplier or location"></label>
               <label>Ownership<select id="fleetOwnershipFilter"><option value="">All ownership</option><option value="HIRED">Hired / leased / cross-hired</option><option value="OWNED">Owned</option><option value="LEASED">Leased</option><option value="CROSS_HIRED">Cross-hired</option><option value="OTHER">Other</option></select></label>
-              <label>Plant type<select id="fleetTypeFilter"></select></label>
+              <label>Asset type<select id="fleetTypeFilter"></select></label>
               <label>Operational status<select id="fleetStatusFilter"></select></label>
               <label>Project<select id="fleetProjectFilter"><option value="">All projects</option></select></label>
               <label>Attention<select id="fleetAttentionFilter"><option value="">All attention states</option><option value="OFF_ROAD">Off road / hold</option><option value="OFF_HIRE">Off-hire attention</option><option value="LOCATION">Location unconfirmed</option><option value="IDLE">Hired / recorded unassigned</option><option value="HIRE_UNKNOWN">Hire needs review</option><option value="MAINTENANCE">Maintenance recorded</option><option value="NONE">No recorded signal</option></select></label>
             </div>
-            <div class="fleet-register-toolbar"><div id="fleetFilterChips" class="fleet-filter-chips"></div><button id="clearFleetFilters" class="fleet-small-action" type="button">Clear all</button><label>Sort<select id="fleetSort"><option value="attention">Attention, then Plant ID</option><option value="id">Plant ID</option><option value="type">Plant type</option><option value="ownership">Ownership</option><option value="status">Status</option><option value="project">Project</option><option value="offhire">Expected off-hire</option></select></label><button id="fleetSortDirection" class="fleet-small-action" type="button" aria-label="Reverse sort direction">Ascending</button></div>
+            <div class="fleet-register-toolbar"><div id="fleetFilterChips" class="fleet-filter-chips"></div><button id="clearFleetFilters" class="fleet-small-action" type="button">Clear all</button><label>Sort<select id="fleetSort"><option value="attention">Attention, then Asset ID</option><option value="id">Asset ID</option><option value="type">Asset type</option><option value="ownership">Ownership</option><option value="status">Status</option><option value="project">Project</option><option value="offhire">Expected off-hire</option></select></label><button id="fleetSortDirection" class="fleet-small-action" type="button" aria-label="Reverse sort direction">Ascending</button></div>
             <p id="fleetRegisterCount" class="fleet-register-note"></p>
             <div id="fleetRegister" aria-busy="true"></div>
             <nav id="fleetPagination" class="fleet-register-pagination" aria-label="Fleet register pages"></nav>
@@ -302,791 +302,610 @@
 
 
   <!-- =====================================================
-       ADD PLANT MODAL
+       ADD ASSET MODAL
+       Approved HTML/CSS. JavaScript should populate, toggle and
+       persist this structure rather than rebuild it.
   ====================================================== -->
 
-  <div
-    id="addPlantModal"
-    class="fleet-modal"
-    hidden
-  >
-
-    <div
-      id="addPlantBackdrop"
-      class="fleet-modal__backdrop"
-    ></div>
-
+  <div id="addPlantModal" class="fleet-modal fleet-asset-modal" hidden>
+    <div id="addPlantBackdrop" class="fleet-modal__backdrop"></div>
 
     <section
-      class="fleet-modal__panel"
+      class="fleet-modal__panel fleet-asset-modal__panel"
       role="dialog"
       aria-modal="true"
       aria-labelledby="addPlantModalTitle"
     >
 
       <header class="fleet-modal__header">
-
         <div>
-
-          <p class="fleet-eyebrow">
-            Plant Record
-          </p>
-
-          <h2
-            id="addPlantModalTitle"
-            class="fleet-modal__title"
-          >
-            Add Plant
-          </h2>
-
+          <p class="fleet-eyebrow">Organisation asset record</p>
+          <h2 id="addPlantModalTitle" class="fleet-modal__title">Add Asset</h2>
           <p class="fleet-modal__subtitle">
-            Create the permanent plant identity first. Deployment, inspections,
-            defects and movements will build its operational history.
+            Create the permanent asset identity first. Deployment, movements,
+            defects, maintenance and compliance build the operational history around it.
           </p>
-
         </div>
 
-
-        <button
-          id="closeAddPlantModal"
-          class="fleet-modal__close"
-          type="button"
-          aria-label="Close"
-        >
-          ×
-        </button>
-
+        <button id="closeAddPlantModal" class="fleet-modal__close" type="button" aria-label="Close">×</button>
       </header>
 
+      <form id="addPlantForm" class="fleet-modal__body fleet-asset-form">
 
-      <form
-        id="addPlantForm"
-        class="fleet-modal__body"
-      >
-
-
-        <!-- ===============================================
-             01 IDENTITY
-        ================================================ -->
-
-        <section class="fleet-form-section">
-
+        <!-- 01 ASSET CLASS -->
+        <section class="fleet-form-section fleet-form-section--class">
           <header>
-
-            <span>
-              01
-            </span>
-
+            <span>01</span>
             <div>
-
-              <strong>
-                Plant Identity
-              </strong>
-
-              <p>
-                The NORMEX Plant ID is permanent and will also be used as the
-                Firestore document ID.
-              </p>
-
+              <strong>Asset Class</strong>
+              <p>Select the asset family first. The form should then show only information relevant to that asset.</p>
             </div>
-
           </header>
 
+          <div class="asset-class-grid" role="radiogroup" aria-label="Asset class">
 
-          <div class="fleet-form-grid">
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Plant Type *
-              </span>
-
-              <select
-                id="plantType"
-                required
-              ></select>
-
+            <label class="asset-class-card is-selected">
+              <input type="radio" name="assetClass" value="ROAD_VEHICLE" checked />
+              <span class="asset-class-card__code">RV</span>
+              <strong>Road Vehicle</strong>
+              <small>Cars, vans, pickups, HGVs and minibuses</small>
             </label>
 
-
-            <label class="fleet-form-field">
-
-              <span>
-                Ownership *
-              </span>
-
-              <select
-                id="plantOwnershipType"
-                required
-              ></select>
-
+            <label class="asset-class-card">
+              <input type="radio" name="assetClass" value="PLANT_MACHINERY" />
+              <span class="asset-class-card__code">PM</span>
+              <strong>Plant &amp; Machinery</strong>
+              <small>Excavators, telehandlers, MEWPs, dumpers and cranes</small>
             </label>
 
-
-            <label class="fleet-form-field">
-
-              <span>
-                Manufacturer
-              </span>
-
-              <input
-                id="plantManufacturer"
-                type="text"
-                placeholder="e.g. Hitachi"
-              />
-
+            <label class="asset-class-card">
+              <input type="radio" name="assetClass" value="SMALL_PLANT" />
+              <span class="asset-class-card__code">SP</span>
+              <strong>Equipment / Small Plant</strong>
+              <small>Grinders, saws, welders, pumps and smaller powered equipment</small>
             </label>
 
-
-            <label class="fleet-form-field">
-
-              <span>
-                Model
-              </span>
-
-              <input
-                id="plantModel"
-                type="text"
-                placeholder="e.g. ZX490"
-              />
-
+            <label class="asset-class-card">
+              <input type="radio" name="assetClass" value="TRAILER_ATTACHMENT" />
+              <span class="asset-class-card__code">TA</span>
+              <strong>Trailer / Attachment</strong>
+              <small>Trailers, buckets, grabs, breakers, forks and attachments</small>
             </label>
 
-
-            <label class="fleet-form-field">
-
-              <span>
-                Serial Number
-              </span>
-
-              <input
-                id="plantSerialNumber"
-                type="text"
-              />
-
+            <label class="asset-class-card">
+              <input type="radio" name="assetClass" value="OTHER" />
+              <span class="asset-class-card__code">OT</span>
+              <strong>Other Asset</strong>
+              <small>Assets outside the standard operating categories</small>
             </label>
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Registration Number
-              </span>
-
-              <input
-                id="plantRegistrationNumber"
-                type="text"
-                placeholder="If applicable"
-              />
-
-            </label>
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Year
-              </span>
-
-              <input
-                id="plantYear"
-                type="number"
-                min="1950"
-                max="2100"
-              />
-
-            </label>
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Fuel / Power
-              </span>
-
-              <select id="plantFuelType">
-
-                <option value="">
-                  Not recorded
-                </option>
-
-                <option value="DIESEL">
-                  Diesel
-                </option>
-
-                <option value="HVO">
-                  HVO
-                </option>
-
-                <option value="PETROL">
-                  Petrol
-                </option>
-
-                <option value="ELECTRIC">
-                  Electric
-                </option>
-
-                <option value="HYBRID">
-                  Hybrid
-                </option>
-
-                <option value="OTHER">
-                  Other
-                </option>
-
-              </select>
-
-            </label>
-
 
           </div>
+        </section>
 
+
+        <!-- 02 IDENTITY -->
+        <section class="fleet-form-section">
+          <header>
+            <span>02</span>
+            <div>
+              <strong>Identity</strong>
+              <p>Permanent identifying information. Every asset receives an internal NORMEX Asset ID.</p>
+            </div>
+          </header>
+
+          <!-- Road vehicle -->
+          <div class="asset-class-fields" data-asset-class-section="ROAD_VEHICLE">
+            <div class="fleet-form-grid">
+
+              <label class="fleet-form-field">
+                <span>Vehicle Type *</span>
+                <select id="vehicleType">
+                  <option value="">Select vehicle type</option>
+                  <option value="CAR">Car</option>
+                  <option value="VAN">Van</option>
+                  <option value="PICKUP">Pickup</option>
+                  <option value="HGV">HGV</option>
+                  <option value="MINIBUS">Minibus</option>
+                  <option value="OTHER_ROAD_VEHICLE">Other road vehicle</option>
+                </select>
+              </label>
+
+              <label class="fleet-form-field">
+                <span>Registration *</span>
+                <input id="plantRegistrationNumber" type="text" placeholder="e.g. YK24 ABC" />
+              </label>
+
+              <label class="fleet-form-field">
+                <span>Make *</span>
+                <input id="plantManufacturer" type="text" placeholder="e.g. Ford" />
+              </label>
+
+              <label class="fleet-form-field">
+                <span>Model *</span>
+                <input id="plantModel" type="text" placeholder="e.g. Transit Custom" />
+              </label>
+
+              <label class="fleet-form-field">
+                <span>VIN / Chassis Number</span>
+                <input id="vehicleVin" type="text" placeholder="Optional" />
+              </label>
+
+              <label class="fleet-form-field">
+                <span>Year</span>
+                <input id="plantYear" type="number" min="1950" max="2100" />
+              </label>
+
+              <label class="fleet-form-field">
+                <span>Fuel / Power</span>
+                <select id="plantFuelType">
+                  <option value="">Not recorded</option>
+                  <option value="DIESEL">Diesel</option>
+                  <option value="HVO">HVO</option>
+                  <option value="PETROL">Petrol</option>
+                  <option value="ELECTRIC">Electric</option>
+                  <option value="HYBRID">Hybrid</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </label>
+
+              <label class="fleet-form-field">
+                <span>Serial / Internal Reference</span>
+                <input id="plantSerialNumber" type="text" placeholder="Optional" />
+              </label>
+
+            </div>
+          </div>
+
+          <!-- Plant and machinery -->
+          <div class="asset-class-fields" data-asset-class-section="PLANT_MACHINERY" hidden>
+            <div class="fleet-form-grid">
+
+              <label class="fleet-form-field">
+                <span>Plant Type *</span>
+                <select id="plantType"></select>
+              </label>
+
+              <label class="fleet-form-field">
+                <span>Manufacturer</span>
+                <input id="plantManufacturerPlant" type="text" placeholder="e.g. Hitachi" />
+              </label>
+
+              <label class="fleet-form-field">
+                <span>Model</span>
+                <input id="plantModelPlant" type="text" placeholder="e.g. ZX350" />
+              </label>
+
+              <label class="fleet-form-field">
+                <span>Serial Number</span>
+                <input id="plantSerialNumberPlant" type="text" />
+              </label>
+
+              <label class="fleet-form-field">
+                <span>Year</span>
+                <input id="plantYearPlant" type="number" min="1950" max="2100" />
+              </label>
+
+              <label class="fleet-form-field">
+                <span>Fuel / Power</span>
+                <select id="plantFuelTypePlant">
+                  <option value="">Not recorded</option>
+                  <option value="DIESEL">Diesel</option>
+                  <option value="HVO">HVO</option>
+                  <option value="PETROL">Petrol</option>
+                  <option value="ELECTRIC">Electric</option>
+                  <option value="HYBRID">Hybrid</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </label>
+
+            </div>
+          </div>
+
+          <!-- Small plant -->
+          <div class="asset-class-fields" data-asset-class-section="SMALL_PLANT" hidden>
+            <div class="fleet-form-grid">
+
+              <label class="fleet-form-field">
+                <span>Equipment Type *</span>
+                <select id="equipmentType">
+                  <option value="">Select equipment type</option>
+                  <option value="GRINDER">Grinder</option>
+                  <option value="CUT_OFF_SAW">Cut-off saw</option>
+                  <option value="BREAKER">Breaker</option>
+                  <option value="WELDER">Welder</option>
+                  <option value="PUMP">Pump</option>
+                  <option value="VACUUM_EXTRACTION">Vacuum / extraction</option>
+                  <option value="SMALL_GENERATOR">Small generator</option>
+                  <option value="COMPRESSOR">Compressor</option>
+                  <option value="OTHER_SMALL_PLANT">Other small Plant</option>
+                </select>
+              </label>
+
+              <label class="fleet-form-field"><span>Manufacturer</span><input id="equipmentManufacturer" type="text" /></label>
+              <label class="fleet-form-field"><span>Model</span><input id="equipmentModel" type="text" /></label>
+              <label class="fleet-form-field"><span>Serial Number</span><input id="equipmentSerialNumber" type="text" /></label>
+              <label class="fleet-form-field"><span>Year</span><input id="equipmentYear" type="number" min="1950" max="2100" /></label>
+
+              <label class="fleet-form-field">
+                <span>Power Source</span>
+                <select id="equipmentPowerType">
+                  <option value="">Not recorded</option>
+                  <option value="110V">110V</option>
+                  <option value="240V">240V</option>
+                  <option value="BATTERY">Battery</option>
+                  <option value="PETROL">Petrol</option>
+                  <option value="DIESEL">Diesel</option>
+                  <option value="PNEUMATIC">Pneumatic</option>
+                  <option value="HYDRAULIC">Hydraulic</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </label>
+
+            </div>
+          </div>
+
+          <!-- Trailer / attachment -->
+          <div class="asset-class-fields" data-asset-class-section="TRAILER_ATTACHMENT" hidden>
+            <div class="fleet-form-grid">
+
+              <label class="fleet-form-field">
+                <span>Type *</span>
+                <select id="attachmentType">
+                  <option value="">Select type</option>
+                  <option value="TRAILER">Trailer</option>
+                  <option value="BUCKET">Bucket</option>
+                  <option value="GRAB">Grab</option>
+                  <option value="BREAKER_ATTACHMENT">Breaker</option>
+                  <option value="FORK_ATTACHMENT">Fork attachment</option>
+                  <option value="PULVERISER">Pulveriser</option>
+                  <option value="OTHER_ATTACHMENT">Other</option>
+                </select>
+              </label>
+
+              <label class="fleet-form-field"><span>Manufacturer</span><input id="attachmentManufacturer" type="text" /></label>
+              <label class="fleet-form-field"><span>Model</span><input id="attachmentModel" type="text" /></label>
+              <label class="fleet-form-field"><span>Serial Number</span><input id="attachmentSerialNumber" type="text" /></label>
+              <label class="fleet-form-field"><span>Registration</span><input id="attachmentRegistrationNumber" type="text" placeholder="If applicable" /></label>
+              <label class="fleet-form-field"><span>Year</span><input id="attachmentYear" type="number" min="1950" max="2100" /></label>
+
+            </div>
+          </div>
+
+          <!-- Other -->
+          <div class="asset-class-fields" data-asset-class-section="OTHER" hidden>
+            <div class="fleet-form-grid">
+              <label class="fleet-form-field"><span>Asset Type *</span><input id="otherAssetType" type="text" placeholder="Describe the asset type" /></label>
+              <label class="fleet-form-field"><span>Manufacturer</span><input id="otherManufacturer" type="text" /></label>
+              <label class="fleet-form-field"><span>Model</span><input id="otherModel" type="text" /></label>
+              <label class="fleet-form-field"><span>Serial / Identifier</span><input id="otherSerialNumber" type="text" /></label>
+            </div>
+          </div>
 
           <div class="fleet-reference-preview">
-
-            <span>
-              NORMEX Plant ID
-            </span>
-
-            <strong id="plantReferencePreview">
-              Generated when plant is saved
-            </strong>
-
+            <span>NORMEX Asset ID</span>
+            <strong id="plantReferencePreview">Generated when asset is saved</strong>
+            <small>
+              Permanent internal reference for reporting and history even where a registration number is the main visible identity.
+            </small>
           </div>
-
         </section>
 
 
-        <!-- ===============================================
-             02 SPECIFICATION
-        ================================================ -->
-
+        <!-- 03 OWNERSHIP -->
         <section class="fleet-form-section">
-
           <header>
-
-            <span>
-              02
-            </span>
-
+            <span>03</span>
             <div>
-
-              <strong>
-                Specification
-              </strong>
-
-              <p>
-                Enough information to identify whether this asset is suitable
-                for future requests.
-              </p>
-
+              <strong>Ownership</strong>
+              <p>Record who controls the asset and, where external, the initial hire position.</p>
             </div>
-
           </header>
 
-
           <div class="fleet-form-grid">
-
+            <label class="fleet-form-field">
+              <span>Ownership *</span>
+              <select id="plantOwnershipType" required></select>
+            </label>
 
             <label class="fleet-form-field">
-
-              <span>
-                Operating Weight
-              </span>
-
-              <input
-                id="plantOperatingWeight"
-                type="text"
-                placeholder="e.g. 50t"
-              />
-
+              <span>Ownership / Asset Note</span>
+              <input id="assetOwnershipNote" type="text" placeholder="Optional reference or ownership note" />
             </label>
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Capacity / Reach
-              </span>
-
-              <input
-                id="plantCapacity"
-                type="text"
-                placeholder="e.g. 24m reach"
-              />
-
-            </label>
-
-
-            <label class="fleet-form-field fleet-form-field--wide">
-
-              <span>
-                Description / Specification
-              </span>
-
-              <textarea
-                id="plantSpecification"
-                rows="3"
-                placeholder="Key capabilities, configuration or limitations"
-              ></textarea>
-
-            </label>
-
-
           </div>
-
         </section>
 
 
-        <!-- ===============================================
-             03 HIRE
-        ================================================ -->
-
-        <section
-          id="hireDetailsSection"
-          class="fleet-form-section"
-          hidden
-        >
-
+        <!-- HIRE -->
+        <section id="hireDetailsSection" class="fleet-form-section fleet-form-section--hire" hidden>
           <header>
-
-            <span>
-              03
-            </span>
-
+            <span>H</span>
             <div>
-
-              <strong>
-                Hire & Financial Position
-              </strong>
-
-              <p>
-                Creates the first canonical hire record linked to this plant asset.
-              </p>
-
+              <strong>Hire &amp; Financial Position</strong>
+              <p>Initial external hire record linked to this asset.</p>
             </div>
-
           </header>
 
-
           <div class="fleet-form-grid">
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Hire Supplier *
-              </span>
-
-              <input
-                id="plantSupplierName"
-                type="text"
-                placeholder="e.g. Sunbelt Rentals"
-              />
-
-            </label>
-
+            <label class="fleet-form-field"><span>Hire Supplier *</span><input id="plantSupplierName" type="text" placeholder="e.g. Sunbelt Rentals" /></label>
+            <label class="fleet-form-field"><span>Supplier Asset Ref</span><input id="plantSupplierReference" type="text" /></label>
+            <label class="fleet-form-field"><span>Hire Start</span><input id="plantHireStart" type="date" /></label>
+            <label class="fleet-form-field"><span>Expected Off-Hire</span><input id="plantExpectedOffHire" type="date" /></label>
+            <label class="fleet-form-field"><span>Hire Rate</span><input id="plantHireRate" type="number" min="0" step="0.01" placeholder="0.00" /></label>
 
             <label class="fleet-form-field">
-
-              <span>
-                Supplier Asset Ref
-              </span>
-
-              <input
-                id="plantSupplierReference"
-                type="text"
-              />
-
-            </label>
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Hire Start
-              </span>
-
-              <input
-                id="plantHireStart"
-                type="date"
-              />
-
-            </label>
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Expected Off-Hire
-              </span>
-
-              <input
-                id="plantExpectedOffHire"
-                type="date"
-              />
-
-            </label>
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Hire Rate
-              </span>
-
-              <input
-                id="plantHireRate"
-                type="number"
-                min="0"
-                step="0.01"
-                placeholder="0.00"
-              />
-
-            </label>
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Rate Unit
-              </span>
-
+              <span>Rate Unit</span>
               <select id="plantHireRateUnit">
-
-                <option value="DAY">
-                  Per Day
-                </option>
-
-                <option
-                  value="WEEK"
-                  selected
-                >
-                  Per Week
-                </option>
-
-                <option value="MONTH">
-                  Per Month
-                </option>
-
+                <option value="DAY">Per Day</option>
+                <option value="WEEK" selected>Per Week</option>
+                <option value="MONTH">Per Month</option>
               </select>
-
             </label>
 
-
-            <label class="fleet-form-field">
-
-              <span>
-                Delivery Charge
-              </span>
-
-              <input
-                id="plantDeliveryCharge"
-                type="number"
-                min="0"
-                step="0.01"
-                placeholder="0.00"
-              />
-
-            </label>
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Collection Charge
-              </span>
-
-              <input
-                id="plantCollectionCharge"
-                type="number"
-                min="0"
-                step="0.01"
-                placeholder="0.00"
-              />
-
-            </label>
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Hire Contract Ref
-              </span>
-
-              <input
-                id="plantHireContractReference"
-                type="text"
-              />
-
-            </label>
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Minimum Hire Period
-              </span>
-
-              <input
-                id="plantMinimumHirePeriod"
-                type="text"
-                placeholder="e.g. 4 weeks"
-              />
-
-            </label>
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Contact Name
-              </span>
-
-              <input
-                id="plantHireContactName"
-                type="text"
-              />
-
-            </label>
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Contact Phone
-              </span>
-
-              <input
-                id="plantHireContactPhone"
-                type="tel"
-              />
-
-            </label>
-
-
-            <label class="fleet-form-field fleet-form-field--wide">
-
-              <span>
-                Contact Email
-              </span>
-
-              <input
-                id="plantHireContactEmail"
-                type="email"
-              />
-
-            </label>
-
-
+            <label class="fleet-form-field"><span>Delivery Charge</span><input id="plantDeliveryCharge" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+            <label class="fleet-form-field"><span>Collection Charge</span><input id="plantCollectionCharge" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+            <label class="fleet-form-field"><span>Hire Contract Ref</span><input id="plantHireContractReference" type="text" /></label>
+            <label class="fleet-form-field"><span>Minimum Hire Period</span><input id="plantMinimumHirePeriod" type="text" placeholder="e.g. 4 weeks" /></label>
+            <label class="fleet-form-field"><span>Contact Name</span><input id="plantHireContactName" type="text" /></label>
+            <label class="fleet-form-field"><span>Contact Phone</span><input id="plantHireContactPhone" type="tel" /></label>
+            <label class="fleet-form-field fleet-form-field--wide"><span>Contact Email</span><input id="plantHireContactEmail" type="email" /></label>
           </div>
-
         </section>
 
 
-        <!-- ===============================================
-             04 ATTACHMENTS
-        ================================================ -->
-
+        <!-- 04 SPECIFICATION -->
         <section class="fleet-form-section">
-
           <header>
-
-            <span>
-              04
-            </span>
-
+            <span>04</span>
             <div>
-
-              <strong>
-                Configuration & Attachments
-              </strong>
-
-              <p>
-                Record major attachments or configuration supplied with the plant.
-              </p>
-
+              <strong>Specification</strong>
+              <p>Capture only information useful for suitability, servicing and future allocation.</p>
             </div>
-
           </header>
 
+          <div class="asset-class-fields" data-specification-for="ROAD_VEHICLE">
+            <div class="fleet-form-grid">
+              <label class="fleet-form-field"><span>Gross / Operating Weight</span><input id="vehicleOperatingWeight" type="text" placeholder="Optional" /></label>
+              <label class="fleet-form-field"><span>Seats / Capacity</span><input id="vehicleCapacity" type="text" placeholder="Optional" /></label>
+              <label class="fleet-form-field fleet-form-field--wide"><span>Description / Specification</span><textarea id="vehicleSpecification" rows="3" placeholder="Useful configuration, load, towing or access information"></textarea></label>
+            </div>
+          </div>
+
+          <div class="asset-class-fields" data-specification-for="PLANT_MACHINERY" hidden>
+            <div class="fleet-form-grid">
+              <label class="fleet-form-field"><span>Operating Weight</span><input id="plantOperatingWeight" type="text" placeholder="e.g. 35t" /></label>
+              <label class="fleet-form-field"><span>Capacity / Reach</span><input id="plantCapacity" type="text" placeholder="e.g. 24m reach" /></label>
+              <label class="fleet-form-field"><span>Current Operating Hours</span><input id="plantOperatingHours" type="number" min="0" step="0.1" placeholder="Optional" /></label>
+              <label class="fleet-form-field"><span>Hour Meter Date</span><input id="plantOperatingHoursAt" type="date" /></label>
+              <label class="fleet-form-field fleet-form-field--wide"><span>Description / Specification</span><textarea id="plantSpecification" rows="3" placeholder="Key capabilities, configuration or limitations"></textarea></label>
+            </div>
+          </div>
+
+          <div class="asset-class-fields" data-specification-for="SMALL_PLANT" hidden>
+            <div class="fleet-form-grid">
+              <label class="fleet-form-field"><span>Current Operating Hours</span><input id="equipmentOperatingHours" type="number" min="0" step="0.1" placeholder="If applicable" /></label>
+              <label class="fleet-form-field"><span>Rated Capacity / Size</span><input id="equipmentCapacity" type="text" placeholder="Optional" /></label>
+              <label class="fleet-form-field fleet-form-field--wide"><span>Description / Specification</span><textarea id="equipmentSpecification" rows="3" placeholder="Capability, accessories or limitations"></textarea></label>
+            </div>
+          </div>
+
+          <div class="asset-class-fields" data-specification-for="TRAILER_ATTACHMENT" hidden>
+            <div class="fleet-form-grid">
+              <label class="fleet-form-field"><span>Capacity / Size</span><input id="attachmentCapacity" type="text" placeholder="Optional" /></label>
+              <label class="fleet-form-field"><span>Compatible Plant / Interface</span><input id="attachmentCompatibility" type="text" placeholder="Optional" /></label>
+              <label class="fleet-form-field fleet-form-field--wide"><span>Description / Specification</span><textarea id="attachmentSpecification" rows="3" placeholder="Configuration, compatibility or limitations"></textarea></label>
+            </div>
+          </div>
+
+          <div class="asset-class-fields" data-specification-for="OTHER" hidden>
+            <div class="fleet-form-grid">
+              <label class="fleet-form-field fleet-form-field--wide"><span>Description / Specification</span><textarea id="otherSpecification" rows="3" placeholder="Useful information about the asset"></textarea></label>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- 05 CURRENT POSITION -->
+        <section class="fleet-form-section">
+          <header>
+            <span>05</span>
+            <div>
+              <strong>Current Position</strong>
+              <p>Initial operating cache only. Future moves and person/project assignments belong to the movement and assignment workflows.</p>
+            </div>
+          </header>
+
+          <div class="fleet-form-grid">
+            <label class="fleet-form-field">
+              <span>Home Base</span>
+              <input id="assetHomeBase" type="text" value="Colemans Yard" />
+            </label>
+
+            <label class="fleet-form-field">
+              <span>Current Project</span>
+              <select id="assetCurrentProject">
+                <option value="">No current project</option>
+              </select>
+            </label>
+
+            <label class="fleet-form-field">
+              <span>Current Location</span>
+              <input id="plantCurrentLocation" type="text" placeholder="e.g. Colemans Yard / project area" />
+            </label>
+
+            <label class="fleet-form-field">
+              <span>Starting Status</span>
+              <select id="plantInitialStatus">
+                <option value="AVAILABLE">Available</option>
+                <option value="RESERVED">Reserved</option>
+                <option value="AWAITING_TRANSPORT">Awaiting Transport</option>
+                <option value="IN_TRANSIT">In Transit</option>
+                <option value="DEPLOYED">Deployed</option>
+                <option value="MAINTENANCE">Maintenance</option>
+                <option value="OFF_ROAD">Off Road</option>
+              </select>
+            </label>
+
+            <label class="fleet-form-field fleet-form-field--wide" data-position-for="ROAD_VEHICLE">
+              <span>Currently Assigned To</span>
+              <select id="plantAssignedToName">
+                <option value="">Not assigned</option>
+              </select>
+              <small class="fleet-field-help">Personnel assignment should later be controlled by the vehicle handover / movement workflow.</small>
+            </label>
+
+            <label class="fleet-form-field fleet-form-field--wide">
+              <span>Operational Notes</span>
+              <textarea id="plantNotes" rows="3" placeholder="Useful initial operating or identification information"></textarea>
+            </label>
+          </div>
+        </section>
+
+
+        <!-- 06 CONFIGURATION -->
+        <section class="fleet-form-section">
+          <header>
+            <span>06</span>
+            <div>
+              <strong>Configuration</strong>
+              <p>Major attachments, accessories or configuration supplied with the asset.</p>
+            </div>
+          </header>
 
           <div class="fleet-inline-add">
-
-            <input
-              id="plantAttachmentInput"
-              type="text"
-              placeholder="e.g. Pulveriser, selector grab, breaker"
-            />
-
-            <button
-              id="addPlantAttachmentButton"
-              class="fleet-secondary-action"
-              type="button"
-            >
-              + Add Attachment
-            </button>
-
+            <input id="plantAttachmentInput" type="text" placeholder="e.g. Pulveriser, selector grab, tow bar, roof rack" />
+            <button id="addPlantAttachmentButton" class="fleet-secondary-action" type="button">+ Add Item</button>
           </div>
 
-
-          <div
-            id="plantAttachmentList"
-            class="fleet-tag-list"
-          >
-
-            <span class="fleet-muted-text">
-              No attachments added
-            </span>
-
+          <div id="plantAttachmentList" class="fleet-tag-list">
+            <span class="fleet-muted-text">No configuration items added</span>
           </div>
-
         </section>
 
 
-        <!-- ===============================================
-             05 START POSITION
-        ================================================ -->
-
+        <!-- 07 DOCUMENTS -->
         <section class="fleet-form-section">
-
           <header>
-
-            <span>
-              05
-            </span>
-
+            <span>07</span>
             <div>
+              <strong>Documents</strong>
+              <p>Stage ownership, vehicle, purchase and asset documents. Files become controlled evidence after the asset is saved.</p>
+            </div>
+          </header>
 
-              <strong>
-                Starting Position
-              </strong>
+          <div class="asset-document-layout">
+            <div class="asset-document-controls">
 
-              <p>
-                This is the asset's initial operational cache. Formal deployment
-                history will be controlled through assignments and movements.
-              </p>
+              <label class="fleet-form-field">
+                <span>Document Type</span>
+                <select id="assetDocumentType">
+                  <option value="">Select document type</option>
+
+                  <optgroup label="Road vehicle">
+                    <option value="V5C">V5C</option>
+                    <option value="PURCHASE_OWNERSHIP">Purchase / ownership evidence</option>
+                    <option value="MOT_CERTIFICATE">MOT certificate</option>
+                    <option value="INSURANCE">Insurance</option>
+                    <option value="SERVICE_RECORD">Service record</option>
+                  </optgroup>
+
+                  <optgroup label="Plant / equipment">
+                    <option value="OWNERSHIP_EVIDENCE">Ownership evidence</option>
+                    <option value="PURCHASE_INVOICE">Purchase invoice</option>
+                    <option value="MANUAL_SPECIFICATION">Manual / specification</option>
+                    <option value="WARRANTY">Warranty</option>
+                  </optgroup>
+
+                  <option value="OTHER">Other</option>
+                </select>
+              </label>
+
+              <label class="asset-document-dropzone" for="assetDocumentFiles">
+                <input id="assetDocumentFiles" type="file" accept=".pdf,application/pdf" multiple />
+                <strong>Choose PDF document</strong>
+                <span>or drop PDF files here</span>
+                <small>Firebase Storage and controlled document metadata will be wired by the integration layer.</small>
+              </label>
+
+              <button id="stageAssetDocument" class="fleet-secondary-action" type="button">
+                + Stage Document
+              </button>
 
             </div>
 
-          </header>
-
-
-          <div class="fleet-form-grid">
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Starting Status
-              </span>
-
-              <select id="plantInitialStatus">
-
-                <option value="AVAILABLE">
-                  Available
-                </option>
-
-                <option value="RESERVED">
-                  Reserved
-                </option>
-
-                <option value="AWAITING_TRANSPORT">
-                  Awaiting Transport
-                </option>
-
-                <option value="IN_TRANSIT">
-                  In Transit
-                </option>
-
-                <option value="DEPLOYED">
-                  Deployed
-                </option>
-
-                <option value="MAINTENANCE">
-                  Maintenance
-                </option>
-
-                <option value="OFF_ROAD">
-                  Off Road
-                </option>
-
-              </select>
-
-            </label>
-
-
-            <label class="fleet-form-field">
-
-              <span>
-                Current Location
-              </span>
-
-              <input
-                id="plantCurrentLocation"
-                type="text"
-                placeholder="e.g. Colemans Yard / JLR Castle Bromwich"
-              />
-
-            </label>
-
-
-            <label class="fleet-form-field fleet-form-field--wide">
-
-              <span>
-                Operational Notes
-              </span>
-
-              <textarea
-                id="plantNotes"
-                rows="3"
-                placeholder="Useful identification or initial control information"
-              ></textarea>
-
-            </label>
-
-
+            <div id="assetDocumentQueue" class="asset-document-queue">
+              <div class="asset-document-empty">
+                <strong>No documents staged</strong>
+                <span>V5C, ownership evidence, service documents and other asset records can be added here.</span>
+              </div>
+            </div>
           </div>
-
         </section>
 
 
-        <div
-          id="addPlantError"
-          class="fleet-message fleet-message--error"
-          hidden
-        ></div>
+        <!-- 08 MAINTENANCE BASELINE -->
+        <section class="fleet-form-section">
+          <header>
+            <span>08</span>
+            <div>
+              <strong>Maintenance Baseline</strong>
+              <p>Optional starting snapshot. Maintenance remains the owner of all future servicing and maintenance history.</p>
+            </div>
+          </header>
+
+          <div class="asset-class-fields" data-maintenance-for="ROAD_VEHICLE">
+            <div class="fleet-form-grid">
+              <label class="fleet-form-field"><span>Current Mileage</span><input id="plantCurrentMileage" type="number" min="0" placeholder="Optional" /></label>
+              <label class="fleet-form-field"><span>MOT Expiry</span><input id="plantMotExpiry" type="date" /></label>
+              <label class="fleet-form-field"><span>Last Service Date</span><input id="plantLastServiceDate" type="date" /></label>
+              <label class="fleet-form-field"><span>Last Service Mileage</span><input id="plantLastServiceMileage" type="number" min="0" placeholder="Optional" /></label>
+              <label class="fleet-form-field"><span>Next Service / Review</span><input id="vehicleNextServiceDate" type="date" /></label>
+            </div>
+          </div>
+
+          <div class="asset-class-fields" data-maintenance-for="PLANT_MACHINERY" hidden>
+            <div class="fleet-form-grid">
+              <label class="fleet-form-field"><span>Current Operating Hours</span><input id="maintenanceOperatingHours" type="number" min="0" step="0.1" placeholder="Optional" /></label>
+              <label class="fleet-form-field"><span>Last Service Date</span><input id="plantLastServiceDatePlant" type="date" /></label>
+              <label class="fleet-form-field"><span>Last Service Hours</span><input id="plantLastServiceHours" type="number" min="0" step="0.1" placeholder="Optional" /></label>
+              <label class="fleet-form-field"><span>Next Service / Review</span><input id="plantNextServiceDate" type="date" /></label>
+            </div>
+          </div>
+
+          <div class="asset-class-fields" data-maintenance-for="SMALL_PLANT" hidden>
+            <div class="fleet-form-grid">
+              <label class="fleet-form-field"><span>Current Operating Hours</span><input id="equipmentMaintenanceHours" type="number" min="0" step="0.1" placeholder="If known" /></label>
+              <label class="fleet-form-field"><span>Last Service / Check</span><input id="equipmentLastServiceDate" type="date" /></label>
+              <label class="fleet-form-field"><span>Next Service / Review</span><input id="equipmentNextServiceDate" type="date" /></label>
+            </div>
+          </div>
+
+          <div class="asset-baseline-note" data-maintenance-for="TRAILER_ATTACHMENT" hidden>
+            No maintenance baseline is required unless useful information is available for this attachment.
+          </div>
+
+          <div class="asset-baseline-note" data-maintenance-for="OTHER" hidden>
+            Maintenance information can be added later where it becomes relevant.
+          </div>
+        </section>
 
 
-        <footer class="fleet-modal__footer">
+        <div id="addPlantError" class="fleet-message fleet-message--error" hidden></div>
 
-          <button
-            id="cancelAddPlant"
-            class="fleet-secondary-action"
-            type="button"
-          >
-            Cancel
-          </button>
+        <footer class="fleet-modal__footer fleet-asset-modal__footer">
+          <div class="fleet-modal__footer-note">
+            <strong>Permanent asset record</strong>
+            <span>Only record information known at creation. Missing optional information can be completed later.</span>
+          </div>
 
-
-          <button
-            id="savePlant"
-            class="fleet-primary-action"
-            type="submit"
-          >
-            Add Plant
-          </button>
-
+          <div class="fleet-modal__footer-actions">
+            <button id="cancelAddPlant" class="fleet-secondary-action" type="button">Cancel</button>
+            <button id="savePlant" class="fleet-primary-action" type="submit">Add Asset</button>
+          </div>
         </footer>
 
-
       </form>
-
     </section>
-
   </div>
-
 
   <script
     src="/modules/contractor/shared/js/config.js"
