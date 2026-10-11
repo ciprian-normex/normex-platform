@@ -1,0 +1,1021 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>
+    Plant Availability | NORMEX
+  </title>
+
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/plant/shared/plant-shell.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/plant/availability/availability.css"
+  />
+
+</head>
+
+
+<body>
+
+  <div class="workspace">
+
+
+    <!-- =====================================================
+         ORGANISATION HEADER
+    ====================================================== -->
+
+    <header class="workspace-header">
+
+      <div class="workspace-container">
+
+        <div class="workspace-header__surface">
+
+
+          <div class="workspace-brand">
+
+            <p class="workspace-brand__product">
+              NORMEX · Contractor Workspace
+            </p>
+
+            <h1
+              id="workspaceOrganisationName"
+              class="workspace-brand__name"
+            >
+              Colemans
+            </h1>
+
+            <p class="workspace-brand__tagline">
+              Projects, resources and operational control
+            </p>
+
+          </div>
+
+
+          <div class="workspace-header-actions">
+
+
+            <div class="workspace-user">
+
+              <div class="workspace-user__details">
+
+                <span
+                  id="workspaceUserName"
+                  class="workspace-user__name"
+                >
+                  User
+                </span>
+
+                <span
+                  id="workspaceUserRole"
+                  class="workspace-user__role"
+                >
+                  Loading
+                </span>
+
+              </div>
+
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ORGANISATION NAV
+    ====================================================== -->
+
+    <nav
+      class="workspace-nav"
+      aria-label="Organisation navigation"
+    >
+
+      <div class="workspace-container">
+
+        <div
+          id="contractorNavSurface"
+          class="workspace-nav__surface"
+        >
+
+          <div
+            id="contractorNavLinks"
+            class="workspace-nav__links"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </nav>
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="workspace-main">
+
+      <div class="workspace-container">
+
+
+        <!-- =================================================
+             PLANT NAV
+        ================================================== -->
+
+        <nav
+          id="plantSubnav"
+          aria-label="Plant workspace navigation"
+        ></nav>
+
+
+        <section class="availability-page">
+
+
+          <!-- =================================================
+               CONTROL HEADER
+          ================================================== -->
+
+          <section class="availability-control-surface">
+
+
+            <div class="availability-control-copy">
+
+              <p class="availability-eyebrow">
+                Forward allocation
+              </p>
+
+
+              <div class="availability-title-row">
+
+                <div>
+
+                  <h2>
+                    Availability
+                  </h2>
+
+                  <p class="availability-lead">
+                    See what Plant, equipment and vehicles are available now, what becomes free next and what may block future allocation.
+                  </p>
+
+                </div>
+
+
+                <div class="availability-horizon-control">
+
+                  <span>
+                    Planning horizon
+                  </span>
+
+
+                  <div
+                    id="availabilityHorizonButtons"
+                    class="availability-horizon-buttons"
+                  >
+
+                    <button
+                      type="button"
+                      data-horizon-days="0"
+                    >
+                      Today
+                    </button>
+
+                    <button
+                      type="button"
+                      data-horizon-days="7"
+                    >
+                      7 days
+                    </button>
+
+                    <button
+                      type="button"
+                      data-horizon-days="14"
+                    >
+                      14 days
+                    </button>
+
+                    <button
+                      class="is-active"
+                      type="button"
+                      data-horizon-days="30"
+                    >
+                      30 days
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <p
+                id="availabilitySystemStatus"
+                class="availability-system-status"
+                role="status"
+              >
+                Availability planning ready
+              </p>
+
+            </div>
+
+
+          </section>
+
+
+          <!-- =================================================
+               POSITION STRIP
+          ================================================== -->
+
+          <section
+            id="availabilitySummary"
+            class="availability-position-strip"
+            aria-label="Availability summary"
+          >
+
+
+            <button
+              class="availability-position-tile availability-position-tile--available"
+              type="button"
+              data-availability-summary="AVAILABLE_NOW"
+            >
+
+              <span class="availability-position-label">
+                Available now
+              </span>
+
+              <strong
+                id="availableNowCount"
+                class="availability-position-value"
+              >
+                —
+              </strong>
+
+              <span class="availability-position-meta">
+                Ready for allocation
+              </span>
+
+            </button>
+
+
+            <button
+              class="availability-position-tile availability-position-tile--soon"
+              type="button"
+              data-availability-summary="AVAILABLE_SOON"
+            >
+
+              <span class="availability-position-label">
+                Available soon
+              </span>
+
+              <strong
+                id="availableSoonCount"
+                class="availability-position-value"
+              >
+                —
+              </strong>
+
+              <span class="availability-position-meta">
+                Within selected horizon
+              </span>
+
+            </button>
+
+
+            <button
+              class="availability-position-tile availability-position-tile--allocated"
+              type="button"
+              data-availability-summary="ALLOCATED"
+            >
+
+              <span class="availability-position-label">
+                Allocated
+              </span>
+
+              <strong
+                id="allocatedCount"
+                class="availability-position-value"
+              >
+                —
+              </strong>
+
+              <span class="availability-position-meta">
+                Currently committed
+              </span>
+
+            </button>
+
+
+            <button
+              class="availability-position-tile availability-position-tile--maintenance"
+              type="button"
+              data-availability-summary="MAINTENANCE"
+            >
+
+              <span class="availability-position-label">
+                Maintenance
+              </span>
+
+              <strong
+                id="maintenanceBlockedCount"
+                class="availability-position-value"
+              >
+                —
+              </strong>
+
+              <span class="availability-position-meta">
+                Planned or unavailable
+              </span>
+
+            </button>
+
+
+            <button
+              class="availability-position-tile availability-position-tile--blocked"
+              type="button"
+              data-availability-summary="BLOCKED"
+            >
+
+              <span class="availability-position-label">
+                Blocked
+              </span>
+
+              <strong
+                id="blockedCount"
+                class="availability-position-value"
+              >
+                —
+              </strong>
+
+              <span class="availability-position-meta">
+                Defect or compliance hold
+              </span>
+
+            </button>
+
+
+            <button
+              class="availability-position-tile availability-position-tile--hire"
+              type="button"
+              data-availability-summary="OFF_HIRE"
+            >
+
+              <span class="availability-position-label">
+                Off-hire due
+              </span>
+
+              <strong
+                id="offHireDueCount"
+                class="availability-position-value"
+              >
+                —
+              </strong>
+
+              <span class="availability-position-meta">
+                Hire commitment ending
+              </span>
+
+            </button>
+
+
+          </section>
+
+
+          <!-- =================================================
+               FORWARD OUTLOOK
+          ================================================== -->
+
+          <section class="availability-outlook-panel">
+
+
+            <header class="availability-section-heading">
+
+              <div>
+
+                <p class="availability-section-kicker">
+                  Forward planning
+                </p>
+
+                <h3>
+                  Availability Outlook
+                </h3>
+
+                <p>
+                  The next operational change for assets within the selected planning horizon.
+                </p>
+
+              </div>
+
+
+              <div class="availability-outlook-period">
+
+                <span>
+                  Horizon
+                </span>
+
+                <strong id="availabilityHorizonLabel">
+                  Next 30 days
+                </strong>
+
+              </div>
+
+            </header>
+
+
+            <div
+              id="availabilityOutlook"
+              class="availability-outlook"
+            >
+
+              <div class="availability-empty-state">
+
+                <strong>
+                  No availability changes loaded
+                </strong>
+
+                <span>
+                  Allocation releases, maintenance, movements and hire end dates will appear here.
+                </span>
+
+              </div>
+
+            </div>
+
+
+          </section>
+
+
+          <!-- =================================================
+               READY TO ALLOCATE
+          ================================================== -->
+
+          <section class="availability-ready-panel">
+
+
+            <header class="availability-section-heading">
+
+              <div>
+
+                <p class="availability-section-kicker">
+                  Allocation options
+                </p>
+
+                <h3>
+                  Ready to Allocate
+                </h3>
+
+                <p>
+                  Assets currently free and not blocked by maintenance, defect, compliance or movement controls.
+                </p>
+
+              </div>
+
+
+              <button
+                id="clearAvailabilitySummaryFilter"
+                class="availability-text-action"
+                type="button"
+                hidden
+              >
+                Clear filter
+              </button>
+
+            </header>
+
+
+            <div
+              id="availabilityReadyGrid"
+              class="availability-ready-grid"
+            >
+
+              <div class="availability-empty-state availability-empty-state--wide">
+
+                <strong>
+                  No available assets loaded
+                </strong>
+
+                <span>
+                  Assets ready for allocation will appear here.
+                </span>
+
+              </div>
+
+            </div>
+
+
+          </section>
+
+
+          <!-- =================================================
+               AVAILABILITY REGISTER
+          ================================================== -->
+
+          <section class="availability-register-panel">
+
+
+            <header class="availability-section-heading availability-section-heading--register">
+
+              <div>
+
+                <p class="availability-section-kicker">
+                  Resource position
+                </p>
+
+                <h3>
+                  Availability Register
+                </h3>
+
+                <p>
+                  Current and forward availability across Plant, equipment and vehicles.
+                </p>
+
+              </div>
+
+
+              <div class="availability-register-count">
+
+                <strong id="availabilityRegisterCount">
+                  —
+                </strong>
+
+                <span>
+                  assets
+                </span>
+
+              </div>
+
+            </header>
+
+
+            <!-- FILTERS -->
+
+            <div class="availability-filter-bar">
+
+
+              <label class="availability-filter availability-filter--search">
+
+                <span>
+                  Search
+                </span>
+
+                <input
+                  id="availabilitySearchInput"
+                  type="search"
+                  placeholder="Asset ID, registration, make or model"
+                  autocomplete="off"
+                />
+
+              </label>
+
+
+              <label class="availability-filter">
+
+                <span>
+                  Asset class
+                </span>
+
+                <select id="availabilityClassFilter">
+
+                  <option value="">
+                    All asset classes
+                  </option>
+
+                  <option value="ROAD_VEHICLE">
+                    Road vehicles
+                  </option>
+
+                  <option value="PLANT_MACHINERY">
+                    Plant &amp; machinery
+                  </option>
+
+                  <option value="SMALL_PLANT">
+                    Small Plant
+                  </option>
+
+                  <option value="TRAILER_ATTACHMENT">
+                    Trailers &amp; attachments
+                  </option>
+
+                  <option value="OTHER">
+                    Other
+                  </option>
+
+                </select>
+
+              </label>
+
+
+              <label class="availability-filter">
+
+                <span>
+                  Position
+                </span>
+
+                <select id="availabilityStateFilter">
+
+                  <option value="">
+                    All positions
+                  </option>
+
+                  <option value="AVAILABLE_NOW">
+                    Available now
+                  </option>
+
+                  <option value="AVAILABLE_SOON">
+                    Available soon
+                  </option>
+
+                  <option value="ALLOCATED">
+                    Allocated
+                  </option>
+
+                  <option value="MAINTENANCE">
+                    Maintenance
+                  </option>
+
+                  <option value="BLOCKED">
+                    Blocked
+                  </option>
+
+                  <option value="OFF_HIRE">
+                    Off-hire due
+                  </option>
+
+                </select>
+
+              </label>
+
+
+              <label class="availability-filter">
+
+                <span>
+                  Project
+                </span>
+
+                <select id="availabilityProjectFilter">
+
+                  <option value="">
+                    All projects
+                  </option>
+
+                </select>
+
+              </label>
+
+
+              <label class="availability-filter">
+
+                <span>
+                  Ownership
+                </span>
+
+                <select id="availabilityOwnershipFilter">
+
+                  <option value="">
+                    All ownership
+                  </option>
+
+                  <option value="OWNED">
+                    Owned
+                  </option>
+
+                  <option value="HIRED">
+                    Hired
+                  </option>
+
+                  <option value="LEASED">
+                    Leased
+                  </option>
+
+                  <option value="CROSS_HIRED">
+                    Cross-hired
+                  </option>
+
+                </select>
+
+              </label>
+
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div class="availability-register-table-wrap">
+
+              <table
+                class="availability-register-table"
+                aria-label="Plant availability register"
+              >
+
+                <thead>
+
+                  <tr>
+
+                    <th>
+                      Asset
+                    </th>
+
+                    <th>
+                      Class
+                    </th>
+
+                    <th>
+                      Current responsibility
+                    </th>
+
+                    <th>
+                      Current location
+                    </th>
+
+                    <th>
+                      Available from
+                    </th>
+
+                    <th>
+                      Next commitment
+                    </th>
+
+                    <th>
+                      Position
+                    </th>
+
+                    <th>
+                      Action
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+
+                <tbody id="availabilityRegisterBody">
+
+                  <tr class="availability-register-empty-row">
+
+                    <td colspan="8">
+
+                      <div class="availability-empty-state availability-empty-state--table">
+
+                        <strong>
+                          No assets loaded
+                        </strong>
+
+                        <span>
+                          Assets matching the current access and filters will appear here.
+                        </span>
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+
+          </section>
+
+
+        </section>
+
+
+      </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="workspace-footer">
+
+      <div class="workspace-container">
+
+        <div class="workspace-footer__inner">
+
+          <span class="workspace-footer__brand">
+            <strong>NORMEX</strong>
+          </span>
+
+          <span
+            id="workspaceFooterOrganisation"
+            class="workspace-footer__context"
+          >
+            Colemans
+          </span>
+
+        </div>
+
+      </div>
+
+    </footer>
+
+
+  </div>
+
+
+  <!-- =====================================================
+       MOBILE NAV
+  ====================================================== -->
+
+  <aside
+    id="contractorMobileNav"
+    class="workspace-mobile-nav"
+    hidden
+  >
+
+    <div
+      id="mobileNavBackdrop"
+      class="workspace-mobile-nav__backdrop"
+    ></div>
+
+    <div class="workspace-mobile-nav__panel">
+
+      <header class="workspace-mobile-nav__header">
+
+        <div>
+
+          <span class="workspace-mobile-nav__eyebrow">
+            Colemans
+          </span>
+
+          <h2 class="workspace-mobile-nav__title">
+            Navigation
+          </h2>
+
+        </div>
+
+        <button
+          id="mobileNavClose"
+          class="workspace-mobile-nav__close"
+          type="button"
+          aria-label="Close navigation"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <nav
+        id="contractorMobileNavLinks"
+        class="workspace-mobile-nav__links"
+      ></nav>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =====================================================
+       ASSET AVAILABILITY DRAWER
+  ====================================================== -->
+
+  <aside
+    id="availabilityDrawer"
+    class="availability-drawer"
+    aria-hidden="true"
+  >
+
+
+    <div
+      id="availabilityDrawerBackdrop"
+      class="availability-drawer__backdrop"
+    ></div>
+
+
+    <section
+      class="availability-drawer__panel"
+      aria-labelledby="availabilityDrawerTitle"
+    >
+
+
+      <header class="availability-drawer__header">
+
+        <div>
+
+          <p
+            id="availabilityDrawerEyebrow"
+            class="availability-drawer__eyebrow"
+          >
+            Asset availability
+          </p>
+
+          <h2 id="availabilityDrawerTitle">
+            Asset
+          </h2>
+
+          <p id="availabilityDrawerSubtitle">
+            Current and forward allocation position
+          </p>
+
+        </div>
+
+
+        <button
+          id="availabilityDrawerClose"
+          class="availability-drawer-close"
+          type="button"
+          aria-label="Close asset availability"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div
+        id="availabilityDrawerBody"
+        class="availability-drawer__body"
+      ></div>
+
+
+      <footer
+        id="availabilityDrawerActions"
+        class="availability-drawer__actions"
+      >
+
+        <a
+          id="availabilityOpenAsset"
+          class="availability-button availability-button--primary"
+          href="#"
+        >
+          Open Asset
+        </a>
+
+      </footer>
+
+
+    </section>
+
+
+  </aside>
+
+
+  <!-- =====================================================
+       SCRIPTS
+  ====================================================== -->
+
+  <script
+    src="/modules/contractor/shared/js/config.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/shared/js/shell.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/plant/availability/availability.js"
+  ></script>
+
+
+</body>
+
+</html>

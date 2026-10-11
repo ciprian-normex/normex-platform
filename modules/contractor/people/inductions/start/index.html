@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>
+    Start Induction | People | NORMEX
+  </title>
+
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="../inductions.css"
+  />
+
+  <link
+  rel="stylesheet"
+  href="./start.css"
+/>
+</head>
+
+
+<body>
+
+
+  <main
+    data-induction-page
+    class="induction-page induction-journey-page"
+  >
+
+
+    <!-- =====================================================
+         PEOPLE WORKSPACE NAVIGATION
+    ====================================================== -->
+
+    <nav
+      class="people-workspace-nav"
+      aria-label="People workspace navigation"
+    >
+
+      <div class="people-workspace-nav__identity">
+
+        <span class="people-workspace-nav__badge">
+          People
+        </span>
+
+        <div>
+
+          <span class="people-workspace-nav__eyebrow">
+            People workspace
+          </span>
+
+          <strong>
+            Workforce &amp; People Control
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="people-workspace-nav__links">
+
+        <a
+          class="people-workspace-nav__link"
+          href="/modules/contractor/people/"
+        >
+          Overview
+        </a>
+
+        <a
+          class="people-workspace-nav__link"
+          href="/modules/contractor/people/rota/"
+        >
+          Rota
+        </a>
+
+        <a
+          class="people-workspace-nav__link"
+          href="/modules/contractor/people/resource-planning/"
+        >
+          Resource Planning
+        </a>
+
+        <a
+          class="people-workspace-nav__link"
+          href="/modules/contractor/people/my-team/"
+        >
+          My Team
+        </a>
+
+        <a
+          class="people-workspace-nav__link is-active"
+          href="/modules/contractor/people/inductions/"
+        >
+          Inductions
+        </a>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <header class="induction-hero induction-hero--journey">
+
+      <div class="induction-hero__copy">
+
+        <p class="induction-eyebrow">
+          People · Core Company Induction
+        </p>
+
+        <h1>
+          Start your induction
+        </h1>
+
+        <p class="induction-hero__note">
+          Your NORMEX People record provides the controlled identity used throughout the induction and on your certificate.
+        </p>
+
+      </div>
+
+
+      <div class="induction-hero__context">
+
+        <span>
+          Induction type
+        </span>
+
+        <strong>
+          Core Company Induction
+        </strong>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         INDUCTION NAVIGATION
+    ====================================================== -->
+
+    <div
+      id="pageNav"
+      class="induction-nav-host"
+    ></div>
+
+
+    <!-- =====================================================
+         NOTICE
+    ====================================================== -->
+
+    <div
+      id="notice"
+      class="notice"
+      hidden
+    ></div>
+
+
+    <!-- =====================================================
+         JOURNEY
+    ====================================================== -->
+
+    <section class="induction-start-layout">
+
+
+      <!-- ===============================================
+           MAIN FORM
+      ================================================ -->
+
+      <section class="induction-start-card">
+
+        <header class="induction-start-card__header">
+
+          <div>
+
+            <p class="induction-eyebrow">
+              Your details
+            </p>
+
+            <h2>
+              Confirm your information
+            </h2>
+
+            <p>
+              Your name and email come from your NORMEX account. Add any missing operational details before starting.
+            </p>
+
+          </div>
+
+        </header>
+
+
+        <form id="startForm">
+
+
+          <div class="form-grid">
+
+
+            <div class="field field--controlled">
+
+              <label for="name">
+                Full name
+              </label>
+
+              <input
+                id="name"
+                disabled
+              />
+
+              <small>
+                Controlled from your People record
+              </small>
+
+            </div>
+
+
+            <div class="field field--controlled">
+
+              <label for="email">
+                Email
+              </label>
+
+              <input
+                id="email"
+                disabled
+              />
+
+              <small>
+                Controlled from your account
+              </small>
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="phone">
+                Phone
+              </label>
+
+              <input
+                id="phone"
+                type="tel"
+                autocomplete="tel"
+                placeholder="Add contact number"
+              />
+
+              <small>
+                Used for your People record and operational contact
+              </small>
+
+            </div>
+
+
+            <div class="field">
+
+              <label for="trade">
+                Primary trade / role
+              </label>
+
+              <input
+                id="trade"
+                maxlength="160"
+                placeholder="e.g. Demolition Operative"
+              />
+
+              <small>
+                Your main trade or operational role
+              </small>
+
+            </div>
+
+
+          </div>
+
+
+          <div
+            id="currentCertificate"
+            class="induction-current-certificate"
+          ></div>
+
+
+          <div class="induction-start-actions">
+
+            <div class="induction-start-actions__note">
+
+              <strong>
+                What happens next?
+              </strong>
+
+              <span>
+                You will watch the current induction video, complete the assessment and receive a verifiable certificate if you pass.
+              </span>
+
+            </div>
+
+
+            <button
+              class="button button--primary induction-start-button"
+              type="submit"
+            >
+              Begin induction
+              <span aria-hidden="true">→</span>
+            </button>
+
+          </div>
+
+
+        </form>
+
+      </section>
+
+
+      <!-- ===============================================
+           JOURNEY SUMMARY
+      ================================================ -->
+
+      <aside class="induction-journey-card">
+
+        <header>
+
+          <p class="induction-eyebrow">
+            Your journey
+          </p>
+
+          <h2>
+            Core induction
+          </h2>
+
+        </header>
+
+
+        <ol class="induction-journey-steps">
+
+
+          <li class="induction-journey-step is-current">
+
+            <span class="induction-journey-step__number">
+              1
+            </span>
+
+            <div>
+
+              <strong>
+                Confirm details
+              </strong>
+
+              <span>
+                Check the information linked to your account.
+              </span>
+
+            </div>
+
+          </li>
+
+
+          <li class="induction-journey-step">
+
+            <span class="induction-journey-step__number">
+              2
+            </span>
+
+            <div>
+
+              <strong>
+                Watch induction
+              </strong>
+
+              <span>
+                Complete the current controlled company video.
+              </span>
+
+            </div>
+
+          </li>
+
+
+          <li class="induction-journey-step">
+
+            <span class="induction-journey-step__number">
+              3
+            </span>
+
+            <div>
+
+              <strong>
+                Assessment
+              </strong>
+
+              <span>
+                Complete the company induction assessment.
+              </span>
+
+            </div>
+
+          </li>
+
+
+          <li class="induction-journey-step">
+
+            <span class="induction-journey-step__number">
+              4
+            </span>
+
+            <div>
+
+              <strong>
+                Certificate
+              </strong>
+
+              <span>
+                Receive your verified induction record after passing.
+              </span>
+
+            </div>
+
+          </li>
+
+
+        </ol>
+
+      </aside>
+
+
+    </section>
+
+
+  </main>
+
+
+  <script
+    src="/modules/contractor/shared/js/config.js"
+  ></script>
+
+  <script
+    type="module"
+    src="./start.js"
+  ></script>
+
+
+</body>
+
+</html>

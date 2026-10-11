@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#17271f" />
+  <title>Assessment Setup | People | NORMEX</title>
+
+  <link rel="stylesheet" href="/modules/contractor/shared/css/theme-colemans.css" />
+  <link rel="stylesheet" href="/modules/contractor/shared/css/workspace.css" />
+  <link rel="stylesheet" href="../inductions.css" />
+  <link rel="stylesheet" href="./test-admin.css" />
+</head>
+<body>
+  <main data-induction-page class="induction-page assessment-admin-page">
+
+    <nav class="people-workspace-nav" aria-label="People workspace navigation">
+      <div class="people-workspace-nav__identity">
+        <span class="people-workspace-nav__badge">People</span>
+        <div>
+          <span class="people-workspace-nav__eyebrow">People workspace</span>
+          <strong>Workforce &amp; People Control</strong>
+        </div>
+      </div>
+
+      <div class="people-workspace-nav__links">
+        <a class="people-workspace-nav__link" href="/modules/contractor/people/">Overview</a>
+        <a class="people-workspace-nav__link" href="/modules/contractor/people/rota/">Rota</a>
+        <a class="people-workspace-nav__link" href="/modules/contractor/people/resource-planning/">Resource Planning</a>
+        <a class="people-workspace-nav__link" href="/modules/contractor/people/my-team/">My Team</a>
+        <a class="people-workspace-nav__link is-active" href="/modules/contractor/people/inductions/">Inductions</a>
+      </div>
+    </nav>
+
+    <header class="induction-hero assessment-admin-hero">
+      <div class="induction-hero__copy">
+        <p class="induction-eyebrow">Induction administration</p>
+        <h1>Assessment setup</h1>
+        <p class="induction-hero__note">Control how the assessment works and maintain the organisation's own question bank.</p>
+      </div>
+
+      <div class="induction-hero__context">
+        <span>Question bank</span>
+        <strong id="heroBankStatus">Loading</strong>
+      </div>
+    </header>
+
+    <div id="pageNav" class="induction-nav-host"></div>
+    <div id="notice" class="notice" hidden></div>
+
+    <section class="assessment-admin-grid">
+
+      <section class="assessment-admin-main">
+
+        <section class="assessment-admin-card">
+          <header class="assessment-admin-card__header">
+            <div>
+              <p class="induction-eyebrow">Assessment rules</p>
+              <h2>How the assessment runs</h2>
+              <p>These controls apply to the organisation's Core Company Induction.</p>
+            </div>
+            <span class="assessment-admin-badge">Server controlled</span>
+          </header>
+
+          <form id="settingsForm" class="assessment-rules-form" novalidate>
+            <div class="assessment-rule-grid">
+              <label class="assessment-rule">
+                <span class="assessment-rule__copy">
+                  <strong>Questions per assessment</strong>
+                  <small>Randomly selected from the active bank.</small>
+                </span>
+                <span class="assessment-rule__input">
+                  <input id="count" name="questionsPerAssessment" type="number" min="1" max="100" step="1" required />
+                  <span>questions</span>
+                </span>
+              </label>
+
+              <label class="assessment-rule">
+                <span class="assessment-rule__copy">
+                  <strong>Pass mark</strong>
+                  <small>Minimum score required to pass.</small>
+                </span>
+                <span class="assessment-rule__input">
+                  <input id="passMark" name="passMarkPercent" type="number" min="1" max="100" step="1" required />
+                  <span>%</span>
+                </span>
+              </label>
+
+              <label class="assessment-rule">
+                <span class="assessment-rule__copy">
+                  <strong>Maximum attempts</strong>
+                  <small>Attempts allowed before management action.</small>
+                </span>
+                <span class="assessment-rule__input">
+                  <input id="attempts" name="maximumAttempts" type="number" min="1" max="20" step="1" required />
+                  <span>attempts</span>
+                </span>
+              </label>
+
+              <label class="assessment-rule">
+                <span class="assessment-rule__copy">
+                  <strong>Retry cooldown</strong>
+                  <small>Delay before another attempt can start.</small>
+                </span>
+                <span class="assessment-rule__input">
+                  <input id="cooldown" name="retryCooldownSeconds" type="number" min="0" max="86400" step="1" required />
+                  <span>seconds</span>
+                </span>
+              </label>
+
+              <label class="assessment-rule">
+                <span class="assessment-rule__copy">
+                  <strong>Certificate validity</strong>
+                  <small>How long a passed induction remains current.</small>
+                </span>
+                <span class="assessment-rule__input">
+                  <input id="validity" name="validityMonths" type="number" min="1" max="120" step="1" required />
+                  <span>months</span>
+                </span>
+              </label>
+            </div>
+
+            <div class="assessment-admin-actions">
+              <span>Changes affect future assessments. Existing certificates remain historical records.</span>
+              <button class="button button--primary" type="submit">Save assessment rules</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="assessment-admin-card assessment-bank-card">
+          <header class="assessment-admin-card__header assessment-bank-header">
+            <div>
+              <p class="induction-eyebrow">Organisation question bank</p>
+              <h2>Question bank</h2>
+              <p>Questions are organisation-owned data. Nothing here is hard-coded into the worker assessment.</p>
+            </div>
+
+            <div class="assessment-bank-actions">
+              <button id="downloadTemplate" class="button" type="button">Download template</button>
+              <button id="openImport" class="button" type="button">Upload / paste bank</button>
+              <button id="addQuestion" class="button" type="button">Add question</button>
+              <button id="saveBank" class="button button--primary" type="button">Publish question bank</button>
+            </div>
+          </header>
+
+          <div class="assessment-bank-metrics">
+            <div>
+              <span>Total questions</span>
+              <strong id="bankTotal">0</strong>
+            </div>
+            <div>
+              <span>Sections</span>
+              <strong id="bankSections">0</strong>
+            </div>
+            <div>
+              <span>Assessment uses</span>
+              <strong id="bankAssessmentCount">0</strong>
+            </div>
+            <div>
+              <span>Bank version</span>
+              <strong id="bankVersion">Not published</strong>
+            </div>
+          </div>
+
+          <div id="bankReadiness" class="assessment-bank-readiness"></div>
+
+          <div class="assessment-bank-toolbar">
+            <label class="assessment-bank-search">
+              <span>Search questions</span>
+              <input id="questionSearch" type="search" placeholder="Search question or section" autocomplete="off" />
+            </label>
+
+            <label class="assessment-bank-filter">
+              <span>Section</span>
+              <select id="sectionFilter">
+                <option value="">All sections</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="assessment-question-list" id="questionRows"></div>
+          <div id="questionEmpty" class="assessment-question-empty" hidden>
+            <strong>No questions in this bank yet</strong>
+            <span>Use Upload / paste bank to import a question set, or add questions manually.</span>
+          </div>
+        </section>
+
+      </section>
+
+      <aside class="assessment-admin-side">
+        <section class="assessment-admin-side-card">
+          <p class="induction-eyebrow">Question bank format</p>
+          <h2>Simple to import</h2>
+          <p>Managers can paste plain text or upload a CSV file. NORMEX validates the bank before anything is published.</p>
+
+          <div class="assessment-format-example">
+            <code>SECTION: Fire safety</code>
+            <code>QUESTION: What should you do if you discover a fire?</code>
+            <code>A: Raise the alarm and evacuate</code>
+            <code>B: Finish the task first</code>
+            <code>C: Wait for your supervisor</code>
+            <code>ANSWER: A</code>
+          </div>
+        </section>
+
+        <section class="assessment-admin-side-card">
+          <p class="induction-eyebrow">Publishing check</p>
+          <h2>Bank readiness</h2>
+          <div class="assessment-side-checks">
+            <div><strong>Enough questions</strong><span>The bank must contain at least the configured assessment count.</span></div>
+            <div><strong>Valid answers</strong><span>Every question needs at least two options and one correct answer.</span></div>
+            <div><strong>Organisation scoped</strong><span>The published bank belongs only to the signed-in organisation.</span></div>
+          </div>
+        </section>
+      </aside>
+
+    </section>
+
+    <dialog id="importDialog" class="assessment-dialog assessment-import-dialog">
+      <form id="importForm" method="dialog" class="assessment-dialog__panel">
+        <header class="assessment-dialog__header">
+          <div>
+            <p class="induction-eyebrow">Question bank import</p>
+            <h2>Upload or paste questions</h2>
+            <p>Use the simple NORMEX text format or upload a CSV template.</p>
+          </div>
+          <button class="assessment-dialog__close" type="button" data-close-import aria-label="Close">×</button>
+        </header>
+
+        <div class="assessment-import-mode">
+          <label><input type="radio" name="importMode" value="replace" checked /> Replace current draft bank</label>
+          <label><input type="radio" name="importMode" value="append" /> Add to current draft bank</label>
+        </div>
+
+        <label class="assessment-file-drop" for="bankFile">
+          <input id="bankFile" type="file" accept=".csv,.txt,text/csv,text/plain" hidden />
+          <strong>Choose CSV or text file</strong>
+          <span id="bankFileName">No file selected</span>
+          <span class="button">Browse file</span>
+        </label>
+
+        <div class="assessment-import-divider"><span>or paste below</span></div>
+
+        <label class="field assessment-import-textarea">
+          <span>Question bank text</span>
+          <textarea id="bankPaste" rows="15" placeholder="SECTION: Fire safety&#10;QUESTION: What should you do if you discover a fire?&#10;A: Raise the alarm and evacuate&#10;B: Finish the task first&#10;C: Wait for your supervisor&#10;ANSWER: A"></textarea>
+        </label>
+
+        <div id="importSummary" class="assessment-import-summary" hidden></div>
+
+        <footer class="assessment-dialog__actions">
+          <button class="button" type="button" data-close-import>Cancel</button>
+          <button id="parseImport" class="button button--primary" type="button">Validate and add to draft</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog id="questionDialog" class="assessment-dialog">
+      <form id="questionForm" method="dialog" class="assessment-dialog__panel" novalidate>
+        <header class="assessment-dialog__header">
+          <div>
+            <p class="induction-eyebrow">Question editor</p>
+            <h2 id="questionDialogTitle">Add question</h2>
+          </div>
+          <button class="assessment-dialog__close" type="button" data-close-question aria-label="Close">×</button>
+        </header>
+
+        <input id="questionIndex" type="hidden" />
+
+        <div class="assessment-dialog-grid">
+          <label class="field">
+            <span>Section</span>
+            <input id="questionSection" type="text" maxlength="160" placeholder="e.g. Fire safety" required />
+          </label>
+
+          <label class="field">
+            <span>Category</span>
+            <input id="questionCategory" type="text" maxlength="100" placeholder="e.g. fire" required />
+          </label>
+        </div>
+
+        <label class="field">
+          <span>Question</span>
+          <textarea id="questionText" rows="4" maxlength="1000" required></textarea>
+        </label>
+
+        <label class="field">
+          <span>Answer options</span>
+          <textarea id="questionOptions" rows="6" placeholder="One answer per line" required></textarea>
+          <small>Use between 2 and 6 answer options.</small>
+        </label>
+
+        <label class="field">
+          <span>Correct answer</span>
+          <input id="correctAnswer" type="text" maxlength="500" placeholder="Must exactly match one option" required />
+        </label>
+
+        <footer class="assessment-dialog__actions">
+          <button class="button" type="button" data-close-question>Cancel</button>
+          <button id="applyQuestion" class="button button--primary" type="submit">Apply question</button>
+        </footer>
+      </form>
+    </dialog>
+
+  </main>
+
+  <script src="/modules/contractor/shared/js/config.js"></script>
+  <script type="module" src="./test-admin.js"></script>
+</body>
+</html>

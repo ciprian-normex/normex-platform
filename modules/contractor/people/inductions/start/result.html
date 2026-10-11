@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#17271f" />
+  <title>Induction Result | People | NORMEX</title>
+
+  <link rel="stylesheet" href="/modules/contractor/shared/css/theme-colemans.css" />
+  <link rel="stylesheet" href="/modules/contractor/shared/css/workspace.css" />
+  <link rel="stylesheet" href="../inductions.css" />
+  <link rel="stylesheet" href="../induction-journey.css" />
+  <link rel="stylesheet" href="./result.css" />
+</head>
+<body>
+  <main data-induction-page class="induction-page induction-result-page">
+
+    <nav class="people-workspace-nav" aria-label="People workspace navigation">
+      <div class="people-workspace-nav__identity">
+        <span class="people-workspace-nav__badge">People</span>
+        <div>
+          <span class="people-workspace-nav__eyebrow">People workspace</span>
+          <strong>Workforce &amp; People Control</strong>
+        </div>
+      </div>
+
+      <div class="people-workspace-nav__links">
+        <a class="people-workspace-nav__link" href="/modules/contractor/people/">Overview</a>
+        <a class="people-workspace-nav__link" href="/modules/contractor/people/rota/">Rota</a>
+        <a class="people-workspace-nav__link" href="/modules/contractor/people/resource-planning/">Resource Planning</a>
+        <a class="people-workspace-nav__link" href="/modules/contractor/people/my-team/">My Team</a>
+        <a class="people-workspace-nav__link is-active" href="/modules/contractor/people/inductions/">Inductions</a>
+      </div>
+    </nav>
+
+    <header class="induction-hero">
+      <div class="induction-hero__copy">
+        <p class="induction-eyebrow">People · Core Company Induction</p>
+        <h1>Assessment result</h1>
+        <p class="induction-hero__note">Your answers have been checked against the current induction standard.</p>
+      </div>
+
+      <div class="induction-hero__context">
+        <span>Step 4 of 4</span>
+        <strong>Result</strong>
+      </div>
+    </header>
+
+    <div id="pageNav" class="induction-nav-host"></div>
+
+    <section class="induction-result-layout">
+      <section class="induction-result-card">
+        <div id="result" class="induction-result-host">
+          <div class="induction-result-loading">Preparing your result...</div>
+        </div>
+      </section>
+
+      <aside class="induction-journey-card induction-result-journey">
+        <header class="induction-journey-card__header">
+          <p class="induction-eyebrow">Your journey</p>
+          <h2>Induction progress</h2>
+          <p>Your assessment result determines whether the induction is complete.</p>
+        </header>
+
+        <ol class="induction-journey-steps">
+          <li class="induction-journey-step is-complete">
+            <span class="induction-journey-step__marker"><span class="induction-journey-step__number">✓</span></span>
+            <div class="induction-journey-step__body"><strong>Confirm details</strong><span>Your information has been confirmed.</span></div>
+          </li>
+
+          <li class="induction-journey-step is-complete">
+            <span class="induction-journey-step__marker"><span class="induction-journey-step__number">✓</span></span>
+            <div class="induction-journey-step__body"><strong>Watch induction</strong><span>The company induction video is complete.</span></div>
+          </li>
+
+          <li class="induction-journey-step is-complete" id="journeyAssessmentStep">
+            <span class="induction-journey-step__marker"><span class="induction-journey-step__number">✓</span></span>
+            <div class="induction-journey-step__body"><strong>Assessment</strong><span>Your assessment has been submitted.</span></div>
+          </li>
+
+          <li class="induction-journey-step is-current" id="journeyCertificateStep">
+            <span class="induction-journey-step__marker">
+              <span class="induction-journey-step__orbit" aria-hidden="true"></span>
+              <span class="induction-journey-step__number">4</span>
+            </span>
+            <div class="induction-journey-step__body"><strong>Certificate</strong><span id="journeyCertificateText">Your result is being prepared.</span></div>
+          </li>
+        </ol>
+
+        <div class="induction-journey-guidance" id="resultGuidance">
+          <span class="induction-journey-guidance__icon">i</span>
+          <div>
+            <strong id="resultGuidanceTitle">Assessment complete</strong>
+            <span id="resultGuidanceText">Your result and next action are shown here.</span>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="/modules/contractor/shared/js/config.js"></script>
+  <script type="module" src="./result.js"></script>
+</body>
+</html>

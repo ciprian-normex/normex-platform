@@ -1,14 +1,1478 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin | Colemans | NORMEX</title>
+
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>
+    Administration | NORMEX
+  </title>
+
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/admin/admin.css"
+  />
+
 </head>
+
+
 <body>
-  <main>
-    <h1>Admin</h1>
-    <p class="page-note">Organisation users, settings and control.</p>
-  </main>
+
+  <div class="workspace">
+
+
+    <!-- =====================================================
+         ORGANISATION HEADER
+    ====================================================== -->
+
+    <header class="workspace-header">
+
+      <div class="workspace-container">
+
+        <div class="workspace-header__surface">
+
+
+          <div class="workspace-brand">
+
+            <p class="workspace-brand__product">
+              NORMEX · Contractor Workspace
+            </p>
+
+            <h1
+              id="workspaceOrganisationName"
+              class="workspace-brand__name"
+            >
+              Colemans
+            </h1>
+
+            <p class="workspace-brand__tagline">
+              Projects, resources and operational control
+            </p>
+
+          </div>
+
+
+          <div class="workspace-header-actions">
+
+            <div class="workspace-user">
+
+              <div class="workspace-user__details">
+
+                <span
+                  id="workspaceUserName"
+                  class="workspace-user__name"
+                >
+                  User
+                </span>
+
+                <span
+                  id="workspaceUserRole"
+                  class="workspace-user__role"
+                >
+                  Loading
+                </span>
+
+              </div>
+
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ORGANISATION NAV
+    ====================================================== -->
+
+    <nav
+      class="workspace-nav"
+      aria-label="Organisation navigation"
+    >
+
+      <div class="workspace-container">
+
+        <div
+          id="contractorNavSurface"
+          class="workspace-nav__surface"
+        >
+
+          <div
+            id="contractorNavLinks"
+            class="workspace-nav__links"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="workspace-main">
+
+      <div class="workspace-container">
+
+        <section class="admin-page">
+
+
+          <!-- =================================================
+               HEADER
+          ================================================== -->
+
+          <section class="admin-hero">
+
+            <div class="admin-hero__copy">
+
+              <p class="admin-eyebrow">
+                Organisation administration
+              </p>
+
+              <h2>
+                User Accounts
+              </h2>
+
+              <p>
+                Invite users, control account access and manage active, invited and inactive organisation accounts.
+              </p>
+
+            </div>
+
+
+            <button
+              id="inviteUserButton"
+              class="admin-primary-button"
+              type="button"
+            >
+              <span aria-hidden="true">
+                +
+              </span>
+
+              Invite User
+            </button>
+
+          </section>
+
+
+          <p
+            id="adminSystemStatus"
+            class="admin-system-status"
+            role="status"
+          >
+            Account administration ready
+          </p>
+
+
+          <!-- =================================================
+               ACCOUNT POSITION
+          ================================================== -->
+
+          <section
+            id="adminAccountSummary"
+            class="admin-summary"
+            aria-label="Account position"
+          >
+
+
+            <article class="admin-summary-card">
+
+              <span class="admin-summary-card__label">
+                Active accounts
+              </span>
+
+              <strong
+                id="adminActiveCount"
+                class="admin-summary-card__value"
+              >
+                —
+              </strong>
+
+              <small>
+                Current organisation access
+              </small>
+
+            </article>
+
+
+            <article class="admin-summary-card admin-summary-card--invited">
+
+              <span class="admin-summary-card__label">
+                Invitations pending
+              </span>
+
+              <strong
+                id="adminInvitedCount"
+                class="admin-summary-card__value"
+              >
+                —
+              </strong>
+
+              <small>
+                Awaiting account setup
+              </small>
+
+            </article>
+
+
+            <article class="admin-summary-card admin-summary-card--inactive">
+
+              <span class="admin-summary-card__label">
+                Inactive
+              </span>
+
+              <strong
+                id="adminInactiveCount"
+                class="admin-summary-card__value"
+              >
+                —
+              </strong>
+
+              <small>
+                Access disabled
+              </small>
+
+            </article>
+
+
+            <article class="admin-summary-card">
+
+              <span class="admin-summary-card__label">
+                Employees
+              </span>
+
+              <strong
+                id="adminEmployeeCount"
+                class="admin-summary-card__value"
+              >
+                —
+              </strong>
+
+              <small>
+                Direct workforce
+              </small>
+
+            </article>
+
+
+            <article class="admin-summary-card">
+
+              <span class="admin-summary-card__label">
+                Agency
+              </span>
+
+              <strong
+                id="adminAgencyCount"
+                class="admin-summary-card__value"
+              >
+                —
+              </strong>
+
+              <small>
+                Agency workforce
+              </small>
+
+            </article>
+
+
+            <article class="admin-summary-card">
+
+              <span class="admin-summary-card__label">
+                Subcontractors
+              </span>
+
+              <strong
+                id="adminSubcontractorCount"
+                class="admin-summary-card__value"
+              >
+                —
+              </strong>
+
+              <small>
+                External workforce
+              </small>
+
+            </article>
+
+
+          </section>
+
+
+          <!-- =================================================
+               DIRECTORY
+          ================================================== -->
+
+          <section class="admin-directory-panel">
+
+
+            <header class="admin-section-heading">
+
+              <div>
+
+                <p class="admin-section-kicker">
+                  Account directory
+                </p>
+
+                <h3>
+                  Organisation Users
+                </h3>
+
+                <p>
+                  Basic account information and organisation access status.
+                </p>
+
+              </div>
+
+
+              <div class="admin-directory-count">
+
+                <strong id="adminDirectoryCount">
+                  —
+                </strong>
+
+                <span>
+                  accounts
+                </span>
+
+              </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 EMPLOYMENT TYPE TABS
+            ================================================== -->
+
+            <div
+              id="adminEmploymentTabs"
+              class="admin-tabs"
+              role="tablist"
+              aria-label="Employment type"
+            >
+
+              <button
+                class="admin-tab is-active"
+                type="button"
+                data-employment-filter=""
+              >
+                All
+              </button>
+
+              <button
+                class="admin-tab"
+                type="button"
+                data-employment-filter="EMPLOYEE"
+              >
+                Employees
+              </button>
+
+              <button
+                class="admin-tab"
+                type="button"
+                data-employment-filter="AGENCY"
+              >
+                Agency
+              </button>
+
+              <button
+                class="admin-tab"
+                type="button"
+                data-employment-filter="SUBCONTRACTOR"
+              >
+                Subcontractors
+              </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 FILTERS
+            ================================================== -->
+
+            <div class="admin-filter-bar">
+
+
+              <label class="admin-filter admin-filter--search">
+
+                <span>
+                  Search
+                </span>
+
+                <input
+                  id="adminSearchInput"
+                  type="search"
+                  placeholder="Name, email or position"
+                  autocomplete="off"
+                />
+
+              </label>
+
+
+              <label class="admin-filter">
+
+                <span>
+                  Account status
+                </span>
+
+                <select id="adminStatusFilter">
+
+                  <option value="">
+                    All statuses
+                  </option>
+
+                  <option value="ACTIVE">
+                    Active
+                  </option>
+
+                  <option value="INVITED">
+                    Invited
+                  </option>
+
+                  <option value="INACTIVE">
+                    Inactive
+                  </option>
+
+                </select>
+
+              </label>
+
+
+              <label class="admin-filter">
+
+                <span>
+                  Authority
+                </span>
+
+                <select id="adminAuthorityFilter">
+
+                  <option value="">
+                    All accessible authority
+                  </option>
+
+                  <option value="WORKER">
+                    Worker
+                  </option>
+
+                  <option value="SUPERVISOR">
+                    Supervisor
+                  </option>
+
+                  <option value="SITE_MANAGER">
+                    Site Manager
+                  </option>
+
+                  <option value="PROJECT_MANAGER">
+                    Project Manager
+                  </option>
+
+                  <option value="SENIOR_PROJECT_MANAGER">
+                    Senior Project Manager
+                  </option>
+
+                  <option value="HEALTH_SAFETY">
+                    H&amp;S Advisor
+                  </option>
+
+                  <option value="SENIOR_HEALTH_SAFETY">
+                    Senior H&amp;S
+                  </option>
+
+                  <option value="CONTRACTS_MANAGER">
+                    Contracts Manager
+                  </option>
+
+                  <option value="PLANT_TRANSPORT_MANAGER">
+                    Plant / Transport Manager
+                  </option>
+
+                  <option value="ORGANISATION_MANAGER">
+                    Organisation Manager
+                  </option>
+
+                  <option value="PLATFORM_ADMIN">
+                    Platform Administrator
+                  </option>
+
+                </select>
+
+              </label>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 DIRECTORY TABLE
+            ================================================== -->
+
+            <div class="admin-table-wrap">
+
+              <table
+                class="admin-account-table"
+                aria-label="Organisation user accounts"
+              >
+
+                <thead>
+
+                  <tr>
+
+                    <th>
+                      User
+                    </th>
+
+                    <th>
+                      Employment
+                    </th>
+
+                    <th>
+                      Position
+                    </th>
+
+                    <th>
+                      Email
+                    </th>
+
+                    <th>
+                      Authority
+                    </th>
+
+                    <th>
+                      Account status
+                    </th>
+
+                    <th>
+                      Action
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+
+                <tbody id="adminAccountTableBody">
+
+                  <tr class="admin-empty-row">
+
+                    <td colspan="7">
+
+                      <div class="admin-empty-state">
+
+                        <strong>
+                          No accounts loaded
+                        </strong>
+
+                        <span>
+                          Organisation user accounts will appear here.
+                        </span>
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+
+          </section>
+
+
+        </section>
+
+      </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="workspace-footer">
+
+      <div class="workspace-container">
+
+        <div class="workspace-footer__inner">
+
+          <span class="workspace-footer__brand">
+            <strong>NORMEX</strong>
+          </span>
+
+          <span
+            id="workspaceFooterOrganisation"
+            class="workspace-footer__context"
+          >
+            Colemans
+          </span>
+
+        </div>
+
+      </div>
+
+    </footer>
+
+
+  </div>
+
+
+  <!-- =====================================================
+       MOBILE NAV
+  ====================================================== -->
+
+  <aside
+    id="contractorMobileNav"
+    class="workspace-mobile-nav"
+    hidden
+  >
+
+    <div
+      id="mobileNavBackdrop"
+      class="workspace-mobile-nav__backdrop"
+    ></div>
+
+    <div class="workspace-mobile-nav__panel">
+
+      <header class="workspace-mobile-nav__header">
+
+        <div>
+
+          <span class="workspace-mobile-nav__eyebrow">
+            Colemans
+          </span>
+
+          <h2 class="workspace-mobile-nav__title">
+            Navigation
+          </h2>
+
+        </div>
+
+        <button
+          id="mobileNavClose"
+          class="workspace-mobile-nav__close"
+          type="button"
+          aria-label="Close navigation"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <nav
+        id="contractorMobileNavLinks"
+        class="workspace-mobile-nav__links"
+      ></nav>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =====================================================
+       INVITE USER DIALOG
+  ====================================================== -->
+
+  <dialog
+    id="inviteUserDialog"
+    class="admin-dialog"
+    aria-labelledby="inviteUserDialogTitle"
+  >
+
+    <form
+      id="inviteUserForm"
+      class="admin-dialog-form"
+      novalidate
+    >
+
+
+      <header class="admin-dialog-header">
+
+        <div>
+
+          <p class="admin-dialog-eyebrow">
+            Organisation access
+          </p>
+
+          <h2 id="inviteUserDialogTitle">
+            Invite User
+          </h2>
+
+          <p>
+            Create the basic account now. Personnel information can be completed later within People.
+          </p>
+
+        </div>
+
+
+        <button
+          id="inviteUserDialogClose"
+          class="admin-dialog-close"
+          type="button"
+          aria-label="Close invite user"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div class="admin-dialog-body">
+
+
+        <!-- BASIC IDENTITY -->
+
+        <section class="admin-form-section">
+
+          <header>
+
+            <span>
+              1
+            </span>
+
+            <div>
+
+              <h3>
+                Basic details
+              </h3>
+
+              <p>
+                Only essential account information is required.
+              </p>
+
+            </div>
+
+          </header>
+
+
+          <div class="admin-form-grid">
+
+
+            <label class="admin-field">
+
+              <span>
+                First name *
+              </span>
+
+              <input
+                id="inviteFirstName"
+                name="firstName"
+                type="text"
+                autocomplete="given-name"
+                required
+              />
+
+            </label>
+
+
+            <label class="admin-field">
+
+              <span>
+                Surname *
+              </span>
+
+              <input
+                id="inviteSurname"
+                name="surname"
+                type="text"
+                autocomplete="family-name"
+                required
+              />
+
+            </label>
+
+
+            <label class="admin-field">
+
+              <span>
+                Employment type *
+              </span>
+
+              <select
+                id="inviteEmploymentType"
+                name="employmentType"
+                required
+              >
+
+                <option value="EMPLOYEE">
+                  Employee
+                </option>
+
+                <option value="AGENCY">
+                  Agency
+                </option>
+
+                <option value="SUBCONTRACTOR">
+                  Subcontractor
+                </option>
+
+              </select>
+
+            </label>
+
+
+            <label class="admin-field">
+
+              <span>
+                Position
+              </span>
+
+              <input
+                id="invitePosition"
+                name="position"
+                type="text"
+                placeholder="Optional e.g. Site Manager"
+              />
+
+            </label>
+
+
+          </div>
+
+        </section>
+
+
+        <!-- CONTACT -->
+
+        <section class="admin-form-section">
+
+          <header>
+
+            <span>
+              2
+            </span>
+
+            <div>
+
+              <h3>
+                Contact
+              </h3>
+
+              <p>
+                The invitation will be sent to the email address entered below.
+              </p>
+
+            </div>
+
+          </header>
+
+
+          <div class="admin-form-grid">
+
+
+            <label class="admin-field">
+
+              <span>
+                Email address *
+              </span>
+
+              <input
+                id="inviteEmail"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+              />
+
+            </label>
+
+
+            <label class="admin-field">
+
+              <span>
+                Contact number
+              </span>
+
+              <input
+                id="invitePhone"
+                name="phone"
+                type="tel"
+                autocomplete="tel"
+                placeholder="Optional"
+              />
+
+            </label>
+
+
+          </div>
+
+        </section>
+
+
+        <!-- AUTHORITY -->
+
+        <section class="admin-form-section">
+
+          <header>
+
+            <span>
+              3
+            </span>
+
+            <div>
+
+              <h3>
+                Account authority
+              </h3>
+
+              <p>
+                Leave as Basic Access if no elevated authority is required.
+              </p>
+
+            </div>
+
+          </header>
+
+
+          <div class="admin-form-grid">
+
+
+            <label class="admin-field admin-field--wide">
+
+              <span>
+                Authority
+              </span>
+
+              <select
+                id="inviteAuthority"
+                name="authority"
+              >
+
+                <option value="WORKER">
+                  Basic Access
+                </option>
+
+                <option value="SUPERVISOR">
+                  Supervisor
+                </option>
+
+                <option value="SITE_MANAGER">
+                  Site Manager
+                </option>
+
+                <option value="PROJECT_MANAGER">
+                  Project Manager
+                </option>
+
+                <option value="SENIOR_PROJECT_MANAGER">
+                  Senior Project Manager
+                </option>
+
+                <option value="HEALTH_SAFETY">
+                  H&amp;S Advisor
+                </option>
+
+                <option value="SENIOR_HEALTH_SAFETY">
+                  Senior H&amp;S
+                </option>
+
+                <option value="CONTRACTS_MANAGER">
+                  Contracts Manager
+                </option>
+
+                <option value="PLANT_TRANSPORT_MANAGER">
+                  Plant / Transport Manager
+                </option>
+
+                <option value="ORGANISATION_MANAGER">
+                  Organisation Manager
+                </option>
+
+                <option value="PLATFORM_ADMIN">
+                  Platform Administrator
+                </option>
+
+              </select>
+
+              <small id="inviteAuthorityHelp">
+                Only authority below your own account may be assigned.
+              </small>
+
+            </label>
+
+
+          </div>
+
+        </section>
+
+
+        <div class="admin-invite-note">
+
+          <strong>
+            What happens next?
+          </strong>
+
+          <p>
+            NORMEX will create the account and basic People record, then send an invitation for the user to complete account setup.
+          </p>
+
+        </div>
+
+
+        <p
+          id="inviteUserError"
+          class="admin-form-error"
+          role="alert"
+          hidden
+        ></p>
+
+
+      </div>
+
+
+      <footer class="admin-dialog-footer">
+
+        <button
+          id="inviteUserCancel"
+          class="admin-secondary-button"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="inviteUserSubmit"
+          class="admin-primary-button"
+          type="submit"
+        >
+          Send Invitation
+        </button>
+
+      </footer>
+
+
+    </form>
+
+  </dialog>
+
+
+  <!-- =====================================================
+       ACCOUNT DRAWER
+  ====================================================== -->
+
+  <aside
+    id="adminAccountDrawer"
+    class="admin-drawer"
+    aria-hidden="true"
+  >
+
+
+    <div
+      id="adminAccountDrawerBackdrop"
+      class="admin-drawer__backdrop"
+    ></div>
+
+
+    <section
+      class="admin-drawer__panel"
+      aria-labelledby="adminAccountDrawerTitle"
+    >
+
+
+      <header class="admin-drawer__header">
+
+        <div>
+
+          <p
+            id="adminAccountDrawerStatus"
+            class="admin-drawer__eyebrow"
+          >
+            Account
+          </p>
+
+          <h2 id="adminAccountDrawerTitle">
+            User Account
+          </h2>
+
+          <p id="adminAccountDrawerSubtitle">
+            Organisation access
+          </p>
+
+        </div>
+
+
+        <button
+          id="adminAccountDrawerClose"
+          class="admin-dialog-close"
+          type="button"
+          aria-label="Close account"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div
+        id="adminAccountDrawerBody"
+        class="admin-drawer__body"
+      ></div>
+
+
+      <footer
+        id="adminAccountDrawerActions"
+        class="admin-drawer__actions"
+      ></footer>
+
+
+    </section>
+
+
+  </aside>
+
+
+  <!-- =====================================================
+       EDIT ACCOUNT DIALOG
+  ====================================================== -->
+
+  <dialog
+    id="editAccountDialog"
+    class="admin-dialog admin-dialog--compact"
+    aria-labelledby="editAccountDialogTitle"
+  >
+
+    <form
+      id="editAccountForm"
+      class="admin-dialog-form"
+      novalidate
+    >
+
+
+      <header class="admin-dialog-header">
+
+        <div>
+
+          <p class="admin-dialog-eyebrow">
+            Account administration
+          </p>
+
+          <h2 id="editAccountDialogTitle">
+            Edit Account
+          </h2>
+
+          <p>
+            Update basic account information. Personnel records remain managed in People.
+          </p>
+
+        </div>
+
+
+        <button
+          id="editAccountDialogClose"
+          class="admin-dialog-close"
+          type="button"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div class="admin-dialog-body">
+
+
+        <input
+          id="editAccountUid"
+          name="uid"
+          type="hidden"
+        />
+
+
+        <div class="admin-form-grid">
+
+
+          <label class="admin-field">
+
+            <span>
+              First name *
+            </span>
+
+            <input
+              id="editFirstName"
+              name="firstName"
+              type="text"
+              required
+            />
+
+          </label>
+
+
+          <label class="admin-field">
+
+            <span>
+              Surname *
+            </span>
+
+            <input
+              id="editSurname"
+              name="surname"
+              type="text"
+              required
+            />
+
+          </label>
+
+
+          <label class="admin-field">
+
+            <span>
+              Employment type *
+            </span>
+
+            <select
+              id="editEmploymentType"
+              name="employmentType"
+              required
+            >
+
+              <option value="EMPLOYEE">
+                Employee
+              </option>
+
+              <option value="AGENCY">
+                Agency
+              </option>
+
+              <option value="SUBCONTRACTOR">
+                Subcontractor
+              </option>
+
+            </select>
+
+          </label>
+
+
+          <label class="admin-field">
+
+            <span>
+              Position
+            </span>
+
+            <input
+              id="editPosition"
+              name="position"
+              type="text"
+            />
+
+          </label>
+
+
+          <label class="admin-field">
+
+            <span>
+              Contact number
+            </span>
+
+            <input
+              id="editPhone"
+              name="phone"
+              type="tel"
+            />
+
+          </label>
+
+
+          <label class="admin-field">
+
+            <span>
+              Authority
+            </span>
+
+            <select
+              id="editAuthority"
+              name="authority"
+            ></select>
+
+          </label>
+
+
+        </div>
+
+
+        <p
+          id="editAccountError"
+          class="admin-form-error"
+          role="alert"
+          hidden
+        ></p>
+
+
+      </div>
+
+
+      <footer class="admin-dialog-footer">
+
+        <button
+          id="editAccountCancel"
+          class="admin-secondary-button"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="editAccountSave"
+          class="admin-primary-button"
+          type="submit"
+        >
+          Save Changes
+        </button>
+
+      </footer>
+
+
+    </form>
+
+  </dialog>
+
+
+  <!-- =====================================================
+       STATUS CONFIRMATION DIALOG
+  ====================================================== -->
+
+  <dialog
+    id="accountStatusDialog"
+    class="admin-dialog admin-dialog--confirm"
+  >
+
+    <form
+      id="accountStatusForm"
+      class="admin-dialog-form"
+    >
+
+
+      <header class="admin-dialog-header">
+
+        <div>
+
+          <p class="admin-dialog-eyebrow">
+            Account access
+          </p>
+
+          <h2 id="accountStatusDialogTitle">
+            Update Account
+          </h2>
+
+          <p id="accountStatusDialogDescription">
+            Confirm the account status change.
+          </p>
+
+        </div>
+
+
+        <button
+          id="accountStatusDialogClose"
+          class="admin-dialog-close"
+          type="button"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div class="admin-dialog-body">
+
+        <div
+          id="accountStatusSummary"
+          class="admin-status-confirmation"
+        ></div>
+
+        <p
+          id="accountStatusError"
+          class="admin-form-error"
+          hidden
+        ></p>
+
+      </div>
+
+
+      <footer class="admin-dialog-footer">
+
+        <button
+          id="accountStatusCancel"
+          class="admin-secondary-button"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="accountStatusConfirm"
+          class="admin-primary-button"
+          type="submit"
+        >
+          Confirm
+        </button>
+
+      </footer>
+
+
+    </form>
+
+  </dialog>
+
+
+  <!-- =====================================================
+       SCRIPTS
+  ====================================================== -->
+
+  <script
+    src="/modules/contractor/shared/js/config.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/shared/js/shell.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/admin/admin.js"
+  ></script>
+
+
 </body>
+
 </html>

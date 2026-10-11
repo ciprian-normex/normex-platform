@@ -1,4 +1,5 @@
 import {
+  app,
   auth,
   db
 } from "/js/firebase.js";
@@ -14,12 +15,23 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 import {
+  getFunctions,
+  httpsCallable
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-functions.js";
+
+import {
   renderContractorNav
 } from "./nav.js";
 
 
 const config =
   window.NORMEX_CONTRACTOR_CONFIG || {};
+
+const accountFunctions =
+  getFunctions(app, "europe-west2");
+
+const manageUserAccount =
+  httpsCallable(accountFunctions, "manageUserAccount");
 
 
 function getElement(id) {
@@ -130,7 +142,7 @@ function applyUserProfile(profile) {
   setText(
     "workspaceUserRole",
     formatRole(
-      profile.role,
+      profile.roleCode || profile.role,
       profile.accessLevel
     )
   );
@@ -300,8 +312,13 @@ function bindShellControls() {
 
 async function initialiseWorkspace(user) {
   try {
-    const profile =
+    let profile =
       await getUserProfile(user.uid);
+
+    if (profile?.status === "INVITED") {
+      await manageUserAccount({ action: "ACTIVATE_SELF" });
+      profile = await getUserProfile(user.uid);
+    }
 
     if (
       !canUseWorkspace(profile) ||

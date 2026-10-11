@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+  <meta
+    name="theme-color"
+    content="#10271c"
+  />
+
+  <title>
+    Check Induction | NORMEX
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="./verify.css"
+  />
+</head>
+
+<body>
+
+  <main class="verify-page">
+
+    <!-- =====================================================
+         BRAND
+    ====================================================== -->
+
+    <header class="verify-topbar">
+
+      <div class="verify-brand">
+
+        <div class="verify-brand__mark">
+          NX
+        </div>
+
+        <div>
+
+          <span>
+            NORMEX
+          </span>
+
+          <strong>
+            Induction Verification
+          </strong>
+
+        </div>
+
+      </div>
+
+      <span class="verify-topbar__public">
+        Public verification
+      </span>
+
+    </header>
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="verify-hero">
+
+      <div class="verify-hero__copy">
+
+        <p class="verify-eyebrow">
+          Live induction register
+        </p>
+
+        <h1>
+          Check an induction
+        </h1>
+
+        <p>
+          Search by induction number, worker name or organisation. QR codes open the exact induction record automatically.
+        </p>
+
+      </div>
+
+
+      <div class="verify-hero__status">
+
+        <span class="verify-hero__status-icon">
+          ✓
+        </span>
+
+        <div>
+
+          <span>
+            Live status
+          </span>
+
+          <strong>
+            Verified by NORMEX
+          </strong>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SEARCH
+    ====================================================== -->
+
+    <section class="verify-search-card">
+
+      <form
+        id="verifyForm"
+        class="verify-search-form"
+      >
+
+        <label for="certificateId">
+          Search induction register
+        </label>
+
+
+        <div class="verify-search-row">
+
+          <input
+            id="certificateId"
+            name="certificateId"
+            type="search"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="e.g. 1, COLEMANS-00001, Ciprian, Trusca or Colemans"
+            required
+          />
+
+          <button
+            id="verifyButton"
+            type="submit"
+          >
+            Search
+          </button>
+
+        </div>
+
+
+        <p>
+          For a worker or organisation search, enter at least 2 characters. A short induction number such as <strong>1</strong> can return matching records from more than one organisation.
+        </p>
+
+      </form>
+
+
+      <div
+        id="notice"
+        class="verify-notice"
+        hidden
+      ></div>
+
+    </section>
+
+
+    <!-- =====================================================
+         LIVE STATUS
+    ====================================================== -->
+
+    <section
+      id="verifyStatusPanel"
+      class="verify-status-panel is-ready"
+    >
+
+      <span
+        id="verifyStatusIcon"
+        class="verify-status-panel__icon"
+      >
+        i
+      </span>
+
+
+      <div>
+
+        <p id="verifyStatusKicker">
+          Ready
+        </p>
+
+        <h2 id="verifyStatusTitle">
+          Search the induction register
+        </h2>
+
+        <span id="verifyStatusMessage">
+          Enter an induction number, worker name or organisation above.
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SINGLE RESULT
+    ====================================================== -->
+
+    <section
+      id="verifySingleResult"
+      class="verify-single-result"
+      hidden
+    >
+
+      <div class="verify-record-heading">
+
+        <div>
+
+          <p>
+            Induction number
+          </p>
+
+          <h2 id="verifyInductionNumber">
+            —
+          </h2>
+
+        </div>
+
+
+        <span
+          id="verifyRecordStatus"
+          class="verify-record-status"
+        >
+          —
+        </span>
+
+      </div>
+
+
+      <div class="verify-record-identity">
+
+        <strong id="verifyWorkerName">
+          —
+        </strong>
+
+        <span id="verifyRecordContext">
+          —
+        </span>
+
+      </div>
+
+
+      <div class="verify-details-grid">
+
+        <div>
+
+          <span>
+            Organisation
+          </span>
+
+          <strong id="verifyCompany">
+            —
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Role / Trade
+          </span>
+
+          <strong id="verifyRole">
+            —
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Certificate type
+          </span>
+
+          <strong id="verifyCertificateType">
+            —
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Date completed
+          </span>
+
+          <strong id="verifyCompleted">
+            —
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Valid until
+          </span>
+
+          <strong id="verifyExpiry">
+            —
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <span>
+            Record source
+          </span>
+
+          <strong id="verifySource">
+            —
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="verify-record-actions">
+
+        <button
+          id="verifyAnotherBtn"
+          class="verify-secondary-button"
+          type="button"
+        >
+          Check another
+        </button>
+
+        <a
+          id="viewCertificateBtn"
+          class="verify-primary-link"
+          href="#"
+        >
+          View certificate
+        </a>
+
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         MULTIPLE RESULTS
+    ====================================================== -->
+
+    <section
+      id="verifySearchResults"
+      class="verify-results-panel"
+      hidden
+    >
+
+      <header>
+
+        <div>
+
+          <p class="verify-eyebrow">
+            Search results
+          </p>
+
+          <h2>
+            Matching induction records
+          </h2>
+
+        </div>
+
+        <span id="resultCountText">
+          0 records found
+        </span>
+
+      </header>
+
+
+      <div
+        id="resultCards"
+        class="verify-result-cards"
+      ></div>
+
+    </section>
+
+
+    <!-- =====================================================
+         NOTE
+    ====================================================== -->
+
+    <section class="verify-note">
+
+      <div class="verify-note__icon">
+        i
+      </div>
+
+      <div>
+
+        <strong>
+          What this check confirms
+        </strong>
+
+        <p>
+          Verification confirms the current induction record held by NORMEX. It does not replace project or site-specific inductions, RAMS briefings, permits, competence checks or local controls required before work starts.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <footer class="verify-footer">
+
+      <strong>
+        NORMEX
+      </strong>
+
+      <span>
+        Public induction verification
+      </span>
+
+    </footer>
+
+  </main>
+
+
+  <script
+    type="module"
+    src="./verify.js"
+  ></script>
+
+</body>
+</html>

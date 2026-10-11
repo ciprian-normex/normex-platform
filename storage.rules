@@ -1,10 +1,50 @@
 rules_version = '2';
 
-// Craft rules based on data in your Firestore database
-// allow write: if firestore.get(
-//    /databases/(default)/documents/users/$(request.auth.uid)).data.isAdmin;
 service firebase.storage {
   match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function profile() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function activeProfile() {
+      return signedIn() &&
+        profile().status == "ACTIVE" &&
+        profile().organisationId is string;
+    }
+
+    function platformAdmin() {
+      return activeProfile() &&
+        profile().accessLevel >= 99 &&
+        (profile().roleCode == "PLATFORM_ADMIN" || profile().role == "PLATFORM_ADMIN");
+    }
+
+    function inductionManager(organisationId) {
+      return activeProfile() &&
+        profile().organisationId == organisationId &&
+        (
+          profile().permissions.canManageAssurance == true ||
+          (
+            (profile().roleCode == "ORGANISATION_MANAGER" || profile().role == "ORGANISATION_MANAGER") &&
+            profile().permissions.canManageOrganisation == true
+          )
+        );
+    }
+
+    match /inductionVideos/{organisationId}/{videoPath=**} {
+      allow read: if activeProfile() &&
+        (platformAdmin() || profile().organisationId == organisationId);
+
+      allow create, update: if (platformAdmin() || inductionManager(organisationId)) &&
+        request.resource.size < 500 * 1024 * 1024 &&
+        request.resource.contentType.matches('video/.*');
+
+      allow delete: if platformAdmin() || inductionManager(organisationId);
+    }
+
     match /{allPaths=**} {
       allow read, write: if false;
     }

@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#17271f" />
+  <title>Induction Assessment | People | NORMEX</title>
+
+  <link rel="stylesheet" href="/modules/contractor/shared/css/theme-colemans.css" />
+  <link rel="stylesheet" href="/modules/contractor/shared/css/workspace.css" />
+  <link rel="stylesheet" href="../inductions.css" />
+  <link rel="stylesheet" href="../induction-journey.css" />
+  <link rel="stylesheet" href="./test.css" />
+</head>
+<body>
+  <main data-induction-page class="induction-page induction-test-page">
+
+    <nav class="people-workspace-nav" aria-label="People workspace navigation">
+      <div class="people-workspace-nav__identity">
+        <span class="people-workspace-nav__badge">People</span>
+        <div>
+          <span class="people-workspace-nav__eyebrow">People workspace</span>
+          <strong>Workforce &amp; People Control</strong>
+        </div>
+      </div>
+
+      <div class="people-workspace-nav__links">
+        <a class="people-workspace-nav__link" href="/modules/contractor/people/">Overview</a>
+        <a class="people-workspace-nav__link" href="/modules/contractor/people/rota/">Rota</a>
+        <a class="people-workspace-nav__link" href="/modules/contractor/people/resource-planning/">Resource Planning</a>
+        <a class="people-workspace-nav__link" href="/modules/contractor/people/my-team/">My Team</a>
+        <a class="people-workspace-nav__link is-active" href="/modules/contractor/people/inductions/">Inductions</a>
+      </div>
+    </nav>
+
+    <header class="induction-hero induction-test-hero">
+      <div class="induction-hero__copy">
+        <p class="induction-eyebrow">People · Core Company Induction</p>
+        <h1>Complete your assessment</h1>
+        <p class="induction-hero__note">Answer every question before submitting. Your assessment is marked against the organisation's published induction standard.</p>
+      </div>
+
+      <div class="induction-hero__context">
+        <span>Step 3 of 4</span>
+        <strong>Assessment</strong>
+      </div>
+    </header>
+
+    <div id="pageNav" class="induction-nav-host"></div>
+    <div id="notice" class="notice" hidden></div>
+
+    <section class="induction-test-layout">
+      <section class="induction-test-card">
+
+        <header class="induction-test-card__header">
+          <div>
+            <p class="induction-eyebrow">Assessment</p>
+            <h2>Core Company Induction</h2>
+            <p>Work through the questions at your own pace. All questions must be answered before submission.</p>
+          </div>
+
+          <div class="induction-test-counter">
+            <span>Answered</span>
+            <strong id="answeredCount">0 / 0</strong>
+          </div>
+        </header>
+
+        <section class="induction-test-summary" aria-label="Assessment rules">
+          <div>
+            <span>Questions</span>
+            <strong id="testQuestionCount">—</strong>
+          </div>
+          <div>
+            <span>Pass mark</span>
+            <strong id="testPassMark">—</strong>
+          </div>
+          <div>
+            <span>Attempt</span>
+            <strong id="testAttempt">—</strong>
+          </div>
+          <div>
+            <span>Answered</span>
+            <strong id="testAnsweredSummary">0 / 0</strong>
+          </div>
+        </section>
+
+        <div class="induction-test-progress-wrap">
+          <div class="induction-test-progress-copy">
+            <span>Assessment progress</span>
+            <strong id="progressLabel">0% complete</strong>
+          </div>
+          <div class="induction-test-progress" aria-hidden="true">
+            <div id="answerProgress" class="induction-test-progress__bar" style="width:0%"></div>
+          </div>
+        </div>
+
+        <form id="testForm" novalidate>
+          <div id="questions" class="induction-test-questions">
+            <div class="induction-test-loading">Loading assessment questions...</div>
+          </div>
+
+          <footer class="induction-test-actions">
+            <div class="induction-test-actions__note">
+              <strong>Before submitting</strong>
+              <span>Check that you have answered every question. Your answers cannot be changed after submission.</span>
+            </div>
+
+            <div class="induction-test-actions__buttons">
+              <a class="button" href="./video.html">← Back to video</a>
+              <button id="submitAssessment" class="button button--primary" type="submit">
+                Submit assessment
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </footer>
+        </form>
+      </section>
+
+      <aside class="induction-journey-card induction-test-journey">
+        <header class="induction-journey-card__header">
+          <p class="induction-eyebrow">Your journey</p>
+          <h2>Induction progress</h2>
+          <p>Complete each step in order to finish your induction.</p>
+        </header>
+
+        <ol class="induction-journey-steps">
+          <li class="induction-journey-step is-complete">
+            <span class="induction-journey-step__marker"><span class="induction-journey-step__number">✓</span></span>
+            <div class="induction-journey-step__body"><strong>Confirm details</strong><span>Your information has been confirmed.</span></div>
+          </li>
+
+          <li class="induction-journey-step is-complete">
+            <span class="induction-journey-step__marker"><span class="induction-journey-step__number">✓</span></span>
+            <div class="induction-journey-step__body"><strong>Watch induction</strong><span>The company induction video is complete.</span></div>
+          </li>
+
+          <li class="induction-journey-step is-current">
+            <span class="induction-journey-step__marker">
+              <span class="induction-journey-step__orbit" aria-hidden="true"></span>
+              <span class="induction-journey-step__number">3</span>
+            </span>
+            <div class="induction-journey-step__body"><strong>Assessment</strong><span>Complete the induction questions.</span></div>
+          </li>
+
+          <li class="induction-journey-step">
+            <span class="induction-journey-step__marker"><span class="induction-journey-step__number">4</span></span>
+            <div class="induction-journey-step__body"><strong>Certificate</strong><span>Your certificate is issued after passing.</span></div>
+          </li>
+        </ol>
+
+        <div class="induction-journey-guidance">
+          <span class="induction-journey-guidance__icon">i</span>
+          <div>
+            <strong>Read each question carefully</strong>
+            <span>Select one answer for every question. Unanswered questions will be highlighted before submission.</span>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="/modules/contractor/shared/js/config.js"></script>
+  <script type="module" src="./test.js"></script>
+</body>
+</html>

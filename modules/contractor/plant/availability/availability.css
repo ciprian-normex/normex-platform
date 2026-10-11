@@ -1,0 +1,1647 @@
+/* =========================================================
+   NORMEX PLANT
+   AVAILABILITY
+========================================================= */
+
+:root {
+  --availability-ink: #183025;
+  --availability-muted: #77857d;
+
+  --availability-line: #dde6e0;
+  --availability-line-soft: #e9efeb;
+
+  --availability-green: #1f4b37;
+  --availability-green-dark: #17392a;
+  --availability-green-soft: #e8f2eb;
+
+  --availability-amber: #956d19;
+  --availability-amber-soft: #faf2de;
+
+  --availability-red: #a14c3f;
+  --availability-red-soft: #fae9e5;
+
+  --availability-blue: #456b81;
+  --availability-blue-soft: #e9f1f5;
+
+  --availability-grey-soft: #f2f5f3;
+
+  --availability-shadow:
+    0 15px 38px
+    rgba(14, 31, 21, 0.055);
+}
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.availability-page {
+  display: grid;
+
+  gap: 14px;
+
+  padding-bottom: 20px;
+}
+
+
+/* =========================================================
+   CONTROL HEADER
+========================================================= */
+
+.availability-control-surface {
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.82);
+
+  border-radius: 20px;
+
+  background:
+    radial-gradient(
+      circle at 93% 0%,
+      rgba(32, 78, 54, 0.07),
+      transparent 32%
+    ),
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f8faf9
+    );
+
+  box-shadow:
+    var(--availability-shadow);
+}
+
+
+.availability-control-copy {
+  padding:
+    21px
+    22px;
+}
+
+
+.availability-eyebrow {
+  margin:
+    0
+    0
+    6px;
+
+  color:
+    #6f7f76;
+
+  font-size: 0.64rem;
+  font-weight: 900;
+
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+}
+
+
+.availability-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 22px;
+}
+
+
+.availability-title-row h2 {
+  margin: 0;
+
+  color:
+    var(--availability-ink);
+
+  font-size: 1.48rem;
+  font-weight: 900;
+
+  letter-spacing: -0.035em;
+}
+
+
+.availability-lead {
+  max-width: 720px;
+
+  margin:
+    6px
+    0
+    0;
+
+  color:
+    #728079;
+
+  font-size: 0.75rem;
+
+  line-height: 1.5;
+}
+
+
+.availability-system-status {
+  margin:
+    13px
+    0
+    0;
+
+  color:
+    #78867e;
+
+  font-size: 0.65rem;
+}
+
+
+/* =========================================================
+   HORIZON CONTROL
+========================================================= */
+
+.availability-horizon-control {
+  display: grid;
+
+  gap: 5px;
+}
+
+
+.availability-horizon-control > span {
+  color:
+    #738078;
+
+  font-size: 0.62rem;
+  font-weight: 900;
+
+  text-align: right;
+
+  text-transform: uppercase;
+}
+
+
+.availability-horizon-buttons {
+  display: inline-flex;
+
+  gap: 4px;
+
+  padding: 4px;
+
+  border:
+    1px solid
+    #dce5df;
+
+  border-radius: 10px;
+
+  background:
+    #f7faf8;
+}
+
+
+.availability-horizon-buttons button {
+  min-height: 34px;
+
+  padding:
+    6px
+    10px;
+
+  border: 0;
+
+  border-radius: 7px;
+
+  background:
+    transparent;
+
+  color:
+    #68766e;
+
+  font: inherit;
+
+  font-size: 0.68rem;
+  font-weight: 850;
+
+  cursor: pointer;
+}
+
+
+.availability-horizon-buttons button:hover {
+  background:
+    #eef3f0;
+}
+
+
+.availability-horizon-buttons button.is-active {
+  background:
+    #214b37;
+
+  color:
+    #ffffff;
+
+  box-shadow:
+    0 5px 12px
+    rgba(25, 66, 45, 0.12);
+}
+
+
+/* =========================================================
+   POSITION STRIP
+========================================================= */
+
+.availability-position-strip {
+  display: grid;
+
+  grid-template-columns:
+    repeat(6, minmax(0, 1fr));
+
+  gap: 7px;
+}
+
+
+.availability-position-tile {
+  min-width: 0;
+
+  min-height: 104px;
+
+  padding:
+    14px
+    15px;
+
+  border:
+    1px solid
+    var(--availability-line);
+
+  border-radius: 12px;
+
+  background:
+    #ffffff;
+
+  text-align: left;
+
+  font: inherit;
+
+  cursor: pointer;
+
+  transition:
+    border-color 120ms ease,
+    background 120ms ease,
+    transform 120ms ease;
+}
+
+
+.availability-position-tile:hover {
+  transform:
+    translateY(-1px);
+
+  border-color:
+    #cad9cf;
+}
+
+
+.availability-position-tile.is-active {
+  border-color:
+    #214d38;
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(33, 77, 56, 0.06);
+}
+
+
+.availability-position-label,
+.availability-position-value,
+.availability-position-meta {
+  display: block;
+}
+
+
+.availability-position-label {
+  color:
+    #6f7e76;
+
+  font-size: 0.64rem;
+  font-weight: 900;
+
+  letter-spacing: 0.04em;
+
+  text-transform: uppercase;
+}
+
+
+.availability-position-value {
+  margin-top: 7px;
+
+  color:
+    #213a2e;
+
+  font-size: 1.32rem;
+  font-weight: 900;
+}
+
+
+.availability-position-meta {
+  margin-top: 4px;
+
+  color:
+    #89948e;
+
+  font-size: 0.67rem;
+
+  line-height: 1.3;
+}
+
+
+.availability-position-tile--available {
+  border-top:
+    2px solid
+    #6b9d7e;
+}
+
+
+.availability-position-tile--soon {
+  border-top:
+    2px solid
+    #8eb4a0;
+}
+
+
+.availability-position-tile--allocated {
+  border-top:
+    2px solid
+    #7693a3;
+}
+
+
+.availability-position-tile--maintenance {
+  border-top:
+    2px solid
+    #d2a950;
+}
+
+
+.availability-position-tile--blocked {
+  border-top:
+    2px solid
+    #ca7162;
+}
+
+
+.availability-position-tile--hire {
+  border-top:
+    2px solid
+    #9b88ad;
+}
+
+
+/* =========================================================
+   PANELS
+========================================================= */
+
+.availability-outlook-panel,
+.availability-ready-panel,
+.availability-register-panel {
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.82);
+
+  border-radius: 18px;
+
+  background:
+    #ffffff;
+
+  box-shadow:
+    var(--availability-shadow);
+}
+
+
+.availability-outlook-panel,
+.availability-ready-panel,
+.availability-register-panel {
+  padding:
+    19px;
+}
+
+
+/* =========================================================
+   SECTION HEADING
+========================================================= */
+
+.availability-section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 18px;
+
+  margin-bottom: 13px;
+}
+
+
+.availability-section-heading h3 {
+  margin: 0;
+
+  color:
+    var(--availability-ink);
+
+  font-size: 0.93rem;
+  font-weight: 900;
+}
+
+
+.availability-section-heading p {
+  max-width: 680px;
+
+  margin:
+    4px
+    0
+    0;
+
+  color:
+    #7d8982;
+
+  font-size: 0.7rem;
+
+  line-height: 1.45;
+}
+
+
+.availability-section-kicker {
+  margin:
+    0
+    0
+    5px !important;
+
+  color:
+    #65756d !important;
+
+  font-size: 0.62rem !important;
+  font-weight: 900;
+
+  letter-spacing: 0.075em;
+
+  text-transform: uppercase;
+}
+
+
+.availability-outlook-period,
+.availability-register-count {
+  flex:
+    0
+    0
+    auto;
+}
+
+
+.availability-outlook-period span,
+.availability-outlook-period strong {
+  display: block;
+
+  text-align: right;
+}
+
+
+.availability-outlook-period span {
+  color:
+    #849088;
+
+  font-size: 0.61rem;
+
+  text-transform: uppercase;
+}
+
+
+.availability-outlook-period strong {
+  margin-top: 3px;
+
+  color:
+    #3b5546;
+
+  font-size: 0.72rem;
+}
+
+
+/* =========================================================
+   OUTLOOK
+========================================================= */
+
+.availability-outlook {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(220px, 280px));
+
+  gap: 10px;
+
+  align-items: stretch;
+  justify-content: start;
+}
+
+
+.availability-outlook-item {
+  position: relative;
+
+  min-width: 0;
+
+  padding:
+    15px;
+
+  border:
+    1px solid
+    #e0e8e2;
+
+  border-radius: 11px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f9fbfa
+    );
+}
+
+
+.availability-outlook-item::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 13px;
+  right: 13px;
+
+  height: 2px;
+
+  border-radius:
+    0 0 2px 2px;
+
+  background:
+    #82998b;
+}
+
+
+.availability-outlook-item.is-release::before {
+  background:
+    #6f9c80;
+}
+
+
+.availability-outlook-item.is-maintenance::before {
+  background:
+    #c59d48;
+}
+
+
+.availability-outlook-item.is-blocked::before {
+  background:
+    #c46b5d;
+}
+
+
+.availability-outlook-item.is-movement::before {
+  background:
+    #67879b;
+}
+
+
+.availability-outlook-date,
+.availability-outlook-title,
+.availability-outlook-asset,
+.availability-outlook-note {
+  display: block;
+}
+
+
+.availability-outlook-date {
+  color:
+    #79877f;
+
+  font-size: 0.62rem;
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.availability-outlook-title {
+  margin-top: 9px;
+
+  color:
+    #294235;
+
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+
+.availability-outlook-asset {
+  margin-top: 4px;
+
+  color:
+    #5d6f65;
+
+  font-size: 0.7rem;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+.availability-outlook-note {
+  margin-top: 5px;
+
+  color:
+    #929c96;
+
+  font-size: 0.66rem;
+
+  line-height: 1.35;
+}
+
+
+/* =========================================================
+   READY TO ALLOCATE
+========================================================= */
+
+.availability-ready-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+
+  gap: 10px;
+}
+
+
+.availability-ready-card {
+  min-width: 0;
+
+  padding:
+    15px;
+
+  border:
+    1px solid
+    #dfe7e1;
+
+  border-radius: 11px;
+
+  background:
+    #ffffff;
+}
+
+
+.availability-ready-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 10px;
+}
+
+
+.availability-ready-card strong,
+.availability-ready-card span,
+.availability-ready-card small {
+  display: block;
+}
+
+
+.availability-ready-card strong {
+  color:
+    #2b4437;
+
+  font-size: 0.8rem;
+}
+
+
+.availability-ready-card span {
+  margin-top: 3px;
+
+  color:
+    #697970;
+
+  font-size: 0.71rem;
+}
+
+
+.availability-ready-card small {
+  margin-top: 5px;
+
+  color:
+    #939c97;
+
+  font-size: 0.65rem;
+
+  line-height: 1.35;
+}
+
+
+.availability-ready-card__meta {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 6px;
+
+  margin-top: 10px;
+
+  padding-top: 9px;
+
+  border-top:
+    1px solid
+    #edf1ee;
+}
+
+
+.availability-ready-card__meta div span {
+  margin: 0;
+
+  color:
+    #8a958f;
+
+  font-size: 0.61rem;
+
+  text-transform: uppercase;
+}
+
+
+.availability-ready-card__meta div strong {
+  margin-top: 3px;
+
+  color:
+    #496052;
+
+  font-size: 0.7rem;
+}
+
+
+.availability-ready-card > .availability-row-action {
+  width: 100%;
+
+  margin-top: 12px;
+}
+
+
+/* =========================================================
+   STATE CHIPS
+========================================================= */
+
+.availability-state-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 26px;
+
+  padding:
+    4px
+    7px;
+
+  border-radius: 999px;
+
+  background:
+    var(--availability-grey-soft);
+
+  color:
+    #627169;
+
+  font-size: 0.6rem;
+  font-weight: 900;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+
+.availability-state-chip.is-available {
+  background:
+    var(--availability-green-soft);
+
+  color:
+    #376549;
+}
+
+
+.availability-state-chip.is-soon {
+  background:
+    #edf5ef;
+
+  color:
+    #55725f;
+}
+
+
+.availability-state-chip.is-allocated {
+  background:
+    var(--availability-blue-soft);
+
+  color:
+    var(--availability-blue);
+}
+
+
+.availability-state-chip.is-maintenance {
+  background:
+    var(--availability-amber-soft);
+
+  color:
+    var(--availability-amber);
+}
+
+
+.availability-state-chip.is-blocked {
+  background:
+    var(--availability-red-soft);
+
+  color:
+    var(--availability-red);
+}
+
+
+/* =========================================================
+   REGISTER
+========================================================= */
+
+.availability-section-heading--register {
+  align-items: center;
+}
+
+
+.availability-register-count {
+  display: flex;
+  align-items: baseline;
+
+  gap: 5px;
+
+  color:
+    #7f8b84;
+}
+
+
+.availability-register-count strong {
+  color:
+    #263f32;
+
+  font-size: 1rem;
+}
+
+
+.availability-register-count span {
+  font-size: 0.66rem;
+}
+
+
+.availability-filter-bar {
+  display: grid;
+
+  grid-template-columns:
+    minmax(220px, 1.45fr)
+    repeat(4, minmax(130px, 0.8fr));
+
+  gap: 9px;
+
+  margin-bottom: 10px;
+
+  padding:
+    11px;
+
+  border:
+    1px solid
+    var(--availability-line-soft);
+
+  border-radius: 11px;
+
+  background:
+    #fafcfb;
+}
+
+
+.availability-filter {
+  display: grid;
+
+  gap: 4px;
+}
+
+
+.availability-filter span {
+  color:
+    #7a877f;
+
+  font-size: 0.61rem;
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.availability-filter input,
+.availability-filter select {
+  width: 100%;
+
+  min-height: 38px;
+
+  padding:
+    7px
+    9px;
+
+  border:
+    1px solid
+    #d7e1da;
+
+  border-radius: 8px;
+
+  background:
+    #ffffff;
+
+  color:
+    #32493c;
+
+  font: inherit;
+
+  font-size: 0.71rem;
+
+  outline: 0;
+}
+
+
+.availability-filter input:focus,
+.availability-filter select:focus {
+  border-color:
+    #7ca08c;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(50, 97, 71, 0.07);
+}
+
+
+.availability-register-table-wrap {
+  overflow-x: auto;
+}
+
+
+.availability-register-table {
+  width: 100%;
+
+  min-width: 1040px;
+
+  border-collapse: collapse;
+
+  table-layout: fixed;
+}
+
+
+.availability-register-table th {
+  padding:
+    10px
+    10px;
+
+  border-bottom:
+    1px solid
+    #dfe6e1;
+
+  color:
+    #738078;
+
+  font-size: 0.61rem;
+  font-weight: 900;
+
+  text-align: left;
+
+  text-transform: uppercase;
+}
+
+
+.availability-register-table td {
+  padding:
+    13px
+    10px;
+
+  border-bottom:
+    1px solid
+    #edf1ee;
+
+  color:
+    #53645a;
+
+  font-size: 0.71rem;
+
+  vertical-align: middle;
+}
+
+
+.availability-register-table tbody tr:hover:not(.availability-register-empty-row) {
+  background:
+    #fafcfb;
+}
+
+
+.availability-register-table th:nth-child(1) {
+  width: 17%;
+}
+
+.availability-register-table th:nth-child(2) {
+  width: 9%;
+}
+
+.availability-register-table th:nth-child(3) {
+  width: 19%;
+}
+
+.availability-register-table th:nth-child(4) {
+  width: 15%;
+}
+
+.availability-register-table th:nth-child(5) {
+  width: 10%;
+}
+
+.availability-register-table th:nth-child(6) {
+  width: 15%;
+}
+
+.availability-register-table th:nth-child(7) {
+  width: 9%;
+}
+
+.availability-register-table th:nth-child(8) {
+  width: 6%;
+}
+
+
+.availability-register-main strong,
+.availability-register-main span {
+  display: block;
+}
+
+
+.availability-register-main strong {
+  color:
+    #2d4538;
+
+  font-size: 0.76rem;
+}
+
+
+.availability-register-main span {
+  margin-top: 2px;
+
+  color:
+    #8a958f;
+
+  font-size: 0.65rem;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.availability-button,
+.availability-row-action,
+.availability-text-action {
+  font: inherit;
+
+  cursor: pointer;
+}
+
+
+.availability-button,
+.availability-row-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid
+    #d4dfd8;
+
+  border-radius: 8px;
+
+  background:
+    #ffffff;
+
+  color:
+    #3c5447;
+
+  font-size: 0.67rem;
+  font-weight: 850;
+
+  text-decoration: none;
+}
+
+
+.availability-button {
+  min-height: 34px;
+
+  padding:
+    7px
+    11px;
+}
+
+
+.availability-row-action {
+  min-height: 32px;
+
+  padding:
+    5px
+    8px;
+}
+
+
+.availability-button:hover,
+.availability-row-action:hover {
+  background:
+    #f4f7f5;
+}
+
+
+.availability-button--primary {
+  border-color:
+    #214c38;
+
+  background:
+    #214c38;
+
+  color:
+    #ffffff;
+}
+
+
+.availability-button--primary:hover {
+  background:
+    #193c2c;
+}
+
+
+.availability-text-action {
+  border: 0;
+
+  background:
+    transparent;
+
+  color:
+    #43604f;
+
+  font-size: 0.68rem;
+  font-weight: 850;
+}
+
+
+/* =========================================================
+   EMPTY STATES
+========================================================= */
+
+.availability-empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+  min-height: 80px;
+
+  padding:
+    18px;
+
+  grid-column:
+    1 / -1;
+
+  text-align: center;
+}
+
+
+.availability-empty-state strong {
+  color:
+    #485e52;
+
+  font-size: 0.73rem;
+}
+
+
+.availability-empty-state span {
+  color:
+    #8c9690;
+
+  font-size: 0.66rem;
+}
+
+
+.availability-empty-state--wide {
+  min-height: 90px;
+
+  border:
+    1px dashed
+    #dce5df;
+
+  border-radius: 10px;
+}
+
+
+.availability-empty-state--table {
+  min-height: 84px;
+}
+
+
+/* =========================================================
+   DRAWER
+========================================================= */
+
+.availability-drawer {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 120;
+
+  pointer-events: none;
+
+  visibility: hidden;
+}
+
+
+.availability-drawer.is-open {
+  pointer-events: auto;
+
+  visibility: visible;
+}
+
+
+.availability-drawer__backdrop {
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    rgba(17, 37, 26, 0.55);
+
+  opacity: 0;
+
+  transition:
+    opacity 150ms ease;
+}
+
+
+.availability-drawer.is-open .availability-drawer__backdrop {
+  opacity: 1;
+}
+
+
+.availability-drawer__panel {
+  position: absolute;
+
+  top: 0;
+  right: 0;
+  bottom: 0;
+
+  width:
+    min(540px, calc(100vw - 28px));
+
+  display: grid;
+
+  grid-template-rows:
+    auto
+    minmax(0, 1fr)
+    auto;
+
+  background:
+    #ffffff;
+
+  box-shadow:
+    -18px 0 50px
+    rgba(13, 29, 19, 0.17);
+
+  transform:
+    translateX(100%);
+
+  transition:
+    transform 170ms ease;
+}
+
+
+.availability-drawer.is-open .availability-drawer__panel {
+  transform:
+    translateX(0);
+}
+
+
+.availability-drawer__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 16px;
+
+  padding:
+    18px;
+
+  border-bottom:
+    1px solid
+    var(--availability-line-soft);
+}
+
+
+.availability-drawer__eyebrow {
+  margin:
+    0
+    0
+    5px;
+
+  color:
+    #79867e;
+
+  font-size: 0.62rem;
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.availability-drawer__header h2 {
+  margin: 0;
+
+  color:
+    #223c2f;
+
+  font-size: 1rem;
+}
+
+
+.availability-drawer__header p:not(.availability-drawer__eyebrow) {
+  margin:
+    5px
+    0
+    0;
+
+  color:
+    #849088;
+
+  font-size: 0.7rem;
+}
+
+
+.availability-drawer-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex:
+    0
+    0
+    auto;
+
+  width: 34px;
+  height: 34px;
+
+  border:
+    1px solid
+    #dbe3de;
+
+  border-radius: 9px;
+
+  background:
+    #ffffff;
+
+  color:
+    #41564a;
+
+  font-size: 1rem;
+
+  cursor: pointer;
+}
+
+
+.availability-drawer__body {
+  overflow-y: auto;
+
+  padding:
+    17px;
+}
+
+
+.availability-drawer__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 7px;
+
+  padding:
+    13px
+    17px;
+
+  border-top:
+    1px solid
+    var(--availability-line-soft);
+
+  background:
+    #fbfcfb;
+}
+
+
+/* =========================================================
+   DRAWER COMPONENTS
+========================================================= */
+
+.availability-detail-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 8px;
+}
+
+
+.availability-detail-item {
+  padding:
+    10px;
+
+  border:
+    1px solid
+    #e4eae6;
+
+  border-radius: 9px;
+
+  background:
+    #fafcfb;
+}
+
+
+.availability-detail-item span,
+.availability-detail-item strong {
+  display: block;
+}
+
+
+.availability-detail-item span {
+  color:
+    #859089;
+
+  font-size: 0.61rem;
+
+  text-transform: uppercase;
+}
+
+
+.availability-detail-item strong {
+  margin-top: 4px;
+
+  color:
+    #3a5145;
+
+  font-size: 0.72rem;
+}
+
+
+.availability-blocker-list {
+  display: grid;
+
+  gap: 6px;
+
+  margin-top: 13px;
+}
+
+
+.availability-blocker {
+  padding:
+    9px
+    10px;
+
+  border:
+    1px solid
+    #e5eae7;
+
+  border-radius: 8px;
+
+  background:
+    #ffffff;
+}
+
+
+.availability-blocker.is-warning {
+  border-color:
+    #ead9b3;
+
+  background:
+    #fffaf0;
+}
+
+
+.availability-blocker.is-alert {
+  border-color:
+    #ebcec7;
+
+  background:
+    #fff8f6;
+}
+
+
+.availability-blocker strong,
+.availability-blocker span {
+  display: block;
+}
+
+
+.availability-blocker strong {
+  color:
+    #455b4f;
+
+  font-size: 0.7rem;
+}
+
+
+.availability-blocker span {
+  margin-top: 3px;
+
+  color:
+    #8b958f;
+
+  font-size: 0.65rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1200px) {
+
+  .availability-position-strip {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+
+}
+
+
+@media (max-width: 920px) {
+
+  .availability-title-row,
+  .availability-section-heading {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .availability-horizon-control > span {
+    text-align: left;
+  }
+
+
+  .availability-filter-bar {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+
+  .availability-filter--search {
+    grid-column:
+      span 2;
+  }
+
+
+}
+
+
+@media (max-width: 650px) {
+
+  .availability-position-strip,
+  .availability-outlook,
+  .availability-ready-grid,
+  .availability-filter-bar,
+  .availability-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .availability-filter--search {
+    grid-column: auto;
+  }
+
+
+  .availability-horizon-buttons {
+    width: 100%;
+  }
+
+
+  .availability-horizon-buttons button {
+    flex: 1;
+  }
+
+
+  .availability-outlook-period span,
+  .availability-outlook-period strong {
+    text-align: left;
+  }
+
+
+  .availability-outlook-panel,
+  .availability-ready-panel,
+  .availability-register-panel {
+    padding: 13px;
+  }
+
+}

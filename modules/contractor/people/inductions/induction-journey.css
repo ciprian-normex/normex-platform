@@ -1,0 +1,779 @@
+/* =========================================================
+   NORMEX PEOPLE
+   SHARED INDUCTION JOURNEY COMPONENT
+
+   Shared by worker induction pages:
+   - Confirm details
+   - Watch induction
+   - Assessment
+   - Certificate / Result
+========================================================= */
+
+:root {
+  --ij-ink: #20372c;
+  --ij-text: #385044;
+
+  --ij-muted: #6f7e76;
+  --ij-muted-soft: #8d9992;
+
+  --ij-green: #28543d;
+  --ij-green-deep: #1e4330;
+  --ij-green-soft: #e9f2ec;
+
+  --ij-line: #dce5df;
+  --ij-line-soft: #e8eeea;
+
+  --ij-panel: #ffffff;
+  --ij-panel-soft: #f7faf8;
+
+  --ij-glow-green: #62d28d;
+  --ij-glow-lime: #b9e86c;
+  --ij-glow-gold: #f1cf63;
+  --ij-glow-cyan: #67cfc0;
+
+  --ij-shadow:
+    0 12px 30px
+    rgba(16, 36, 24, 0.045);
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.induction-journey-card {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  min-height: 100%;
+
+  overflow: hidden;
+
+  padding:
+    19px
+    18px
+    16px;
+
+  border:
+    1px solid
+    rgba(39, 64, 49, 0.08);
+
+  border-radius: 18px;
+
+  background:
+    var(--ij-panel);
+
+  box-shadow:
+    var(--ij-shadow);
+}
+
+
+/* =========================================================
+   BACKGROUND DETAIL
+========================================================= */
+
+.induction-journey-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: -78px;
+  right: -74px;
+
+  width: 180px;
+  height: 180px;
+
+  border:
+    1px solid
+    rgba(44, 84, 61, 0.07);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.induction-journey-card__header {
+  position: relative;
+
+  z-index: 4;
+
+  margin-bottom: 20px;
+}
+
+
+.induction-journey-card__header h2 {
+  margin: 0;
+
+  color:
+    var(--ij-ink);
+
+  font-size: var(--people-text-md, 0.94rem);
+  font-weight: 900;
+
+  line-height: 1.15;
+}
+
+
+.induction-journey-card__header > p:last-child {
+  max-width: 250px;
+
+  margin:
+    5px
+    0
+    0;
+
+  color:
+    var(--ij-muted);
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   STEPS
+========================================================= */
+
+.induction-journey-steps {
+  position: relative;
+
+  z-index: 4;
+
+  display: grid;
+
+  gap: 7px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+
+/* =========================================================
+   STEP
+========================================================= */
+
+.induction-journey-step {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    42px
+    minmax(0, 1fr);
+
+  gap: 10px;
+
+  align-items: center;
+
+  min-height: 64px;
+
+  padding:
+    3px
+    0;
+}
+
+
+/* =========================================================
+   CONNECTING LINE
+========================================================= */
+
+.induction-journey-step:not(:last-child)::after {
+  content: "";
+
+  position: absolute;
+
+  top: 48px;
+  left: 20px;
+
+  width: 1px;
+  height: 30px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      #cbd8d0,
+      #e5ebe7
+    );
+}
+
+
+/* =========================================================
+   MARKER
+========================================================= */
+
+.induction-journey-step__marker {
+  position: relative;
+
+  display: grid;
+  place-items: center;
+
+  width: 42px;
+  height: 42px;
+}
+
+
+/* =========================================================
+   NUMBER
+========================================================= */
+
+.induction-journey-step__number {
+  position: relative;
+
+  z-index: 6;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 29px;
+  height: 29px;
+
+  padding: 0;
+
+  border:
+    1.5px solid
+    #b8c7bd;
+
+  border-radius: 50%;
+
+  background:
+    #f6f9f7;
+
+  color:
+    #687870;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+
+  line-height: 1;
+
+  text-align: center;
+}
+
+
+/* =========================================================
+   COPY
+========================================================= */
+
+.induction-journey-step__body {
+  min-width: 0;
+}
+
+
+.induction-journey-step__body strong,
+.induction-journey-step__body span {
+  display: block;
+}
+
+
+.induction-journey-step__body strong {
+  color:
+    #344e40;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+
+  line-height: 1.25;
+}
+
+
+.induction-journey-step__body span {
+  max-width: 220px;
+
+  margin-top: 3px;
+
+  color:
+    var(--ij-muted-soft);
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   COMPLETE
+========================================================= */
+
+.induction-journey-step.is-complete
+.induction-journey-step__number {
+  border-color:
+    #79a088;
+
+  background:
+    #e9f3ec;
+
+  color:
+    #2b6143;
+}
+
+
+.induction-journey-step.is-complete
+.induction-journey-step__body strong {
+  color:
+    #365944;
+}
+
+
+/* =========================================================
+   CURRENT
+========================================================= */
+
+.induction-journey-step.is-current
+.induction-journey-step__number {
+  border-color:
+    rgba(255, 255, 255, 0.22);
+
+  background:
+    linear-gradient(
+      145deg,
+      #35664b,
+      #254c38
+    );
+
+  color:
+    #ffffff;
+
+  box-shadow:
+    0 3px 10px
+    rgba(28, 72, 48, 0.24);
+}
+
+
+/* =========================================================
+   CURRENT ORBIT
+========================================================= */
+
+.induction-journey-step__orbit {
+  position: absolute;
+
+  z-index: 4;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 50%;
+
+  background:
+    conic-gradient(
+      from 0deg,
+
+      transparent 0deg,
+      transparent 24deg,
+
+      var(--ij-glow-green) 58deg,
+
+      var(--ij-glow-lime) 100deg,
+
+      transparent 142deg,
+      transparent 205deg,
+
+      var(--ij-glow-gold) 240deg,
+
+      var(--ij-glow-cyan) 282deg,
+
+      transparent 330deg,
+      transparent 360deg
+    );
+
+  -webkit-mask:
+    radial-gradient(
+      circle,
+      transparent 0,
+      transparent 16px,
+      #000 16.5px,
+      #000 19px,
+      transparent 19.5px
+    );
+
+  mask:
+    radial-gradient(
+      circle,
+      transparent 0,
+      transparent 16px,
+      #000 16.5px,
+      #000 19px,
+      transparent 19.5px
+    );
+
+  animation:
+    inductionJourneyOrbit
+    5.5s
+    linear
+    infinite;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   CURRENT HALO
+========================================================= */
+
+.induction-journey-step.is-current
+.induction-journey-step__marker::before {
+  content: "";
+
+  position: absolute;
+
+  z-index: 2;
+
+  width: 47px;
+  height: 47px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(91, 208, 138, 0.13) 0%,
+      rgba(91, 208, 138, 0.055) 47%,
+      transparent 72%
+    );
+
+  animation:
+    inductionJourneyHalo
+    4s
+    ease-in-out
+    infinite;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   MOVING LIGHT
+========================================================= */
+
+.induction-journey-step.is-current
+.induction-journey-step__marker::after {
+  content: "";
+
+  position: absolute;
+
+  z-index: 5;
+
+  top: 3px;
+  left: 18px;
+
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background:
+    #ddf69e;
+
+  box-shadow:
+    0 0 8px
+    rgba(185, 232, 108, 0.72);
+
+  transform-origin:
+    3px
+    18px;
+
+  animation:
+    inductionJourneyOrbitDot
+    5.5s
+    linear
+    infinite;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   CURRENT TEXT
+========================================================= */
+
+.induction-journey-step.is-current
+.induction-journey-step__body strong {
+  color:
+    var(--ij-ink);
+}
+
+
+.induction-journey-step.is-current
+.induction-journey-step__body span {
+  color:
+    #64776d;
+}
+
+
+/* =========================================================
+   UPCOMING
+========================================================= */
+
+.induction-journey-step:not(.is-current):not(.is-complete)
+.induction-journey-step__number {
+  background:
+    #f7faf8;
+
+  color:
+    #7d8982;
+}
+
+
+/* =========================================================
+   GUIDANCE
+========================================================= */
+
+.induction-journey-guidance {
+  position: relative;
+
+  z-index: 4;
+
+  display: grid;
+
+  grid-template-columns:
+    31px
+    minmax(0, 1fr);
+
+  gap: 10px;
+
+  margin-top: auto;
+
+  padding:
+    11px
+    12px;
+
+  border:
+    1px solid
+    #dce7e0;
+
+  border-radius: 11px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f9fbfa,
+      #f4f8f5
+    );
+}
+
+
+.induction-journey-guidance__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 29px;
+  height: 29px;
+
+  border-radius: 50%;
+
+  background:
+    #e8f1eb;
+
+  color:
+    var(--ij-green);
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+
+  line-height: 1;
+}
+
+
+.induction-journey-guidance strong {
+  display: block;
+
+  color:
+    #3b5547;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+.induction-journey-guidance span {
+  display: block;
+
+  margin-top: 3px;
+
+  color:
+    var(--ij-muted-soft);
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  line-height: 1.42;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes inductionJourneyOrbit {
+
+  from {
+    transform:
+      rotate(0deg);
+  }
+
+  to {
+    transform:
+      rotate(360deg);
+  }
+
+}
+
+
+@keyframes inductionJourneyOrbitDot {
+
+  from {
+    transform:
+      rotate(0deg);
+  }
+
+  to {
+    transform:
+      rotate(360deg);
+  }
+
+}
+
+
+@keyframes inductionJourneyHalo {
+
+  0%,
+  100% {
+    transform:
+      scale(0.96);
+
+    opacity:
+      0.55;
+  }
+
+  50% {
+    transform:
+      scale(1.08);
+
+    opacity:
+      1;
+  }
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .induction-journey-card {
+    min-height: auto;
+
+    padding:
+      16px;
+  }
+
+
+  .induction-journey-card__header {
+    margin-bottom:
+      14px;
+  }
+
+
+  .induction-journey-steps {
+    grid-template-columns:
+      repeat(
+        4,
+        minmax(0, 1fr)
+      );
+
+    gap:
+      7px;
+  }
+
+
+  .induction-journey-step {
+    display:
+      block;
+
+    min-height:
+      0;
+
+    padding:
+      10px;
+
+    border:
+      1px solid
+      var(--ij-line-soft);
+
+    border-radius:
+      11px;
+  }
+
+
+  .induction-journey-step::after {
+    display:
+      none;
+  }
+
+
+  .induction-journey-step__marker {
+    margin-bottom:
+      8px;
+  }
+
+
+  .induction-journey-step__body span {
+    max-width:
+      none;
+  }
+
+
+  .induction-journey-guidance {
+    margin-top:
+      12px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 620px) {
+
+  .induction-journey-steps {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .induction-journey-step__orbit,
+  .induction-journey-step.is-current
+  .induction-journey-step__marker::before,
+  .induction-journey-step.is-current
+  .induction-journey-step__marker::after {
+    animation:
+      none;
+  }
+
+}

@@ -1,0 +1,1722 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>
+    Plant Requests | NORMEX
+  </title>
+
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/plant/shared/plant-shell.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/plant/requests/requests.css"
+  />
+
+</head>
+
+
+<body>
+
+  <div class="workspace">
+
+
+    <!-- =====================================================
+         ORGANISATION HEADER
+    ====================================================== -->
+
+    <header class="workspace-header">
+
+      <div class="workspace-container">
+
+        <div class="workspace-header__surface">
+
+
+          <div class="workspace-brand">
+
+            <p class="workspace-brand__product">
+              NORMEX · Contractor Workspace
+            </p>
+
+            <h1
+              id="workspaceOrganisationName"
+              class="workspace-brand__name"
+            >
+              Colemans
+            </h1>
+
+            <p class="workspace-brand__tagline">
+              Projects, resources and operational control
+            </p>
+
+          </div>
+
+
+          <div class="workspace-header-actions">
+
+
+            <div class="workspace-user">
+
+              <div class="workspace-user__details">
+
+                <span
+                  id="workspaceUserName"
+                  class="workspace-user__name"
+                >
+                  User
+                </span>
+
+                <span
+                  id="workspaceUserRole"
+                  class="workspace-user__role"
+                >
+                  Loading
+                </span>
+
+              </div>
+
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+
+            </div>
+
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ORGANISATION NAV
+    ====================================================== -->
+
+    <nav
+      class="workspace-nav"
+      aria-label="Organisation navigation"
+    >
+
+      <div class="workspace-container">
+
+        <div
+          id="contractorNavSurface"
+          class="workspace-nav__surface"
+        >
+
+          <div
+            id="contractorNavLinks"
+            class="workspace-nav__links"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="workspace-main">
+
+      <div class="workspace-container">
+
+
+        <!-- =================================================
+             PLANT NAV
+        ================================================== -->
+
+        <nav
+          id="plantSubnav"
+          aria-label="Plant workspace navigation"
+        ></nav>
+
+
+        <section class="requests-page">
+
+
+          <!-- =================================================
+               CONTROL HEADER
+          ================================================== -->
+
+          <section class="requests-control-surface">
+
+
+            <div class="requests-control-copy">
+
+              <p class="requests-eyebrow">
+                Demand &amp; approvals
+              </p>
+
+
+              <div class="requests-title-row">
+
+                <div>
+
+                  <h2>
+                    Plant Requests
+                  </h2>
+
+                  <p class="requests-lead">
+                    Request Plant, maintenance, movements and off-hire actions from the Plant &amp; Transport team.
+                  </p>
+
+                </div>
+
+
+                <button
+                  id="newRequestButton"
+                  class="requests-primary-action"
+                  type="button"
+                >
+                  <span aria-hidden="true">
+                    +
+                  </span>
+
+                  New Request
+                </button>
+
+              </div>
+
+
+              <p
+                id="requestsSystemStatus"
+                class="requests-system-status"
+                role="status"
+              >
+                Request control ready
+              </p>
+
+            </div>
+
+
+          </section>
+
+
+          <!-- =================================================
+               POSITION STRIP
+          ================================================== -->
+
+          <section
+            id="requestsSummary"
+            class="requests-position-strip"
+            aria-label="Request position"
+          >
+
+
+            <button
+              class="requests-position-tile"
+              type="button"
+              data-request-summary="OPEN"
+            >
+
+              <span class="requests-position-label">
+                Open
+              </span>
+
+              <strong
+                id="requestsOpenCount"
+                class="requests-position-value"
+              >
+                —
+              </strong>
+
+              <span class="requests-position-meta">
+                Active requests
+              </span>
+
+            </button>
+
+
+            <button
+              class="requests-position-tile requests-position-tile--attention"
+              type="button"
+              data-request-summary="PENDING_APPROVAL"
+            >
+
+              <span class="requests-position-label">
+                Awaiting approval
+              </span>
+
+              <strong
+                id="requestsPendingCount"
+                class="requests-position-value"
+              >
+                —
+              </strong>
+
+              <span class="requests-position-meta">
+                Needs Plant review
+              </span>
+
+            </button>
+
+
+            <button
+              class="requests-position-tile requests-position-tile--approved"
+              type="button"
+              data-request-summary="APPROVED"
+            >
+
+              <span class="requests-position-label">
+                Approved
+              </span>
+
+              <strong
+                id="requestsApprovedCount"
+                class="requests-position-value"
+              >
+                —
+              </strong>
+
+              <span class="requests-position-meta">
+                Awaiting fulfilment
+              </span>
+
+            </button>
+
+
+            <button
+              class="requests-position-tile requests-position-tile--urgent"
+              type="button"
+              data-request-summary="URGENT"
+            >
+
+              <span class="requests-position-label">
+                Urgent
+              </span>
+
+              <strong
+                id="requestsUrgentCount"
+                class="requests-position-value"
+              >
+                —
+              </strong>
+
+              <span class="requests-position-meta">
+                Immediate attention
+              </span>
+
+            </button>
+
+
+            <button
+              class="requests-position-tile requests-position-tile--complete"
+              type="button"
+              data-request-summary="COMPLETED"
+            >
+
+              <span class="requests-position-label">
+                Completed
+              </span>
+
+              <strong
+                id="requestsCompletedCount"
+                class="requests-position-value"
+              >
+                —
+              </strong>
+
+              <span class="requests-position-meta">
+                Last 30 days
+              </span>
+
+            </button>
+
+
+          </section>
+
+
+          <!-- =================================================
+               PROJECT POSITION
+          ================================================== -->
+
+          <section
+            id="projectRequestContext"
+            class="requests-context-panel"
+          >
+
+
+            <header class="requests-section-heading">
+
+              <div>
+
+                <p class="requests-section-kicker">
+                  Current demand
+                </p>
+
+                <h3>
+                  Project &amp; Site Position
+                </h3>
+
+                <p>
+                  Plant already allocated to the selected project and active requests raised against it.
+                </p>
+
+              </div>
+
+
+              <div class="requests-section-actions">
+
+                <label class="requests-context-selector">
+
+                  <span>
+                    Project
+                  </span>
+
+                  <select id="requestContextProject">
+
+                    <option value="">
+                      All accessible projects
+                    </option>
+
+                  </select>
+
+                </label>
+
+              </div>
+
+            </header>
+
+
+            <div
+              id="projectPositionGrid"
+              class="requests-context-grid"
+            >
+
+
+              <article class="requests-context-card">
+
+                <span>
+                  Allocated Plant
+                </span>
+
+                <strong id="contextAllocatedPlant">
+                  —
+                </strong>
+
+                <small>
+                  Assets assigned to this project
+                </small>
+
+              </article>
+
+
+              <article class="requests-context-card">
+
+                <span>
+                  Vehicles
+                </span>
+
+                <strong id="contextVehicles">
+                  —
+                </strong>
+
+                <small>
+                  Person-assigned vehicles in project context
+                </small>
+
+              </article>
+
+
+              <article class="requests-context-card">
+
+                <span>
+                  Open requests
+                </span>
+
+                <strong id="contextOpenRequests">
+                  —
+                </strong>
+
+                <small>
+                  Current project demand
+                </small>
+
+              </article>
+
+
+              <article class="requests-context-card">
+
+                <span>
+                  Awaiting Plant
+                </span>
+
+                <strong id="contextAwaitingPlant">
+                  —
+                </strong>
+
+                <small>
+                  Approved but not fulfilled
+                </small>
+
+              </article>
+
+
+            </div>
+
+
+            <div
+              id="projectAssetsPreview"
+              class="requests-project-assets"
+            >
+
+              <div class="requests-empty-inline">
+
+                <strong>
+                  Select a project to view allocated assets
+                </strong>
+
+                <span>
+                  Project-linked Plant and equipment will appear here.
+                </span>
+
+              </div>
+
+            </div>
+
+
+          </section>
+
+
+          <!-- =================================================
+               ATTENTION QUEUE
+          ================================================== -->
+
+          <section class="requests-attention-panel">
+
+
+            <header class="requests-section-heading">
+
+              <div>
+
+                <p class="requests-section-kicker">
+                  Action required
+                </p>
+
+                <h3>
+                  Request Attention
+                </h3>
+
+                <p>
+                  Requests awaiting approval, allocation or urgent Plant &amp; Transport action.
+                </p>
+
+              </div>
+
+
+              <button
+                id="clearRequestSummaryFilter"
+                class="requests-text-action"
+                type="button"
+                hidden
+              >
+                Clear filter
+              </button>
+
+            </header>
+
+
+            <div
+              id="requestAttentionList"
+              class="requests-attention-list"
+            >
+
+              <div class="requests-empty-state">
+
+                <strong>
+                  No requests need attention
+                </strong>
+
+                <span>
+                  New project and site requests will appear here when action is required.
+                </span>
+
+              </div>
+
+            </div>
+
+
+          </section>
+
+
+          <!-- =================================================
+               REQUEST REGISTER
+          ================================================== -->
+
+          <section class="requests-register-panel">
+
+
+            <header class="requests-section-heading requests-section-heading--register">
+
+              <div>
+
+                <p class="requests-section-kicker">
+                  Request history
+                </p>
+
+                <h3>
+                  Request Register
+                </h3>
+
+                <p>
+                  Open, approved, rejected and completed requests across accessible projects.
+                </p>
+
+              </div>
+
+
+              <div class="requests-register-count">
+
+                <strong id="requestRegisterCount">
+                  —
+                </strong>
+
+                <span>
+                  requests
+                </span>
+
+              </div>
+
+            </header>
+
+
+            <!-- FILTERS -->
+
+            <div class="requests-filter-bar">
+
+
+              <label class="requests-filter requests-filter--search">
+
+                <span>
+                  Search
+                </span>
+
+                <input
+                  id="requestSearchInput"
+                  type="search"
+                  placeholder="Request, asset, project or requester"
+                  autocomplete="off"
+                />
+
+              </label>
+
+
+              <label class="requests-filter">
+
+                <span>
+                  Type
+                </span>
+
+                <select id="requestTypeFilter">
+
+                  <option value="">
+                    All types
+                  </option>
+
+                  <option value="PLANT_REQUIRED">
+                    Plant required
+                  </option>
+
+                  <option value="SERVICE_REPAIR">
+                    Service / repair
+                  </option>
+
+                  <option value="MOVEMENT">
+                    Movement
+                  </option>
+
+                  <option value="OFF_HIRE">
+                    Off-hire
+                  </option>
+
+                  <option value="REPLACEMENT">
+                    Replacement
+                  </option>
+
+                  <option value="OTHER">
+                    Other
+                  </option>
+
+                </select>
+
+              </label>
+
+
+              <label class="requests-filter">
+
+                <span>
+                  Status
+                </span>
+
+                <select id="requestStatusFilter">
+
+                  <option value="">
+                    All statuses
+                  </option>
+
+                  <option value="DRAFT">
+                    Draft
+                  </option>
+
+                  <option value="SUBMITTED">
+                    Submitted
+                  </option>
+
+                  <option value="PENDING_APPROVAL">
+                    Awaiting approval
+                  </option>
+
+                  <option value="UNDER_REVIEW">
+                    Under review
+                  </option>
+
+                  <option value="APPROVED">
+                    Approved
+                  </option>
+
+                  <option value="PARTIALLY_APPROVED">
+                    Partially approved
+                  </option>
+
+                  <option value="IN_PROGRESS">
+                    In progress
+                  </option>
+
+                  <option value="COMPLETED">
+                    Completed
+                  </option>
+
+                  <option value="REJECTED">
+                    Rejected
+                  </option>
+
+                  <option value="CANCELLED">
+                    Cancelled
+                  </option>
+
+                </select>
+
+              </label>
+
+
+              <label class="requests-filter">
+
+                <span>
+                  Priority
+                </span>
+
+                <select id="requestPriorityFilter">
+
+                  <option value="">
+                    All priorities
+                  </option>
+
+                  <option value="NORMAL">
+                    Normal
+                  </option>
+
+                  <option value="HIGH">
+                    High
+                  </option>
+
+                  <option value="URGENT">
+                    Urgent
+                  </option>
+
+                </select>
+
+              </label>
+
+
+              <label class="requests-filter">
+
+                <span>
+                  Project
+                </span>
+
+                <select id="requestProjectFilter">
+
+                  <option value="">
+                    All accessible projects
+                  </option>
+
+                </select>
+
+              </label>
+
+
+            </div>
+
+
+            <!-- TABLE -->
+
+            <div class="requests-register-table-wrap">
+
+              <table
+                class="requests-register-table"
+                aria-label="Plant request register"
+              >
+
+                <thead>
+
+                  <tr>
+
+                    <th>
+                      Request
+                    </th>
+
+                    <th>
+                      Project
+                    </th>
+
+                    <th>
+                      Requirement
+                    </th>
+
+                    <th>
+                      Required
+                    </th>
+
+                    <th>
+                      Priority
+                    </th>
+
+                    <th>
+                      Status
+                    </th>
+
+                    <th>
+                      Owner
+                    </th>
+
+                    <th>
+                      Action
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+
+                <tbody id="requestRegisterBody">
+
+                  <tr class="requests-register-empty-row">
+
+                    <td colspan="8">
+
+                      <div class="requests-empty-state requests-empty-state--table">
+
+                        <strong>
+                          No requests loaded
+                        </strong>
+
+                        <span>
+                          Requests matching the current access and filters will appear here.
+                        </span>
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+
+          </section>
+
+
+        </section>
+
+
+      </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="workspace-footer">
+
+      <div class="workspace-container">
+
+        <div class="workspace-footer__inner">
+
+          <span class="workspace-footer__brand">
+            <strong>NORMEX</strong>
+          </span>
+
+          <span
+            id="workspaceFooterOrganisation"
+            class="workspace-footer__context"
+          >
+            Colemans
+          </span>
+
+        </div>
+
+      </div>
+
+    </footer>
+
+
+  </div>
+
+
+  <!-- =====================================================
+       MOBILE NAV
+  ====================================================== -->
+
+  <aside
+    id="contractorMobileNav"
+    class="workspace-mobile-nav"
+    hidden
+  >
+
+    <div
+      id="mobileNavBackdrop"
+      class="workspace-mobile-nav__backdrop"
+    ></div>
+
+    <div class="workspace-mobile-nav__panel">
+
+      <header class="workspace-mobile-nav__header">
+
+        <div>
+
+          <span class="workspace-mobile-nav__eyebrow">
+            Colemans
+          </span>
+
+          <h2 class="workspace-mobile-nav__title">
+            Navigation
+          </h2>
+
+        </div>
+
+        <button
+          id="mobileNavClose"
+          class="workspace-mobile-nav__close"
+          type="button"
+          aria-label="Close navigation"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <nav
+        id="contractorMobileNavLinks"
+        class="workspace-mobile-nav__links"
+      ></nav>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =====================================================
+       NEW REQUEST DIALOG
+  ====================================================== -->
+
+  <dialog
+    id="requestDialog"
+    class="requests-dialog"
+    aria-labelledby="requestDialogTitle"
+  >
+
+    <form
+      id="requestForm"
+      class="requests-dialog-form"
+      novalidate
+    >
+
+
+      <header class="requests-dialog-header">
+
+        <div>
+
+          <p class="requests-dialog-eyebrow">
+            Plant &amp; Transport
+          </p>
+
+          <h2 id="requestDialogTitle">
+            New Request
+          </h2>
+
+          <p id="requestDialogDescription">
+            Tell the Plant team what is required and when.
+          </p>
+
+        </div>
+
+
+        <button
+          id="requestDialogClose"
+          class="requests-dialog-close"
+          type="button"
+          aria-label="Close request"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div class="requests-dialog-body">
+
+
+        <!-- REQUEST TYPE -->
+
+        <section class="requests-form-section">
+
+          <header>
+
+            <span>
+              1
+            </span>
+
+            <div>
+
+              <h3>
+                Request type
+              </h3>
+
+              <p>
+                Select the operational action required.
+              </p>
+
+            </div>
+
+          </header>
+
+
+          <div
+            id="requestTypeSelector"
+            class="requests-type-grid"
+          >
+
+
+            <label class="requests-type-option">
+
+              <input
+                type="radio"
+                name="requestType"
+                value="PLANT_REQUIRED"
+                checked
+              />
+
+              <span class="requests-type-option__body">
+
+                <strong>
+                  Plant required
+                </strong>
+
+                <small>
+                  Request Plant or equipment for a project.
+                </small>
+
+              </span>
+
+            </label>
+
+
+            <label class="requests-type-option">
+
+              <input
+                type="radio"
+                name="requestType"
+                value="SERVICE_REPAIR"
+              />
+
+              <span class="requests-type-option__body">
+
+                <strong>
+                  Service / repair
+                </strong>
+
+                <small>
+                  Request service or repair for an allocated asset.
+                </small>
+
+              </span>
+
+            </label>
+
+
+            <label class="requests-type-option">
+
+              <input
+                type="radio"
+                name="requestType"
+                value="MOVEMENT"
+              />
+
+              <span class="requests-type-option__body">
+
+                <strong>
+                  Movement
+                </strong>
+
+                <small>
+                  Request transport or relocation.
+                </small>
+
+              </span>
+
+            </label>
+
+
+            <label class="requests-type-option">
+
+              <input
+                type="radio"
+                name="requestType"
+                value="OFF_HIRE"
+              />
+
+              <span class="requests-type-option__body">
+
+                <strong>
+                  Off-hire
+                </strong>
+
+                <small>
+                  Request return or release of hired Plant.
+                </small>
+
+              </span>
+
+            </label>
+
+
+            <label class="requests-type-option">
+
+              <input
+                type="radio"
+                name="requestType"
+                value="REPLACEMENT"
+              />
+
+              <span class="requests-type-option__body">
+
+                <strong>
+                  Replacement
+                </strong>
+
+                <small>
+                  Request a replacement asset.
+                </small>
+
+              </span>
+
+            </label>
+
+
+            <label class="requests-type-option">
+
+              <input
+                type="radio"
+                name="requestType"
+                value="OTHER"
+              />
+
+              <span class="requests-type-option__body">
+
+                <strong>
+                  Other
+                </strong>
+
+                <small>
+                  Other Plant or Transport support.
+                </small>
+
+              </span>
+
+            </label>
+
+
+          </div>
+
+        </section>
+
+
+        <!-- PROJECT CONTEXT -->
+
+        <section class="requests-form-section">
+
+          <header>
+
+            <span>
+              2
+            </span>
+
+            <div>
+
+              <h3>
+                Project &amp; requirement
+              </h3>
+
+              <p>
+                Identify where the request comes from and what is needed.
+              </p>
+
+            </div>
+
+          </header>
+
+
+          <div class="requests-form-grid">
+
+
+            <label class="requests-field">
+
+              <span>
+                Project *
+              </span>
+
+              <select
+                id="requestProjectId"
+                name="projectId"
+                required
+              >
+
+                <option value="">
+                  Select project
+                </option>
+
+              </select>
+
+            </label>
+
+            <label class="requests-safety-field requests-form-grid__wide">
+
+              <input
+                id="requestSafetyCritical"
+                name="safetyCritical"
+                type="checkbox"
+              />
+
+              <span>
+                <strong>Safety-critical</strong>
+                Immediate Plant / Transport management attention is required. This does not place the asset on hold.
+              </span>
+
+            </label>
+
+
+            <label class="requests-field">
+
+              <span>
+                Priority *
+              </span>
+
+              <select
+                id="requestPriority"
+                name="priority"
+                required
+              >
+
+                <option value="NORMAL">
+                  Normal
+                </option>
+
+                <option value="HIGH">
+                  High
+                </option>
+
+                <option value="URGENT">
+                  Urgent
+                </option>
+
+              </select>
+
+            </label>
+
+
+            <!-- PLANT REQUIRED -->
+
+            <div
+              class="requests-type-fields requests-form-grid__wide"
+              data-request-fields="PLANT_REQUIRED"
+            >
+
+              <div class="requests-form-grid">
+
+
+                <label class="requests-field">
+
+                  <span>
+                    Plant / equipment type *
+                  </span>
+
+                  <select
+                    id="requestPlantType"
+                    name="requestedPlantType"
+                  >
+
+                    <option value="">
+                      Select type
+                    </option>
+
+                  </select>
+
+                </label>
+
+
+                <label class="requests-field">
+
+                  <span>
+                    Quantity
+                  </span>
+
+                  <input
+                    id="requestQuantity"
+                    name="quantity"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value="1"
+                  />
+
+                </label>
+
+
+              </div>
+
+            </div>
+
+
+            <!-- EXISTING ASSET -->
+
+            <div
+              class="requests-type-fields requests-form-grid__wide"
+              data-request-fields="SERVICE_REPAIR MOVEMENT OFF_HIRE REPLACEMENT"
+              hidden
+            >
+
+              <label class="requests-field">
+
+                <span>
+                  Asset *
+                </span>
+
+                <select
+                  id="requestAssetId"
+                  name="assetId"
+                >
+
+                  <option value="">
+                    Select allocated asset
+                  </option>
+
+                </select>
+
+              </label>
+
+            </div>
+
+
+            <label class="requests-field requests-field--wide">
+
+              <span>
+                Requirement / issue *
+              </span>
+
+              <textarea
+                id="requestRequirement"
+                name="requirement"
+                rows="4"
+                placeholder="Describe what is required, the issue or the reason for the request"
+                required
+              ></textarea>
+
+            </label>
+
+
+          </div>
+
+        </section>
+
+
+        <!-- TIMING -->
+
+        <section class="requests-form-section">
+
+          <header>
+
+            <span>
+              3
+            </span>
+
+            <div>
+
+              <h3>
+                Timing &amp; location
+              </h3>
+
+              <p>
+                When and where does the project need the action completed?
+              </p>
+
+            </div>
+
+          </header>
+
+
+          <div class="requests-form-grid">
+
+
+            <label class="requests-field">
+
+              <span>
+                Required from *
+              </span>
+
+              <input
+                id="requestRequiredFrom"
+                name="requiredFrom"
+                type="date"
+                required
+              />
+
+            </label>
+
+
+            <label class="requests-field">
+
+              <span>
+                Required until
+              </span>
+
+              <input
+                id="requestRequiredUntil"
+                name="requiredUntil"
+                type="date"
+              />
+
+            </label>
+
+
+            <label class="requests-field requests-field--wide">
+
+              <span>
+                Delivery / work location
+              </span>
+
+              <input
+                id="requestLocation"
+                name="location"
+                type="text"
+                placeholder="e.g. B Block, west elevation"
+              />
+
+            </label>
+
+
+          </div>
+
+        </section>
+
+
+        <!-- ACTION ITEMS -->
+
+        <section class="requests-form-section">
+
+          <header>
+
+            <span>
+              4
+            </span>
+
+            <div>
+
+              <h3>
+                Action items
+              </h3>
+
+              <p>
+                Separate distinct actions so management can review each one independently.
+              </p>
+
+            </div>
+
+          </header>
+
+
+          <div id="requestItemsEditor" class="requests-items-editor"></div>
+
+          <button
+            id="requestAddItemButton"
+            class="requests-button requests-add-item"
+            type="button"
+          >
+            + Add action item
+          </button>
+
+        </section>
+
+
+        <!-- NOTES -->
+
+        <section class="requests-form-section">
+
+          <header>
+
+            <span>
+              5
+            </span>
+
+            <div>
+
+              <h3>
+                Additional information
+              </h3>
+
+              <p>
+                Add anything the Plant team needs before reviewing the request.
+              </p>
+
+            </div>
+
+          </header>
+
+
+          <div class="requests-form-grid">
+
+
+            <label class="requests-field requests-field--wide">
+
+              <span>
+                Notes
+              </span>
+
+              <textarea
+                id="requestNotes"
+                name="notes"
+                rows="4"
+                placeholder="Access restrictions, lifting requirements, supplier details or other useful information"
+              ></textarea>
+
+            </label>
+
+
+          </div>
+
+          <div class="requests-attachment-state" role="note">
+            <strong>Attachments unavailable</strong>
+            <span>Storage currently denies uploads. No attachment metadata will be created. Inspection evidence can still be linked by source context.</span>
+          </div>
+
+        </section>
+
+
+        <p
+          id="requestFormError"
+          class="requests-form-error"
+          role="alert"
+          hidden
+        ></p>
+
+
+      </div>
+
+
+      <footer class="requests-dialog-footer">
+
+        <div>
+
+          <span>
+            Requester
+          </span>
+
+          <strong id="requesterPreview">
+            Current user
+          </strong>
+
+        </div>
+
+
+        <div class="requests-dialog-footer__actions">
+
+          <button
+            id="requestCancelButton"
+            class="requests-button"
+            type="button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="requestSaveDraftButton"
+            class="requests-button"
+            type="button"
+          >
+            Save Draft
+          </button>
+
+          <button
+            id="requestSubmitButton"
+            class="requests-button requests-button--primary"
+            type="submit"
+          >
+            Submit Request
+          </button>
+
+        </div>
+
+      </footer>
+
+
+    </form>
+
+  </dialog>
+
+
+  <!-- =====================================================
+       REQUEST DETAIL DRAWER
+  ====================================================== -->
+
+  <aside
+    id="requestDrawer"
+    class="requests-drawer"
+    aria-hidden="true"
+  >
+
+
+    <div
+      id="requestDrawerBackdrop"
+      class="requests-drawer__backdrop"
+    ></div>
+
+
+    <section
+      class="requests-drawer__panel"
+      aria-labelledby="requestDrawerTitle"
+    >
+
+
+      <header class="requests-drawer__header">
+
+        <div>
+
+          <p
+            id="requestDrawerReference"
+            class="requests-drawer__eyebrow"
+          >
+            Request
+          </p>
+
+          <h2 id="requestDrawerTitle">
+            Request details
+          </h2>
+
+          <p id="requestDrawerSubtitle">
+            Loading request information
+          </p>
+
+        </div>
+
+
+        <button
+          id="requestDrawerClose"
+          class="requests-dialog-close"
+          type="button"
+          aria-label="Close request details"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div
+        id="requestDrawerBody"
+        class="requests-drawer__body"
+      ></div>
+
+
+      <footer
+        id="requestDrawerActions"
+        class="requests-drawer__actions"
+      >
+
+        <!-- JS renders permission/status appropriate actions -->
+
+      </footer>
+
+
+    </section>
+
+
+  </aside>
+
+
+  <!-- =====================================================
+       SCRIPTS
+  ====================================================== -->
+
+  <script
+    src="/modules/contractor/shared/js/config.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/shared/js/shell.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/plant/requests/requests.js"
+  ></script>
+
+
+</body>
+
+</html>

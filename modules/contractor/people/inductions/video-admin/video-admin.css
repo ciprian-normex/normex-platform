@@ -1,0 +1,982 @@
+/* =========================================================
+   NORMEX PEOPLE
+   INDUCTION PACK ADMINISTRATION
+========================================================= */
+
+:root {
+  --ipa-ink: #21392e;
+  --ipa-text: #3b5346;
+
+  --ipa-muted: #74827a;
+  --ipa-muted-soft: #8d9992;
+
+  --ipa-green: #2c5941;
+  --ipa-green-deep: #214832;
+  --ipa-green-soft: #e9f2ec;
+
+  --ipa-line: #dce5df;
+  --ipa-line-soft: #e9efeb;
+
+  --ipa-surface: #ffffff;
+  --ipa-soft: #f7faf8;
+
+  --ipa-shadow:
+    0 9px 26px
+    rgba(15, 35, 23, 0.035);
+}
+
+
+/* =========================================================
+   PANELS
+========================================================= */
+
+.video-admin-current,
+.video-admin-editor,
+.video-admin-side-card {
+  border:
+    1px solid
+    rgba(40, 62, 48, 0.08);
+
+  border-radius: 18px;
+
+  background:
+    var(--ipa-surface);
+
+  box-shadow:
+    var(--ipa-shadow);
+}
+
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+.video-admin-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 18px;
+
+  margin-bottom: 15px;
+}
+
+
+.video-admin-section-header h2 {
+  margin: 0;
+
+  color:
+    var(--ipa-ink);
+
+  font-size: var(--people-text-lg, 1.08rem);
+  font-weight: 900;
+}
+
+
+.video-admin-section-header > div > p:last-child {
+  max-width: 660px;
+
+  margin:
+    5px
+    0
+    0;
+
+  color:
+    var(--ipa-muted);
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.video-admin-status {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 25px;
+
+  padding:
+    4px
+    9px;
+
+  border-radius: 7px;
+
+  background:
+    #edf1ee;
+
+  color:
+    #64736b;
+
+  font-size: var(--people-text-xs, 0.72rem);
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   CURRENT PACK
+========================================================= */
+
+.video-admin-current {
+  margin-bottom: 12px;
+
+  padding: 18px;
+}
+
+
+.video-admin-current__layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.55fr)
+    minmax(250px, 0.65fr);
+
+  gap: 12px;
+}
+
+
+/* =========================================================
+   CURRENT VIDEO PREVIEW
+========================================================= */
+
+.video-admin-preview {
+  position: relative;
+
+  display: grid;
+  place-items: center;
+
+  width: 100%;
+
+  aspect-ratio: 16 / 9;
+
+  overflow: hidden;
+
+  border-radius: 13px;
+
+  background:
+    radial-gradient(
+      circle at 50% 42%,
+      #1b3024,
+      #101b15 58%,
+      #0b130e
+    );
+}
+
+
+.video-admin-preview video {
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+}
+
+
+.video-admin-preview__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-direction: column;
+
+  gap: 6px;
+
+  max-width: 400px;
+
+  padding: 24px;
+
+  text-align: center;
+}
+
+
+.video-admin-preview__play {
+  margin-bottom: 3px;
+
+  color:
+    rgba(255, 255, 255, 0.76);
+
+  font-size: var(--people-text-base, 0.84rem);
+}
+
+
+.video-admin-preview__empty strong {
+  color: #f3f7f4;
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+.video-admin-preview__empty > span:last-child {
+  color:
+    rgba(226, 235, 229, 0.64);
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   CURRENT SETTINGS
+========================================================= */
+
+.video-admin-current__settings {
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--ipa-line-soft);
+
+  border-radius: 11px;
+}
+
+
+.video-admin-current-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  min-height: 46px;
+
+  padding:
+    8px
+    11px;
+
+  border-bottom:
+    1px solid
+    var(--ipa-line-soft);
+}
+
+
+.video-admin-current-row:last-child {
+  border-bottom: 0;
+}
+
+
+.video-admin-current-row span {
+  color:
+    var(--ipa-muted-soft);
+
+  font-size: var(--people-text-xs, 0.72rem);
+}
+
+
+.video-admin-current-row strong {
+  max-width: 160px;
+
+  color:
+    var(--ipa-text);
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+
+  text-align: right;
+}
+
+
+/* =========================================================
+   EDITOR LAYOUT
+========================================================= */
+
+.video-admin-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    280px;
+
+  gap: 12px;
+
+  align-items: start;
+}
+
+
+.video-admin-editor {
+  padding: 18px;
+}
+
+
+/* =========================================================
+   FORM BLOCK
+========================================================= */
+
+.video-admin-form-block {
+  padding:
+    17px
+    0;
+
+  border-top:
+    1px solid
+    var(--ipa-line-soft);
+}
+
+
+.video-admin-form-block:first-of-type {
+  padding-top: 3px;
+
+  border-top: 0;
+}
+
+
+.video-admin-form-block__header {
+  margin-bottom: 13px;
+}
+
+
+.video-admin-form-label {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color:
+    #64806e;
+
+  font-size: var(--people-text-xs, 0.72rem);
+  font-weight: 900;
+
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+}
+
+
+.video-admin-form-block__header strong {
+  display: block;
+
+  color:
+    var(--ipa-text);
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+.video-admin-form-block__header p {
+  max-width: 650px;
+
+  margin:
+    4px
+    0
+    0;
+
+  color:
+    var(--ipa-muted-soft);
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   FIELDS
+========================================================= */
+
+.video-admin-fields {
+  display: grid;
+
+  gap: 10px;
+}
+
+
+.video-admin-fields--two {
+  grid-template-columns:
+    minmax(0, 1.25fr)
+    minmax(180px, 0.75fr);
+}
+
+
+/* =========================================================
+   DROPZONE
+========================================================= */
+
+.video-admin-dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-direction: column;
+
+  gap: 5px;
+
+  min-height: 135px;
+
+  padding: 18px;
+
+  border:
+    1px dashed
+    #b8c8bd;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #fafcfb,
+      #f5f8f6
+    );
+
+  cursor: pointer;
+
+  text-align: center;
+
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    transform 150ms ease;
+}
+
+
+.video-admin-dropzone:hover,
+.video-admin-dropzone.is-dragging {
+  border-color:
+    #71927d;
+
+  background:
+    #f2f7f3;
+
+  transform:
+    translateY(-1px);
+}
+
+
+.video-admin-dropzone__upload {
+  color:
+    var(--ipa-green);
+
+  font-size: 1rem;
+  font-weight: 900;
+
+  line-height: 1;
+}
+
+
+.video-admin-dropzone strong {
+  color:
+    var(--ipa-text);
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+.video-admin-dropzone > span:nth-of-type(2) {
+  color:
+    var(--ipa-muted-soft);
+
+  font-size: var(--people-text-xs, 0.72rem);
+}
+
+
+.video-admin-dropzone__button {
+  margin-top: 5px;
+
+  padding:
+    5px
+    10px;
+
+  border:
+    1px solid
+    var(--ipa-line);
+
+  border-radius: 7px;
+
+  background:
+    #ffffff;
+
+  color:
+    var(--ipa-green);
+
+  font-size: var(--people-text-xs, 0.72rem);
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   FILE META
+========================================================= */
+
+.video-admin-file-meta {
+  display: grid;
+
+  grid-template-columns:
+    1.5fr
+    0.6fr
+    0.7fr;
+
+  margin-top: 9px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--ipa-line);
+
+  border-radius: 9px;
+}
+
+
+.video-admin-file-meta[hidden] {
+  display: none;
+}
+
+
+.video-admin-file-meta > div {
+  padding:
+    9px
+    10px;
+
+  border-right:
+    1px solid
+    var(--ipa-line);
+}
+
+
+.video-admin-file-meta > div:last-child {
+  border-right: 0;
+}
+
+
+.video-admin-file-meta span,
+.video-admin-file-meta strong {
+  display: block;
+}
+
+
+.video-admin-file-meta span {
+  color:
+    var(--ipa-muted-soft);
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  text-transform: uppercase;
+}
+
+
+.video-admin-file-meta strong {
+  margin-top: 3px;
+
+  color:
+    var(--ipa-text);
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+/* =========================================================
+   RULE GRID
+========================================================= */
+
+.video-admin-rule-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 8px;
+}
+
+
+.video-admin-rule-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 18px;
+
+  min-height: 82px;
+
+  padding:
+    11px
+    12px;
+
+  border:
+    1px solid
+    var(--ipa-line);
+
+  border-radius: 10px;
+
+  background:
+    var(--ipa-soft);
+}
+
+
+.video-admin-rule-card label {
+  display: block;
+
+  color:
+    var(--ipa-text);
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+.video-admin-rule-card p {
+  max-width: 300px;
+
+  margin:
+    4px
+    0
+    0;
+
+  color:
+    var(--ipa-muted);
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   NUMBER INPUT
+========================================================= */
+
+.video-admin-number-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  flex: 0 0 auto;
+}
+
+
+.video-admin-number-control input {
+  width: 110px;
+  min-height: 40px;
+
+  padding: 0 18px;
+
+  border: 1px solid #bcc8bf;
+  border-radius: 16px;
+
+  background: #ffffff;
+  color: var(--ipa-ink);
+
+  font-size: var(--people-text-md, 0.94rem);
+  font-weight: 800;
+  line-height: 1;
+
+  text-align: center;
+
+  appearance: textfield;
+  -moz-appearance: textfield;
+
+  box-shadow: none;
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+
+.video-admin-number-control input:hover {
+  border-color: #9fb2a5;
+  background: #fcfdfc;
+}
+
+
+.video-admin-number-control input:focus {
+  outline: none;
+  border-color: var(--ipa-green);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(44, 89, 65, 0.10);
+}
+
+
+.video-admin-number-control input::-webkit-outer-spin-button,
+.video-admin-number-control input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+.video-admin-number-control span {
+  min-width: 52px;
+
+  color: var(--ipa-muted);
+  font-size: var(--people-text-xs, 0.72rem);
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.video-admin-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding-top: 16px;
+
+  border-top:
+    1px solid
+    var(--ipa-line-soft);
+}
+
+
+.video-admin-actions > div {
+  display: grid;
+
+  gap: 3px;
+
+  max-width: 590px;
+}
+
+
+.video-admin-actions strong {
+  color:
+    var(--ipa-text);
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+.video-admin-actions > div > span {
+  color:
+    var(--ipa-muted-soft);
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  line-height: 1.4;
+}
+
+
+.video-admin-publish {
+  gap: 7px;
+
+  flex: 0 0 auto;
+
+  min-width: 145px;
+}
+
+
+/* =========================================================
+   SIDE
+========================================================= */
+
+.video-admin-side {
+  display: grid;
+
+  gap: 10px;
+}
+
+
+.video-admin-side-card {
+  padding: 15px;
+}
+
+
+.video-admin-side-card h2 {
+  margin: 0;
+
+  color:
+    var(--ipa-ink);
+
+  font-size: var(--people-text-lg, 1.08rem);
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   CHECKLIST
+========================================================= */
+
+.video-admin-checklist {
+  display: grid;
+
+  margin-top: 12px;
+}
+
+
+.video-admin-check {
+  padding:
+    9px
+    0;
+
+  border-bottom:
+    1px solid
+    var(--ipa-line-soft);
+}
+
+
+.video-admin-check:last-child {
+  border-bottom: 0;
+}
+
+
+.video-admin-check strong,
+.video-admin-check span {
+  display: block;
+}
+
+
+.video-admin-check strong {
+  color:
+    var(--ipa-text);
+
+  font-size: var(--people-text-base, 0.84rem);
+}
+
+
+.video-admin-check span {
+  margin-top: 3px;
+
+  color:
+    var(--ipa-muted-soft);
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   INFO
+========================================================= */
+
+.video-admin-side-card--info {
+  display: grid;
+
+  grid-template-columns:
+    25px
+    minmax(0, 1fr);
+
+  gap: 9px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f9fbfa,
+      #f5f8f6
+    );
+}
+
+
+.video-admin-info {
+  color:
+    var(--ipa-green);
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+
+  text-align: center;
+}
+
+
+.video-admin-side-card--info strong {
+  color:
+    var(--ipa-text);
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+.video-admin-side-card--info p {
+  margin:
+    4px
+    0
+    0;
+
+  color:
+    var(--ipa-muted);
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 950px) {
+
+  .video-admin-current__layout,
+  .video-admin-layout {
+    grid-template-columns:
+      1fr;
+  }
+
+}
+
+
+@media (max-width: 720px) {
+
+  .video-admin-fields--two,
+  .video-admin-rule-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .video-admin-rule-card {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column;
+  }
+
+
+  .video-admin-number-control input {
+    width:
+      100%;
+  }
+
+
+  .video-admin-actions,
+  .video-admin-section-header {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column;
+  }
+
+
+  .video-admin-file-meta {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .video-admin-file-meta > div {
+    border-right:
+      0;
+
+    border-bottom:
+      1px solid
+      var(--ipa-line);
+  }
+
+
+  .video-admin-file-meta > div:last-child {
+    border-bottom:
+      0;
+  }
+
+
+  .video-admin-publish {
+    width:
+      100%;
+  }
+
+}

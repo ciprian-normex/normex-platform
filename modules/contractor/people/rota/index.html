@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>
+    Rota | People | NORMEX
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/people/rota/rota.css"
+  />
+
+</head>
+
+
+<body>
+
+  <div class="workspace">
+
+
+    <!-- =====================================================
+         ORGANISATION HEADER
+    ====================================================== -->
+
+    <header class="workspace-header">
+
+      <div class="workspace-container">
+
+        <div class="workspace-header__surface">
+
+
+          <div class="workspace-brand">
+
+            <p class="workspace-brand__product">
+              NORMEX · Contractor Workspace
+            </p>
+
+            <h1
+              id="workspaceOrganisationName"
+              class="workspace-brand__name"
+            >
+              Colemans
+            </h1>
+
+            <p class="workspace-brand__tagline">
+              Projects, resources and operational control
+            </p>
+
+          </div>
+
+
+          <div class="workspace-header-actions">
+
+
+            <div class="workspace-status">
+
+              <span
+                class="workspace-status__pulse"
+                aria-hidden="true"
+              ></span>
+
+              <span class="workspace-status__label">
+                Organisation Workspace
+              </span>
+
+            </div>
+
+
+            <div class="workspace-user">
+
+              <div class="workspace-user__details">
+
+                <span
+                  id="workspaceUserName"
+                  class="workspace-user__name"
+                >
+                  User
+                </span>
+
+                <span
+                  id="workspaceUserRole"
+                  class="workspace-user__role"
+                >
+                  Loading
+                </span>
+
+              </div>
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ORGANISATION NAVIGATION
+    ====================================================== -->
+
+    <nav
+      class="workspace-nav"
+      aria-label="Organisation navigation"
+    >
+
+      <div class="workspace-container">
+
+        <div
+          id="contractorNavSurface"
+          class="workspace-nav__surface"
+        >
+
+          <div
+            id="contractorNavLinks"
+            class="workspace-nav__links"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="workspace-main">
+
+      <div class="workspace-container">
+
+
+        <!-- =================================================
+             PEOPLE WORKSPACE NAVIGATION
+        ================================================== -->
+
+        <nav
+          class="people-workspace-nav"
+          aria-label="People workspace navigation"
+        >
+
+          <div class="people-workspace-nav__identity">
+
+            <span class="people-workspace-nav__badge">
+              People
+            </span>
+
+            <div>
+
+              <span class="people-workspace-nav__eyebrow">
+                People workspace
+              </span>
+
+              <strong>
+                Workforce &amp; People Control
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <div class="people-workspace-nav__links">
+
+            <a
+              class="people-workspace-nav__link"
+              href="/modules/contractor/people/"
+            >
+              Overview
+            </a>
+
+            <a
+              class="people-workspace-nav__link is-active"
+              href="/modules/contractor/people/rota/"
+            >
+              Rota
+            </a>
+
+            <a
+              class="people-workspace-nav__link"
+              href="/modules/contractor/people/resource-planning/"
+            >
+              Resource Planning
+            </a>
+
+            <a
+              class="people-workspace-nav__link"
+              href="/modules/contractor/people/my-team/"
+            >
+              My Team
+            </a>
+
+            <a
+              class="people-workspace-nav__link"
+              href="/modules/contractor/people/inductions/"
+            >
+              Inductions
+            </a>
+
+          </div>
+
+        </nav>
+
+
+        <section class="rota-page">
+
+
+          <!-- =================================================
+               HERO
+          ================================================== -->
+
+          <header class="rota-hero">
+
+            <div>
+
+              <p class="rota-eyebrow">
+                People · Rota
+              </p>
+
+              <h2>
+                Weekly Rota
+              </h2>
+
+              <p class="rota-hero__note">
+                Plan where people are working, review the wider workforce position and publish the confirmed week.
+              </p>
+
+            </div>
+
+
+            <div class="rota-hero__status">
+
+              <span class="rota-hero__status-label">
+                Planning status
+              </span>
+
+              <strong id="rotaHeroStatus">
+                Loading
+              </strong>
+
+            </div>
+
+          </header>
+
+
+          <!-- =================================================
+               WEEK TOOLBAR
+          ================================================== -->
+
+          <section class="rota-toolbar">
+
+
+            <div class="rota-week-navigation">
+
+              <button
+                id="rotaPreviousWeek"
+                class="rota-control-button"
+                type="button"
+              >
+                ←
+                Previous
+              </button>
+
+
+              <div class="rota-week-title">
+
+                <span id="rotaWeekContext">
+                  Current week
+                </span>
+
+                <strong id="rotaWeekLabel">
+                  Loading week
+                </strong>
+
+              </div>
+
+
+              <button
+                id="rotaNextWeek"
+                class="rota-control-button"
+                type="button"
+              >
+                Next
+                →
+              </button>
+
+
+              <button
+                id="rotaToday"
+                class="rota-control-button rota-control-button--quiet"
+                type="button"
+              >
+                This week
+              </button>
+
+            </div>
+
+
+            <div class="rota-toolbar__actions">
+
+
+              <select
+                id="rotaScopeSelect"
+                class="rota-scope-select"
+                aria-label="Rota project visibility"
+              >
+                <option value="VISIBLE">
+                  My visible projects
+                </option>
+              </select>
+
+
+              <button
+                id="rotaCopyPrevious"
+                class="rota-control-button"
+                type="button"
+                disabled
+              >
+                Copy previous week
+              </button>
+
+
+              <button
+                id="rotaDiscardChanges"
+                class="rota-control-button"
+                type="button"
+                disabled
+              >
+                Discard changes
+              </button>
+
+
+              <button
+                id="rotaPublish"
+                class="rota-primary-button"
+                type="button"
+                disabled
+              >
+                Publish Rota
+              </button>
+
+            </div>
+
+
+          </section>
+
+
+          <!-- =================================================
+               DRAFT / PUBLISHED INFO
+          ================================================== -->
+
+          <section class="rota-status-strip">
+
+
+            <div class="rota-status-item">
+
+              <span class="rota-status-item__label">
+                Published
+              </span>
+
+              <strong id="rotaPublishedStatus">
+                Not loaded
+              </strong>
+
+            </div>
+
+
+            <div class="rota-status-item">
+
+              <span class="rota-status-item__label">
+                Last published
+              </span>
+
+              <strong id="rotaPublishedAt">
+                —
+              </strong>
+
+            </div>
+
+
+            <div class="rota-status-item">
+
+              <span class="rota-status-item__label">
+                Planning horizon
+              </span>
+
+              <strong id="rotaPlanningHorizon">
+                —
+              </strong>
+
+            </div>
+
+
+            <div
+              id="rotaUnsavedIndicator"
+              class="rota-unsaved-indicator"
+              hidden
+            >
+
+              <span class="rota-unsaved-indicator__dot"></span>
+
+              <strong>
+                Unpublished changes
+              </strong>
+
+            </div>
+
+
+          </section>
+
+
+          <!-- =================================================
+               MAIN ROTA WORKSPACE
+          ================================================== -->
+
+          <section class="rota-workspace">
+
+
+            <!-- ===============================================
+                 WORKFORCE PANEL
+            ================================================ -->
+
+            <aside class="rota-workforce">
+
+
+              <header class="rota-workforce__header">
+
+                <div>
+
+                  <p class="rota-eyebrow">
+                    Workforce
+                  </p>
+
+                  <h3>
+                    People
+                  </h3>
+
+                  <p>
+                    Drag a person onto the required day and project.
+                  </p>
+
+                </div>
+
+
+                <span
+                  id="rotaVisiblePeopleCount"
+                  class="rota-count-badge"
+                >
+                  —
+                </span>
+
+              </header>
+
+
+              <div class="rota-workforce__filters">
+
+
+                <label class="rota-filter rota-filter--search">
+
+                  <span>
+                    Search
+                  </span>
+
+                  <input
+                    id="rotaPeopleSearch"
+                    type="search"
+                    placeholder="Name or trade"
+                    autocomplete="off"
+                  />
+
+                </label>
+
+
+                <label class="rota-filter">
+
+                  <span>
+                    Trade
+                  </span>
+
+                  <select id="rotaTradeFilter">
+                    <option value="">
+                      All trades
+                    </option>
+                  </select>
+
+                </label>
+
+
+                <label class="rota-filter">
+
+                  <span>
+                    Employment
+                  </span>
+
+                  <select id="rotaEmploymentFilter">
+
+                    <option value="">
+                      All people
+                    </option>
+
+                    <option value="EMPLOYEE">
+                      Employees
+                    </option>
+
+                    <option value="AGENCY">
+                      Agency
+                    </option>
+
+                    <option value="SUBCONTRACTOR">
+                      Subcontractors
+                    </option>
+
+                  </select>
+
+                </label>
+
+
+              </div>
+
+
+              <div
+                id="rotaPeopleList"
+                class="rota-people-list"
+              >
+
+                <div class="rota-empty-state">
+
+                  <strong>
+                    Workforce not loaded
+                  </strong>
+
+                  <span>
+                    People available within your permitted rota scope will appear here.
+                  </span>
+
+                </div>
+
+              </div>
+
+
+            </aside>
+
+
+            <!-- ===============================================
+                 BOARD
+            ================================================ -->
+
+            <section class="rota-board-shell">
+
+
+              <div class="rota-board-scroll">
+
+
+                <div
+                  id="rotaBoard"
+                  class="rota-board"
+                >
+
+
+                  <!-- =========================================
+                       BOARD HEADER
+                  ========================================== -->
+
+                  <div class="rota-board-row rota-board-row--header">
+
+
+                    <div class="rota-board-project-cell rota-board-project-cell--header">
+
+                      <span>
+                        Project / Position
+                      </span>
+
+                    </div>
+
+
+                    <div
+                      id="rotaDayHeader0"
+                      class="rota-board-day-header"
+                    >
+                      <span>Mon</span>
+                      <strong>—</strong>
+                    </div>
+
+
+                    <div
+                      id="rotaDayHeader1"
+                      class="rota-board-day-header"
+                    >
+                      <span>Tue</span>
+                      <strong>—</strong>
+                    </div>
+
+
+                    <div
+                      id="rotaDayHeader2"
+                      class="rota-board-day-header"
+                    >
+                      <span>Wed</span>
+                      <strong>—</strong>
+                    </div>
+
+
+                    <div
+                      id="rotaDayHeader3"
+                      class="rota-board-day-header"
+                    >
+                      <span>Thu</span>
+                      <strong>—</strong>
+                    </div>
+
+
+                    <div
+                      id="rotaDayHeader4"
+                      class="rota-board-day-header"
+                    >
+                      <span>Fri</span>
+                      <strong>—</strong>
+                    </div>
+
+
+                    <div
+                      id="rotaDayHeader5"
+                      class="rota-board-day-header"
+                    >
+                      <span>Sat</span>
+                      <strong>—</strong>
+                    </div>
+
+
+                    <div
+                      id="rotaDayHeader6"
+                      class="rota-board-day-header"
+                    >
+                      <span>Sun</span>
+                      <strong>—</strong>
+                    </div>
+
+
+                  </div>
+
+
+                  <!-- =========================================
+                       SPECIAL POSITIONS
+                  ========================================== -->
+
+                  <div
+                    id="rotaSpecialRows"
+                    class="rota-board-special"
+                  ></div>
+
+
+                  <!-- =========================================
+                       PROJECT ROWS
+                  ========================================== -->
+
+                  <div
+                    id="rotaProjectRows"
+                    class="rota-board-projects"
+                  >
+
+                    <div class="rota-board-loading">
+
+                      <strong>
+                        Rota not loaded
+                      </strong>
+
+                      <span>
+                        Visible project rows will appear here.
+                      </span>
+
+                    </div>
+
+                  </div>
+
+
+                </div>
+
+              </div>
+
+
+            </section>
+
+
+          </section>
+
+
+          <!-- =================================================
+               BOARD FOOTER
+          ================================================== -->
+
+          <section class="rota-board-footer">
+
+
+            <div>
+
+              <span>
+                People planned
+              </span>
+
+              <strong id="rotaPeoplePlanned">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Not scheduled
+              </span>
+
+              <strong id="rotaPeopleUnscheduled">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Holiday
+              </span>
+
+              <strong id="rotaHolidayCount">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Unavailable
+              </span>
+
+              <strong id="rotaUnavailableCount">
+                —
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                Projects shown
+              </span>
+
+              <strong id="rotaProjectCount">
+                —
+              </strong>
+
+            </div>
+
+
+          </section>
+
+
+        </section>
+
+
+      </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="workspace-footer">
+
+      <div class="workspace-container">
+
+        <div class="workspace-footer__inner">
+
+          <span class="workspace-footer__brand">
+            <strong>NORMEX</strong>
+          </span>
+
+          <span
+            id="workspaceFooterOrganisation"
+            class="workspace-footer__context"
+          >
+            Colemans
+          </span>
+
+        </div>
+
+      </div>
+
+    </footer>
+
+
+  </div>
+
+
+  <!-- =====================================================
+       MOBILE NAV
+  ====================================================== -->
+
+  <aside
+    id="contractorMobileNav"
+    class="workspace-mobile-nav"
+    hidden
+  >
+
+    <div
+      id="mobileNavBackdrop"
+      class="workspace-mobile-nav__backdrop"
+    ></div>
+
+
+    <div class="workspace-mobile-nav__panel">
+
+      <header class="workspace-mobile-nav__header">
+
+        <div>
+
+          <span class="workspace-mobile-nav__eyebrow">
+            NORMEX
+          </span>
+
+          <h2 class="workspace-mobile-nav__title">
+            Navigation
+          </h2>
+
+        </div>
+
+
+        <button
+          id="mobileNavClose"
+          class="workspace-mobile-nav__close"
+          type="button"
+          aria-label="Close navigation"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <nav
+        id="contractorMobileNavLinks"
+        class="workspace-mobile-nav__links"
+      ></nav>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =====================================================
+       SCRIPTS
+  ====================================================== -->
+
+  <script
+    src="/modules/contractor/shared/js/config.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/shared/js/shell.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/people/rota/rota.js"
+  ></script>
+
+
+</body>
+
+</html>

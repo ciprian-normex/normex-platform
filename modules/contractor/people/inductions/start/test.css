@@ -1,0 +1,402 @@
+/* =========================================================
+   NORMEX PEOPLE
+   WORKER INDUCTION ASSESSMENT
+========================================================= */
+
+:root {
+  --it-ink: #20372c;
+  --it-text: #385044;
+  --it-muted: #748179;
+  --it-muted-soft: #8d9992;
+  --it-green: #28543d;
+  --it-green-soft: #e9f2ec;
+  --it-line: #dce5df;
+  --it-line-soft: #e8eeea;
+  --it-soft: #f7faf8;
+  --it-warn: #8a6418;
+  --it-warn-soft: #fbf4e4;
+  --it-shadow: 0 12px 30px rgba(16, 36, 24, 0.045);
+}
+
+.induction-test-page {
+  padding-bottom: 38px;
+}
+
+.induction-test-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.32fr);
+  gap: 14px;
+  align-items: stretch;
+}
+
+.induction-test-card {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid rgba(39, 64, 49, 0.08);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: var(--it-shadow);
+}
+
+.induction-test-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 14px;
+}
+
+.induction-test-card__header h2 {
+  margin: 0;
+  color: var(--it-ink);
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: -0.018em;
+}
+
+.induction-test-card__header > div > p:last-child {
+  max-width: 660px;
+  margin: 6px 0 0;
+  color: var(--it-muted);
+  font-size: var(--people-text-sm, 0.78rem);
+  line-height: 1.5;
+}
+
+.induction-test-counter {
+  display: grid;
+  align-content: center;
+  gap: 3px;
+  flex: 0 0 auto;
+  min-width: 108px;
+  min-height: 58px;
+  padding: 9px 12px;
+  border: 1px solid var(--it-line);
+  border-radius: 11px;
+  background: linear-gradient(145deg, #fafcfb, #f5f8f6);
+  text-align: right;
+}
+
+.induction-test-counter span {
+  color: var(--it-muted-soft);
+  font-size: var(--people-text-xs, 0.72rem);
+  font-weight: 850;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.induction-test-counter strong {
+  color: var(--it-text);
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+/* =========================================================
+   ASSESSMENT SUMMARY
+========================================================= */
+
+.induction-test-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 8px;
+  border: 1px solid var(--it-line-soft);
+  border-radius: 13px;
+  background: #f7faf8;
+}
+
+.induction-test-summary > div {
+  min-height: 58px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 9px 11px;
+  border: 1px solid #e1e8e3;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.induction-test-summary span {
+  color: var(--it-muted-soft);
+  font-size: var(--people-text-xs, 0.72rem);
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.induction-test-summary strong {
+  color: var(--it-text);
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.induction-test-progress-wrap {
+  margin-bottom: 14px;
+}
+
+.induction-test-progress-copy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 7px;
+}
+
+.induction-test-progress-copy span {
+  color: var(--it-muted-soft);
+  font-size: var(--people-text-xs, 0.72rem);
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.induction-test-progress-copy strong {
+  color: var(--it-text);
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+.induction-test-progress {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8eeea;
+}
+
+.induction-test-progress__bar {
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #4b795e, #28543d);
+  transition: width 180ms ease;
+}
+
+/* =========================================================
+   QUESTIONS
+========================================================= */
+
+.induction-test-questions {
+  display: grid;
+  gap: 12px;
+}
+
+.induction-test-loading {
+  padding: 24px;
+  border: 1px dashed #cbd8d0;
+  border-radius: 12px;
+  background: #f8faf9;
+  color: var(--it-muted);
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 800;
+  text-align: center;
+}
+
+.question {
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--it-line-soft);
+  border-radius: 13px;
+  background: linear-gradient(145deg, #ffffff, #fafcfb);
+  box-shadow: 0 5px 16px rgba(16, 36, 24, 0.025);
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.question.is-unanswered {
+  border-color: #d8b96d;
+  box-shadow: 0 0 0 3px rgba(216, 185, 109, 0.10);
+}
+
+.question legend {
+  width: 100%;
+  padding: 0 0 12px;
+  color: var(--it-ink);
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+  line-height: 1.5;
+}
+
+.question-number {
+  margin-right: 7px;
+  color: #4f725f;
+  font-weight: 950;
+}
+
+.option-list {
+  display: grid;
+  gap: 7px;
+}
+
+.option {
+  display: grid;
+  grid-template-columns: 24px 28px minmax(0, 1fr);
+  gap: 9px;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 1px solid var(--it-line);
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.option:hover {
+  border-color: #aebfb4;
+  background: #fafcfb;
+  transform: translateY(-1px);
+}
+
+.option:has(input:checked) {
+  border-color: #668b75;
+  background: #f0f6f2;
+  box-shadow: 0 0 0 2px rgba(40, 84, 61, 0.06);
+}
+
+.option input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--it-green);
+}
+
+.option__letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 7px;
+  background: #f1f5f2;
+  color: #50685b;
+  font-size: var(--people-text-xs, 0.72rem);
+  font-weight: 950;
+}
+
+.option:has(input:checked) .option__letter {
+  background: #dfece3;
+  color: #28543d;
+}
+
+.option__text {
+  color: #51645a;
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 700;
+  line-height: 1.42;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.induction-test-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 16px;
+  padding-top: 15px;
+  border-top: 1px solid var(--it-line-soft);
+}
+
+.induction-test-actions__note {
+  display: grid;
+  gap: 3px;
+  max-width: 470px;
+}
+
+.induction-test-actions__note strong {
+  color: var(--it-text);
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+.induction-test-actions__note span {
+  color: var(--it-muted-soft);
+  font-size: var(--people-text-xs, 0.72rem);
+  line-height: 1.4;
+}
+
+.induction-test-actions__buttons {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+}
+
+#submitAssessment:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.induction-test-journey {
+  height: 100%;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+  .induction-test-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .induction-test-journey {
+    order: -1;
+    height: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .induction-test-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .induction-test-card {
+    padding: 14px;
+  }
+
+  .induction-test-card__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .induction-test-counter {
+    width: 100%;
+    text-align: left;
+  }
+
+  .option {
+    grid-template-columns: 22px 26px minmax(0, 1fr);
+  }
+
+  .induction-test-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .induction-test-actions__buttons {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .induction-test-actions__buttons .button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .induction-test-progress__bar,
+  .question,
+  .option {
+    transition: none;
+  }
+}

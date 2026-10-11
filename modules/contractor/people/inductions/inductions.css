@@ -1,0 +1,2279 @@
+@import url("../people.css");
+
+/* =========================================================
+   NORMEX PEOPLE
+   INDUCTIONS
+========================================================= */
+
+:root {
+  --induction-ink: #172f24;
+  --induction-muted: #748179;
+
+  --induction-line: #dce5df;
+  --induction-line-soft: #e9efeb;
+
+  --induction-green: #1f4936;
+  --induction-green-dark: #16372a;
+  --induction-green-soft: #e9f2ec;
+
+  --induction-amber: #99701c;
+  --induction-amber-soft: #f8f0db;
+
+  --induction-red: #9b3e3e;
+  --induction-red-soft: #faecec;
+
+  --induction-surface: #ffffff;
+
+  --induction-shadow:
+    0 16px 42px
+    rgba(14, 29, 20, 0.055);
+}
+
+
+* {
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.induction-page {
+  display: grid;
+
+  gap: 13px;
+
+  min-width: 0;
+
+  padding:
+    16px
+    0
+    30px;
+}
+
+
+/* =========================================================
+   EYEBROW
+========================================================= */
+
+.induction-eyebrow {
+  margin:
+    0
+    0
+    5px;
+
+  color:
+    #66796e;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+
+  letter-spacing: 0.09em;
+
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.induction-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 24px;
+
+  padding:
+    25px
+    27px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.88);
+
+  border-radius: 25px;
+
+  background:
+    radial-gradient(
+      circle at 92% 10%,
+      rgba(31, 73, 54, 0.07),
+      transparent 31%
+    ),
+    #ffffff;
+
+  box-shadow:
+    var(--induction-shadow);
+}
+
+
+.induction-hero__copy {
+  min-width: 0;
+}
+
+
+.induction-hero h1 {
+  margin: 0;
+
+  color:
+    var(--induction-ink);
+
+  font-size: 1.82rem;
+  font-weight: 900;
+
+  letter-spacing: -0.035em;
+}
+
+
+.induction-hero__note {
+  max-width: 760px;
+
+  margin:
+    6px
+    0
+    0;
+
+  color:
+    var(--induction-muted);
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height: 1.45;
+}
+
+
+.induction-hero__context {
+  display: grid;
+
+  gap: 4px;
+
+  flex:
+    0 0 auto;
+
+  min-width: 180px;
+
+  padding:
+    11px
+    14px;
+
+  border:
+    1px solid
+    var(--induction-line);
+
+  border-radius: 12px;
+
+  background:
+    rgba(255, 255, 255, 0.84);
+
+  text-align: right;
+}
+
+
+.induction-hero__context span {
+  color:
+    #88948d;
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  text-transform: uppercase;
+}
+
+
+.induction-hero__context strong {
+  color:
+    #395246;
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+/* =========================================================
+   INDUCTION SUBNAV
+========================================================= */
+
+.induction-nav-host {
+  min-width: 0;
+}
+
+
+.induction-nav {
+  display: flex;
+  align-items: center;
+
+  gap: 4px;
+
+  padding:
+    7px;
+
+  overflow-x: auto;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.88);
+
+  border-radius: 16px;
+
+  background:
+    #ffffff;
+
+  box-shadow:
+    0 9px 24px
+    rgba(14, 29, 20, 0.035);
+}
+
+
+.induction-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex:
+    0 0 auto;
+
+  min-height: 40px;
+
+  padding:
+    7px
+    13px;
+
+  border-radius: 9px;
+
+  color:
+    #506359;
+
+  font-size: var(--people-text-sm);
+  font-weight: 900;
+
+  text-decoration: none;
+
+  white-space: nowrap;
+
+  transition:
+    background 120ms ease,
+    color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+
+.induction-nav a:hover {
+  background:
+    #f2f6f3;
+
+  color:
+    #243e31;
+}
+
+
+.induction-nav a[aria-current="page"] {
+  background:
+    linear-gradient(
+      180deg,
+      #214b37,
+      #17392a
+    );
+
+  color:
+    #ffffff;
+
+  box-shadow:
+    0 6px 15px
+    rgba(20, 54, 37, 0.13);
+}
+
+
+.induction-nav a:focus-visible {
+  outline: 3px solid rgba(31, 73, 54, 0.2);
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   MAIN PANELS
+========================================================= */
+
+.induction-readiness-panel,
+.induction-control-panel {
+  padding:
+    20px
+    21px;
+
+  border:
+    1px solid
+    rgba(40, 62, 48, 0.08);
+
+  border-radius: 19px;
+
+  background:
+    #ffffff;
+
+  box-shadow:
+    0 8px 24px
+    rgba(14, 29, 20, 0.03);
+}
+
+
+.induction-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 18px;
+
+  margin-bottom: 16px;
+}
+
+
+.induction-section-header h2 {
+  margin: 0;
+
+  color:
+    #223c2f;
+
+  font-size: var(--people-text-md, 0.94rem);
+  font-weight: 900;
+}
+
+
+.induction-section-header div > p:last-child {
+  max-width: 720px;
+
+  margin:
+    5px
+    0
+    0;
+
+  color:
+    #7b8880;
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   METRICS
+========================================================= */
+
+.metrics {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(0, 1fr)
+    );
+
+  gap: 9px;
+}
+
+
+.metric {
+  position: relative;
+
+  min-width: 0;
+  min-height: 106px;
+
+  padding:
+    14px
+    15px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(42, 62, 49, 0.08);
+
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f9fbfa
+    );
+}
+
+
+.metric::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 13px;
+  right: 13px;
+
+  height: 2px;
+
+  background:
+    #76967f;
+}
+
+
+.metric strong {
+  display: block;
+
+  margin-top: 12px;
+
+  color:
+    #213b2e;
+
+  font-size: 1.2rem;
+  font-weight: 900;
+
+  letter-spacing: -0.03em;
+}
+
+
+.metric span {
+  display: block;
+
+  margin-top: 5px;
+
+  color:
+    #7f8c84;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 750;
+}
+
+
+/* =========================================================
+   ROUTE GRID
+========================================================= */
+
+.grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      12,
+      minmax(0, 1fr)
+    );
+
+  gap: 10px;
+}
+
+
+/*
+ * First route is always "Complete my induction".
+ *
+ * Make it the primary destination rather than treating every
+ * tile as equally important.
+ */
+
+.tile {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  grid-column:
+    span 4;
+
+  min-height: 145px;
+
+  padding:
+    17px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--induction-line);
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #fafcfb
+    );
+
+  color:
+    inherit;
+
+  text-decoration: none;
+
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    transform 120ms ease;
+}
+
+
+.tile:first-child {
+  grid-column:
+    span 8;
+
+  min-height: 176px;
+
+  padding:
+    21px;
+
+  background:
+    radial-gradient(
+      circle at 90% 8%,
+      rgba(35, 100, 68, 0.1),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f5faf7
+    );
+}
+
+
+.tile:hover {
+  border-color:
+    #b6cbbf;
+
+  box-shadow:
+    0 10px 24px
+    rgba(14, 29, 20, 0.05);
+
+  transform:
+    translateY(-1px);
+}
+
+
+.tile::after {
+  content:
+    "Open →";
+
+  display: block;
+
+  align-self: flex-start;
+
+  margin-top: 18px;
+
+  color:
+    #365845;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+.tile strong {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color:
+    #243e31;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+.tile:first-child strong {
+  font-size: 1rem;
+}
+
+
+.tile span {
+  display: block;
+
+  max-width: 620px;
+
+  color:
+    #7c8981;
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height: 1.5;
+}
+
+
+.tile:first-child span {
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+/* =========================================================
+   NOTICE
+========================================================= */
+
+.notice {
+  padding:
+    12px
+    14px;
+
+  border:
+    1px solid
+    #cfddd4;
+
+  border-radius: 10px;
+
+  background:
+    #f2f6f3;
+
+  color:
+    #385246;
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+.notice--error {
+  border-color:
+    #eacaca;
+
+  background:
+    #fff4f4;
+
+  color:
+    #842f2f;
+}
+
+
+.notice--warn {
+  border-color:
+    #ead5b8;
+
+  background:
+    #fff8ed;
+
+  color:
+    #7a490f;
+}
+
+
+.notice[hidden] {
+  display: none;
+}
+
+
+/* =========================================================
+   SHARED INDUCTION COMPONENTS
+
+   Kept because the current child pages already use these.
+========================================================= */
+
+.panel {
+  padding:
+    20px;
+
+  border:
+    1px solid
+    var(--induction-line);
+
+  border-radius: 16px;
+
+  background:
+    #ffffff;
+
+  box-shadow:
+    0 8px 24px
+    rgba(14, 29, 20, 0.035);
+}
+
+
+.form-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0, 1fr)
+    );
+
+  gap: 13px;
+}
+
+
+.field {
+  display: grid;
+
+  gap: 6px;
+}
+
+
+.field label {
+  color:
+    #42594d;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 850;
+}
+
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+
+  padding:
+    10px
+    11px;
+
+  border:
+    1px solid
+    #cbd7cf;
+
+  border-radius: 8px;
+
+  background:
+    #ffffff;
+
+  color:
+    var(--induction-ink);
+
+  font: inherit;
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline:
+    2px solid
+    rgba(35, 100, 68, 0.13);
+
+  border-color:
+    #8cab99;
+}
+
+
+.field textarea {
+  min-height: 100px;
+
+  resize: vertical;
+}
+
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: 17px;
+}
+
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 35px;
+
+  padding:
+    7px
+    12px;
+
+  border:
+    1px solid
+    var(--induction-line);
+
+  border-radius: 9px;
+
+  background:
+    #ffffff;
+
+  color:
+    #40574a;
+
+  font: inherit;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 850;
+
+  text-decoration: none;
+
+  cursor: pointer;
+}
+
+
+.button:hover:not(:disabled) {
+  background:
+    #f4f7f5;
+}
+
+
+.button--primary {
+  border-color:
+    var(--induction-green);
+
+  background:
+    linear-gradient(
+      180deg,
+      #214b37,
+      #17392a
+    );
+
+  color:
+    #ffffff;
+}
+
+
+.button--danger {
+  border-color:
+    #e8cccc;
+
+  color:
+    var(--induction-red);
+}
+
+
+.button:disabled {
+  opacity: 0.48;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   TABLES
+========================================================= */
+
+.table-wrap {
+  overflow: auto;
+
+  border:
+    1px solid
+    var(--induction-line);
+
+  border-radius: 12px;
+
+  background:
+    #ffffff;
+}
+
+
+table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+th,
+td {
+  padding:
+    11px
+    12px;
+
+  border-bottom:
+    1px solid
+    #e6ece8;
+
+  text-align: left;
+
+  white-space: nowrap;
+}
+
+
+th {
+  background:
+    #f5f8f6;
+
+  color:
+    #52675b;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+
+  letter-spacing: 0.04em;
+
+  text-transform: uppercase;
+}
+
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+
+  min-height: 24px;
+
+  padding:
+    4px
+    8px;
+
+  border-radius: 999px;
+
+  background:
+    #e8f3ec;
+
+  color:
+    #24603f;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+.status--expired,
+.status--failed,
+.status--suspended {
+  background:
+    var(--induction-red-soft);
+
+  color:
+    #973636;
+}
+
+
+.status--expiring,
+.status--pending {
+  background:
+    var(--induction-amber-soft);
+
+  color:
+    #87510c;
+}
+
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+.filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin:
+    0
+    0
+    14px;
+}
+
+
+.filters input,
+.filters select {
+  min-height: 35px;
+
+  padding:
+    7px
+    9px;
+
+  border:
+    1px solid
+    var(--induction-line);
+
+  border-radius: 8px;
+
+  background:
+    #ffffff;
+
+  color:
+    #40574a;
+
+  font: inherit;
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty {
+  padding:
+    30px;
+
+  color:
+    var(--induction-muted);
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  text-align: center;
+}
+
+
+/* =========================================================
+   WORKER JOURNEY
+========================================================= */
+
+.journey {
+  max-width: 880px;
+
+  margin:
+    0
+    auto;
+}
+
+
+.journey video {
+  width: 100%;
+
+  max-height: 520px;
+
+  border-radius: 13px;
+
+  background:
+    #111111;
+}
+
+
+.question {
+  margin:
+    0
+    0
+    12px;
+
+  padding:
+    17px;
+
+  border:
+    1px solid
+    var(--induction-line);
+
+  border-radius: 11px;
+
+  background:
+    #ffffff;
+}
+
+
+.question legend {
+  padding:
+    0
+    5px;
+
+  color:
+    #324d3f;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 850;
+}
+
+
+.option {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 8px;
+
+  margin-top: 9px;
+
+  color:
+    #586b61;
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+/* =========================================================
+   CERTIFICATE
+========================================================= */
+
+.certificate {
+  max-width: 850px;
+
+  margin:
+    28px
+    auto;
+
+  padding:
+    40px;
+
+  border:
+    2px solid
+    #244d39;
+
+  background:
+    #ffffff;
+
+  text-align: center;
+}
+
+
+.certificate__number {
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Consolas,
+    monospace;
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+.certificate__name {
+  margin:
+    26px
+    0
+    10px;
+
+  font-size: 2rem;
+}
+
+
+.certificate__details {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap: 13px;
+
+  margin:
+    28px
+    0;
+}
+
+
+.muted {
+  color:
+    var(--induction-muted);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+  .tile {
+    grid-column:
+      span 6;
+  }
+
+
+  .tile:first-child {
+    grid-column:
+      span 12;
+  }
+
+}
+
+
+@media (max-width: 800px) {
+
+  .induction-hero {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .induction-hero__context {
+    text-align: left;
+  }
+
+
+  .metrics,
+  .form-grid,
+  .certificate__details {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+
+  .tile,
+  .tile:first-child {
+    grid-column:
+      span 12;
+  }
+
+}
+
+
+@media (max-width: 580px) {
+
+  .metrics,
+  .form-grid,
+  .certificate__details {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .induction-readiness-panel,
+  .induction-control-panel,
+  .panel {
+    padding:
+      15px;
+  }
+
+
+  .certificate {
+    margin:
+      12px;
+
+    padding:
+      24px
+      15px;
+  }
+
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print {
+
+  .workspace-header,
+  .workspace-nav,
+  .workspace-footer,
+  .people-workspace-nav,
+  .induction-nav,
+  .no-print {
+    display:
+      none !important;
+  }
+
+
+  .certificate {
+    max-width: none;
+
+    margin: 0;
+
+    border:
+      2px solid
+      #000000;
+
+    box-shadow: none;
+  }
+
+}
+
+/* =========================================================
+   START INDUCTION
+========================================================= */
+
+.induction-journey-page {
+  padding-bottom: 34px;
+}
+
+
+.induction-hero--journey {
+  margin-bottom: 0;
+}
+
+
+/* =========================================================
+   START LAYOUT
+========================================================= */
+
+.induction-start-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.65fr)
+    minmax(260px, 0.65fr);
+
+  gap: 12px;
+
+  align-items: start;
+}
+
+
+.induction-start-card,
+.induction-journey-card {
+  border:
+    1px solid
+    rgba(40, 62, 48, 0.08);
+
+  border-radius: 18px;
+
+  background:
+    #ffffff;
+
+  box-shadow:
+    0 8px 24px
+    rgba(14, 29, 20, 0.03);
+}
+
+
+/* =========================================================
+   MAIN FORM CARD
+========================================================= */
+
+.induction-start-card {
+  padding:
+    22px;
+}
+
+
+.induction-start-card__header {
+  margin-bottom: 18px;
+}
+
+
+.induction-start-card__header h2,
+.induction-journey-card h2 {
+  margin: 0;
+
+  color:
+    #223c2f;
+
+  font-size: var(--people-text-md, 0.94rem);
+  font-weight: 900;
+}
+
+
+.induction-start-card__header > div > p:last-child {
+  max-width: 680px;
+
+  margin:
+    5px
+    0
+    0;
+
+  color:
+    #7b8880;
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   CONTROLLED FIELDS
+========================================================= */
+
+.field small {
+  color:
+    #8a958f;
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  line-height: 1.35;
+}
+
+
+.field--controlled input {
+  border-color:
+    #dde5e0;
+
+  background:
+    #f6f8f7;
+
+  color:
+    #53665b;
+
+  cursor:
+    not-allowed;
+}
+
+
+/* =========================================================
+   CURRENT CERTIFICATE
+========================================================= */
+
+.induction-current-certificate:empty {
+  display: none;
+}
+
+
+.induction-current-certificate .notice {
+  margin-top: 18px !important;
+}
+
+
+/* =========================================================
+   START ACTION AREA
+========================================================= */
+
+.induction-start-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-top: 20px;
+
+  padding-top: 17px;
+
+  border-top:
+    1px solid
+    var(--induction-line-soft);
+}
+
+
+.induction-start-actions__note {
+  display: grid;
+
+  gap: 4px;
+
+  max-width: 560px;
+}
+
+
+.induction-start-actions__note strong {
+  color:
+    #40594c;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+.induction-start-actions__note span {
+  color:
+    #87938c;
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height: 1.45;
+}
+
+
+.induction-start-button {
+  flex:
+    0 0 auto;
+
+  gap: 8px;
+
+  min-height: 40px;
+
+  padding:
+    8px
+    15px;
+}
+
+
+/* =========================================================
+   JOURNEY CARD
+========================================================= */
+
+.induction-journey-card {
+  padding:
+    19px;
+}
+
+
+.induction-journey-card header {
+  margin-bottom: 16px;
+}
+
+
+/* =========================================================
+   JOURNEY STEPS
+========================================================= */
+
+.induction-journey-steps {
+  display: grid;
+
+  gap: 0;
+
+  margin: 0;
+
+  padding: 0;
+
+  list-style: none;
+}
+
+
+.induction-journey-step {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    31px
+    minmax(0, 1fr);
+
+  gap: 10px;
+
+  min-height: 68px;
+
+  padding:
+    5px
+    0
+    14px;
+}
+
+
+.induction-journey-step:not(:last-child)::after {
+  content: "";
+
+  position: absolute;
+
+  top: 34px;
+  bottom: 0;
+  left: 15px;
+
+  width: 1px;
+
+  background:
+    #dce5df;
+}
+
+
+.induction-journey-step__number {
+  position: relative;
+
+  z-index: 1;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 31px;
+  height: 31px;
+
+  border:
+    1px solid
+    #d9e2dc;
+
+  border-radius: 999px;
+
+  background:
+    #f6f8f7;
+
+  color:
+    #718077;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+.induction-journey-step.is-current
+.induction-journey-step__number {
+  border-color:
+    #24533d;
+
+  background:
+    #214b37;
+
+  color:
+    #ffffff;
+}
+
+
+.induction-journey-step div {
+  padding-top: 2px;
+}
+
+
+.induction-journey-step strong,
+.induction-journey-step span {
+  display: block;
+}
+
+
+.induction-journey-step strong {
+  color:
+    #40584b;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+.induction-journey-step span {
+  margin-top: 3px;
+
+  color:
+    #89948e;
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height: 1.4;
+}
+
+
+.induction-journey-step.is-current strong {
+  color:
+    #244a37;
+}
+
+
+/* =========================================================
+   START RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .induction-start-layout {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .induction-journey-card {
+    order: -1;
+  }
+
+
+  .induction-journey-steps {
+    grid-template-columns:
+      repeat(
+        4,
+        minmax(0, 1fr)
+      );
+
+    gap: 7px;
+  }
+
+
+  .induction-journey-step {
+    display: block;
+
+    min-height: 0;
+
+    padding:
+      10px;
+
+    border:
+      1px solid
+      var(--induction-line-soft);
+
+    border-radius: 10px;
+  }
+
+
+  .induction-journey-step::after {
+    display: none;
+  }
+
+
+  .induction-journey-step__number {
+    margin-bottom: 8px;
+  }
+
+}
+
+
+@media (max-width: 650px) {
+
+  .induction-start-actions {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .induction-start-button {
+    width: 100%;
+  }
+
+
+  .induction-journey-steps {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+}
+
+/* =========================================================
+   INDUCTION OVERVIEW DASHBOARD
+========================================================= */
+
+.metric__label {
+  display: block;
+
+  color: #75827a;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+
+  letter-spacing: 0.05em;
+
+  text-transform: uppercase;
+}
+
+
+.metric small {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #89948e;
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height: 1.35;
+}
+
+
+.metric--unavailable::before {
+  background: #b5bdb8;
+}
+
+
+/* =========================================================
+   DASHBOARD GRID
+========================================================= */
+
+.induction-dashboard {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.5fr)
+    minmax(300px, 0.8fr);
+
+  gap: 11px;
+
+  align-items: start;
+}
+
+
+.induction-dashboard-card {
+  padding: 19px;
+
+  border:
+    1px solid
+    rgba(40, 62, 48, 0.08);
+
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 8px 24px
+    rgba(14, 29, 20, 0.03);
+}
+
+
+.induction-dashboard-card--pack {
+  grid-column:
+    1 / -1;
+}
+
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+.induction-dashboard-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  margin-bottom: 15px;
+}
+
+
+.induction-dashboard-card__header h2 {
+  margin: 0;
+
+  color: #223c2f;
+
+  font-size: var(--people-text-base, 0.84rem);
+  font-weight: 900;
+}
+
+
+.induction-dashboard-card__action {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 7px;
+
+  flex: 0 0 auto;
+
+  min-height: 32px;
+
+  padding:
+    6px
+    10px;
+
+  border:
+    1px solid
+    #d7e1db;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #31513f;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+
+  text-decoration: none;
+}
+
+
+.induction-dashboard-card__action:hover {
+  background: #f5f8f6;
+}
+
+
+/* =========================================================
+   CURRENT PACK
+========================================================= */
+
+.induction-pack {
+  display: grid;
+
+  grid-template-columns:
+    minmax(240px, 0.75fr)
+    minmax(0, 1.7fr);
+
+  gap: 12px;
+
+  align-items: stretch;
+}
+
+
+.induction-pack__primary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  min-height: 112px;
+
+  padding: 16px;
+
+  border:
+    1px solid
+    var(--induction-line-soft);
+
+  border-radius: 13px;
+
+  background:
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(31, 73, 54, 0.08),
+      transparent 35%
+    ),
+    #f8faf9;
+}
+
+
+.induction-pack__primary strong {
+  margin-top: 11px;
+
+  color: #274536;
+
+  font-size: var(--people-text-base, 0.84rem);
+  font-weight: 900;
+}
+
+
+.induction-pack__primary > span:last-child {
+  margin-top: 4px;
+
+  color: #87938c;
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+.induction-pack__status {
+  align-self: flex-start;
+
+  padding:
+    4px
+    7px;
+
+  border-radius: 999px;
+
+  font-size: var(--people-text-xs, 0.72rem);
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+
+.induction-pack__status.is-live {
+  background: #e7f2eb;
+
+  color: #286144;
+}
+
+
+.induction-pack__status.is-warning {
+  background: #f8efda;
+
+  color: #865d12;
+}
+
+
+.induction-pack__details {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(0, 1fr)
+    );
+
+  border:
+    1px solid
+    var(--induction-line-soft);
+
+  border-radius: 13px;
+
+  overflow: hidden;
+}
+
+
+.induction-pack__details > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  min-height: 112px;
+
+  padding:
+    14px;
+
+  border-right:
+    1px solid
+    var(--induction-line-soft);
+}
+
+
+.induction-pack__details > div:last-child {
+  border-right: 0;
+}
+
+
+.induction-pack__details span {
+  color: #87938c;
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  text-transform: uppercase;
+}
+
+
+.induction-pack__details strong {
+  margin-top: 7px;
+
+  color: #354f42;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   RECENT ACTIVITY
+========================================================= */
+
+.induction-activity-list {
+  display: grid;
+}
+
+
+.induction-activity-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  min-height: 54px;
+
+  padding:
+    8px
+    2px;
+
+  border-bottom:
+    1px solid
+    var(--induction-line-soft);
+}
+
+
+.induction-activity-row:last-child {
+  border-bottom: 0;
+}
+
+
+.induction-activity-row__person {
+  min-width: 0;
+}
+
+
+.induction-activity-row__person strong,
+.induction-activity-row__person span {
+  display: block;
+}
+
+
+.induction-activity-row__person strong {
+  overflow: hidden;
+
+  color: #385045;
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+.induction-activity-row__person span {
+  margin-top: 3px;
+
+  color: #8a958f;
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+.induction-activity-row__meta {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  flex: 0 0 auto;
+}
+
+
+.induction-activity-row__meta > span:last-child {
+  color: #89948e;
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+/* =========================================================
+   ATTENTION
+========================================================= */
+
+.induction-attention-grid {
+  display: grid;
+
+  gap: 7px;
+}
+
+
+.induction-attention-item {
+  display: grid;
+
+  grid-template-columns:
+    42px
+    minmax(0, 1fr);
+
+  gap: 10px;
+
+  align-items: center;
+
+  min-height: 59px;
+
+  padding:
+    9px
+    11px;
+
+  border:
+    1px solid
+    var(--induction-line-soft);
+
+  border-left:
+    3px solid
+    #91a198;
+
+  border-radius: 9px;
+
+  background: #fbfcfb;
+}
+
+
+.induction-attention-item--warning {
+  border-left-color: #c99b42;
+
+  background: #fffdf8;
+}
+
+
+.induction-attention-item--danger {
+  border-left-color: #b96464;
+
+  background: #fffafa;
+}
+
+
+.induction-attention-item--clear {
+  border-left-color: #75a184;
+}
+
+
+.induction-attention-item > strong {
+  color: #314c3d;
+
+  font-size: var(--people-text-md, 0.94rem);
+  font-weight: 900;
+
+  text-align: center;
+}
+
+
+.induction-attention-item span,
+.induction-attention-item small {
+  display: block;
+}
+
+
+.induction-attention-item span {
+  color: #40584b;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+.induction-attention-item small {
+  margin-top: 2px;
+
+  color: #89948e;
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  line-height: 1.35;
+}
+
+
+/* =========================================================
+   DASHBOARD EMPTY
+========================================================= */
+
+.induction-dashboard-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+  min-height: 100px;
+
+  padding: 16px;
+
+  text-align: center;
+}
+
+
+.induction-dashboard-empty strong {
+  color: #4b6155;
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+.induction-dashboard-empty span {
+  max-width: 470px;
+
+  color: #8b9690;
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 950px) {
+
+  .induction-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+
+  .induction-dashboard-card--pack {
+    grid-column: auto;
+  }
+
+
+  .induction-pack {
+    grid-template-columns: 1fr;
+  }
+
+
+  .induction-pack__details {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+
+  .induction-pack__details > div:nth-child(2) {
+    border-right: 0;
+  }
+
+
+  .induction-pack__details > div:nth-child(-n+2) {
+    border-bottom:
+      1px solid
+      var(--induction-line-soft);
+  }
+
+}
+
+
+@media (max-width: 560px) {
+
+  .induction-pack__details {
+    grid-template-columns: 1fr;
+  }
+
+
+  .induction-pack__details > div {
+    min-height: 78px;
+
+    border-right: 0;
+    border-bottom:
+      1px solid
+      var(--induction-line-soft);
+  }
+
+
+  .induction-pack__details > div:last-child {
+    border-bottom: 0;
+  }
+
+
+  .induction-activity-row {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+
+  .induction-activity-row__meta {
+    width: 100%;
+
+    justify-content: space-between;
+  }
+
+}

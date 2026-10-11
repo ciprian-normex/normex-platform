@@ -956,6 +956,128 @@ service cloud.firestore {
     }
 
 
+    function canAccessPlantRequestProject(
+      data
+    ) {
+
+      let actor = currentProfile();
+
+      let permissions = actor.permissions;
+
+      let roleCode = actor.roleCode;
+
+      let managesRequests =
+        actor.accessLevel >= 99 ||
+        (permissions.keys().hasAny(["canManagePlant"]) && permissions.canManagePlant == true) ||
+        (permissions.keys().hasAny(["canManageTransport"]) && permissions.canManageTransport == true) ||
+        (permissions.keys().hasAny(["canManageOrganisation"]) && permissions.canManageOrganisation == true) ||
+        roleCode == "PLANT_TRANSPORT_MANAGER" ||
+        roleCode == "ORGANISATION_MANAGER";
+
+      return signedIn() &&
+
+        currentProfileExists() &&
+
+        actor.status == "ACTIVE" &&
+
+        data.keys().hasAll([
+          "organisationId",
+          "projectId"
+        ]) &&
+
+        data.projectId is string &&
+
+        data.projectId != "" &&
+
+        data.organisationId == actor.organisationId &&
+
+        projectExists(
+          data.projectId
+        ) &&
+
+        projectData(
+          data.projectId
+        ).organisationId == data.organisationId &&
+
+        (
+          managesRequests ||
+
+          (permissions.keys().hasAny(["canViewAllProjects"]) && permissions.canViewAllProjects == true) ||
+
+          isProjectMember(
+            data.projectId
+          )
+        );
+
+    }
+
+
+    function canManagePlantRequests(
+      organisationId
+    ) {
+
+      let actor = currentProfile();
+
+      let permissions = actor.permissions;
+
+      let roleCode = actor.roleCode;
+
+      return signedIn() &&
+
+        currentProfileExists() &&
+
+        actor.status == "ACTIVE" &&
+
+        organisationId == actor.organisationId &&
+
+        (
+          actor.accessLevel >= 99 ||
+
+          (permissions.keys().hasAny(["canManagePlant"]) && permissions.canManagePlant == true) ||
+
+          (permissions.keys().hasAny(["canManageTransport"]) && permissions.canManageTransport == true) ||
+
+          (permissions.keys().hasAny(["canManageOrganisation"]) && permissions.canManageOrganisation == true) ||
+
+          roleCode == "PLANT_TRANSPORT_MANAGER" ||
+
+          roleCode == "ORGANISATION_MANAGER"
+        );
+
+    }
+
+
+    function canCreatePlantRequest(
+      data
+    ) {
+
+      let actor = currentProfile();
+
+      let permissions = actor.permissions;
+
+      let roleCode = actor.roleCode;
+
+      let managesRequests =
+        actor.accessLevel >= 99 ||
+        (permissions.keys().hasAny(["canManagePlant"]) && permissions.canManagePlant == true) ||
+        (permissions.keys().hasAny(["canManageTransport"]) && permissions.canManageTransport == true) ||
+        (permissions.keys().hasAny(["canManageOrganisation"]) && permissions.canManageOrganisation == true) ||
+        roleCode == "PLANT_TRANSPORT_MANAGER" ||
+        roleCode == "ORGANISATION_MANAGER";
+
+      return canAccessPlantRequestProject(data) &&
+
+        (
+          managesRequests ||
+
+          (permissions.keys().hasAny(["canRequestPlant"]) && permissions.canRequestPlant == true) ||
+
+          actor.accessLevel >= 2
+        );
+
+    }
+
+
     /* =====================================================
        COMMERCIAL
     ===================================================== */
@@ -1063,20 +1185,46 @@ service cloud.firestore {
         );
 
 
-      allow create, update, delete: if
+      /*
+       * Account lifecycle and authority mutations are performed only by the
+       * trusted manageUserAccount callable. Admin SDK writes bypass rules.
+       * A signed-in user retains a narrow contact/display-name self edit;
+       * organisation, status and authority fields cannot be changed here.
+       */
+      allow create, delete: if false;
+
+      allow update: if
+        signedIn() &&
+        request.auth.uid == userId &&
+        resource.data.organisationId == currentOrganisationId() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          "displayName",
+          "phone",
+          "updatedAt"
+        ]);
+
+    }
+
+
+    /* =====================================================
+       PEOPLE IDENTITY HANDOFF
+
+       Admin creates/updates the minimal linked record through the trusted
+       callable. Client access here is read-only and limited to authorised
+       organisation account administrators for the Admin -> People handoff.
+    ===================================================== */
+
+    match /people/{personId} {
+
+      allow read: if
         isPlatformAdmin() ||
-
         (
-          canManageUsersPermission() &&
-
-          (
-            request.method == "create"
-              ? request.resource.data.organisationId ==
-                  currentOrganisationId()
-              : resource.data.organisationId ==
-                  currentOrganisationId()
-          )
+          isActiveUser() &&
+          resource.data.organisationId == currentOrganisationId() &&
+          canManageUsersPermission()
         );
+
+      allow create, update, delete: if false;
 
     }
 
@@ -1637,17 +1785,41 @@ service cloud.firestore {
         request.resource.data.organisationId ==
           resource.data.organisationId &&
 
-        request.resource.data.plantId ==
-          resource.data.plantId &&
-
-        request.resource.data.plantReference ==
-          resource.data.plantReference &&
-
         request.resource.data.createdByUid ==
           resource.data.createdByUid &&
 
         request.resource.data.createdAt ==
-          resource.data.createdAt;
+          resource.data.createdAt &&
+
+        (
+          (
+            request.resource.data.plantId ==
+              resource.data.plantId &&
+
+            request.resource.data.plantReference ==
+              resource.data.plantReference
+          )
+
+          ||
+
+          (
+            !resource.data.keys().hasAny([
+              "plantId"
+            ]) &&
+
+            request.resource.data.diff(
+              resource.data
+            ).affectedKeys().hasOnly([
+              "complianceApplicability",
+              "complianceHold",
+              "complianceHoldReason",
+              "complianceHoldHistory",
+              "updatedByUid",
+              "updatedByName",
+              "updatedAt"
+            ])
+          )
+        );
 
 
       allow delete:
@@ -1923,14 +2095,7 @@ service cloud.firestore {
     /* =====================================================
        PLANT REQUESTS
 
-       Incoming demand:
-       PLANT
-       REPAIR
-       TRANSPORT
-       MATERIAL_TRANSPORT
-       REPLACEMENT
-       COLLECTION
-       OTHER
+       Intake, item review and canonical workflow handoff.
 
        L2+ / authorised users can submit.
 
@@ -1942,13 +2107,7 @@ service cloud.firestore {
 
       allow read: if
 
-        canManagePlant(
-          resource.data.organisationId
-        )
-
-        ||
-
-        canManageTransport(
+        canManagePlantRequests(
           resource.data.organisationId
         )
 
@@ -1983,14 +2142,7 @@ service cloud.firestore {
 
 
       allow create: if
-        canRequestPlant(
-          request.resource.data.organisationId
-        ) &&
-
-        request.resource.data.organisationId ==
-          currentOrganisationId() &&
-
-        optionalProjectValid(
+        canCreatePlantRequest(
           request.resource.data
         ) &&
 
@@ -1998,26 +2150,73 @@ service cloud.firestore {
           request.auth.uid &&
 
         request.resource.data.requestType in [
-          "PLANT",
-          "REPAIR",
-          "TRANSPORT",
-          "MATERIAL_TRANSPORT",
+          "PLANT_REQUIRED",
+          "SERVICE_REPAIR",
+          "MOVEMENT",
+          "OFF_HIRE",
           "REPLACEMENT",
-          "COLLECTION",
           "OTHER"
-        ];
+        ] &&
+
+        request.resource.data.priority in [
+          "NORMAL",
+          "HIGH",
+          "URGENT"
+        ] &&
+
+        request.resource.data.status in [
+          "DRAFT",
+          "SUBMITTED"
+        ] &&
+
+        request.resource.data.safetyCritical is bool &&
+
+        request.resource.data.items is list;
 
 
       allow update: if
         (
-          canManagePlant(
+          canManagePlantRequests(
             resource.data.organisationId
           )
 
           ||
 
-          canManageTransport(
-            resource.data.organisationId
+          (
+            signedIn() &&
+
+            resource.data.createdByUid == request.auth.uid &&
+
+            (
+              (
+                resource.data.status == "DRAFT" &&
+
+                request.resource.data.status in [
+                  "DRAFT",
+                  "SUBMITTED"
+                ]
+              )
+
+              ||
+
+              (
+                resource.data.status == "SUBMITTED" &&
+
+                request.resource.data.status == "CANCELLED" &&
+
+                request.resource.data.diff(
+                  resource.data
+                ).affectedKeys().hasOnly([
+                  "status",
+                  "items",
+                  "cancelledAt",
+                  "updatedByUid",
+                  "updatedByName",
+                  "updatedAt",
+                  "history"
+                ])
+              )
+            )
           )
         ) &&
 
@@ -2030,9 +2229,28 @@ service cloud.firestore {
         request.resource.data.createdAt ==
           resource.data.createdAt &&
 
-        optionalProjectValid(
+        canAccessPlantRequestProject(
           request.resource.data
-        );
+        ) &&
+
+        request.resource.data.requestType in [
+          "PLANT_REQUIRED",
+          "SERVICE_REPAIR",
+          "MOVEMENT",
+          "OFF_HIRE",
+          "REPLACEMENT",
+          "OTHER"
+        ] &&
+
+        request.resource.data.priority in [
+          "NORMAL",
+          "HIGH",
+          "URGENT"
+        ] &&
+
+        request.resource.data.safetyCritical is bool &&
+
+        request.resource.data.items is list;
 
 
       allow delete:
@@ -2774,6 +2992,595 @@ service cloud.firestore {
       allow delete:
         if isPlatformAdmin();
 
+    }
+
+
+    /* =====================================================
+       PEOPLE ROTA
+
+       Canonical collections:
+       - peopleRotaWeeks: published pointer for an organisation/week
+       - peopleRotaVersions: immutable version identity plus BUILDING -> PUBLISHED
+       - peopleRotaEntries: immutable position records belonging to a version
+    ===================================================== */
+
+    function canManagePeopleRota() {
+
+      return isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          currentLevel() is number &&
+
+          currentLevel() >= 3
+        );
+
+    }
+
+
+    function canReadPeopleRota(
+      data
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          data.organisationId is string &&
+
+          data.organisationId ==
+            currentOrganisationId()
+        );
+
+    }
+
+
+    function canReadPeopleRotaVersion(
+      data
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          canReadPeopleRota(
+            data
+          ) &&
+
+          data.status == "PUBLISHED"
+        );
+
+    }
+
+
+    function canReadPeopleRotaEntry(
+      data
+    ) {
+
+      return isPlatformAdmin() ||
+
+        (
+          canReadPeopleRota(
+            data
+          ) &&
+
+          exists(
+            /databases/$(database)/documents/peopleRotaVersions/$(data.versionId)
+          ) &&
+
+          get(
+            /databases/$(database)/documents/peopleRotaVersions/$(data.versionId)
+          ).data.organisationId == data.organisationId &&
+
+          get(
+            /databases/$(database)/documents/peopleRotaVersions/$(data.versionId)
+          ).data.status == "PUBLISHED"
+        );
+
+    }
+
+
+    function canWritePeopleRota(
+      data
+    ) {
+
+      return canManagePeopleRota() &&
+
+        currentOrganisationId() is string &&
+
+        currentOrganisationId().size() > 0 &&
+
+        data.organisationId is string &&
+
+        data.organisationId ==
+          currentOrganisationId();
+
+    }
+
+
+    function isPeopleRotaString(
+      value,
+      maximumLength
+    ) {
+
+      return value is string &&
+        value.size() > 0 &&
+        value.size() <= maximumLength;
+
+    }
+
+
+    function isPeopleRotaNullableString(
+      value,
+      maximumLength
+    ) {
+
+      return value == null ||
+        isPeopleRotaString(
+          value,
+          maximumLength
+        );
+
+    }
+
+
+    function isPeopleRotaDateKey(
+      value
+    ) {
+
+      return value is string &&
+        value.size() == 10 &&
+        value.matches("^[0-9]{4}-[0-9]{2}-[0-9]{2}$");
+
+    }
+
+
+    function isValidPeopleRotaVersion(
+      data
+    ) {
+
+      return data.keys().hasAll([
+          "organisationId",
+          "weekId",
+          "weekStart",
+          "versionNumber",
+          "previousVersionId",
+          "status",
+          "entryCount",
+          "createdByUid",
+          "createdByName",
+          "createdAt",
+          "updatedByUid",
+          "updatedAt"
+        ]) &&
+
+        data.keys().hasOnly([
+          "organisationId",
+          "weekId",
+          "weekStart",
+          "versionNumber",
+          "previousVersionId",
+          "status",
+          "entryCount",
+          "createdByUid",
+          "createdByName",
+          "createdAt",
+          "updatedByUid",
+          "updatedAt",
+          "publishedByUid",
+          "publishedByName",
+          "publishedAt"
+        ]) &&
+
+        isPeopleRotaString(data.organisationId, 120) &&
+        isPeopleRotaString(data.weekId, 180) &&
+        isPeopleRotaDateKey(data.weekStart) &&
+        data.versionNumber is int &&
+        data.versionNumber > 0 &&
+        data.versionNumber <= 1000000 &&
+        isPeopleRotaNullableString(data.previousVersionId, 180) &&
+        data.status in [
+          "BUILDING",
+          "PUBLISHED"
+        ] &&
+        data.entryCount is int &&
+        data.entryCount >= 0 &&
+        data.entryCount <= 10000 &&
+        isPeopleRotaString(data.createdByUid, 128) &&
+        isPeopleRotaString(data.createdByName, 160) &&
+        data.createdAt is timestamp &&
+        isPeopleRotaString(data.updatedByUid, 128) &&
+        data.updatedAt is timestamp &&
+
+        (
+          (
+            data.status == "BUILDING" &&
+            !data.keys().hasAny([
+              "publishedByUid",
+              "publishedByName",
+              "publishedAt"
+            ])
+          ) ||
+
+          (
+            data.status == "PUBLISHED" &&
+            data.keys().hasAll([
+              "publishedByUid",
+              "publishedByName",
+              "publishedAt"
+            ]) &&
+            isPeopleRotaString(data.publishedByUid, 128) &&
+            isPeopleRotaString(data.publishedByName, 160) &&
+            data.publishedAt is timestamp
+          )
+        );
+
+    }
+
+
+    function isValidPeopleRotaEntry(
+      data
+    ) {
+
+      return data.keys().hasAll([
+          "organisationId",
+          "weekId",
+          "versionId",
+          "weekStart",
+          "personId",
+          "dateKey",
+          "positionType",
+          "projectId",
+          "createdByUid",
+          "createdAt"
+        ]) &&
+
+        data.keys().hasOnly([
+          "organisationId",
+          "weekId",
+          "versionId",
+          "weekStart",
+          "personId",
+          "dateKey",
+          "positionType",
+          "projectId",
+          "createdByUid",
+          "createdAt"
+        ]) &&
+
+        isPeopleRotaString(data.organisationId, 120) &&
+        isPeopleRotaString(data.weekId, 180) &&
+        isPeopleRotaString(data.versionId, 180) &&
+        isPeopleRotaDateKey(data.weekStart) &&
+        isPeopleRotaString(data.personId, 180) &&
+        isPeopleRotaDateKey(data.dateKey) &&
+        data.positionType in [
+          "WORK",
+          "HOLIDAY",
+          "UNAVAILABLE"
+        ] &&
+        (
+          (
+            data.positionType == "WORK" &&
+            isPeopleRotaString(data.projectId, 180)
+          ) ||
+          (
+            data.positionType in [
+              "HOLIDAY",
+              "UNAVAILABLE"
+            ] &&
+            data.projectId == null
+          )
+        ) &&
+        isPeopleRotaString(data.createdByUid, 128) &&
+        data.createdAt is timestamp;
+
+    }
+
+
+    function peopleRotaEntryVersionExists(
+      data
+    ) {
+
+      return exists(
+          /databases/$(database)/documents/peopleRotaVersions/$(data.versionId)
+        ) &&
+
+        get(
+          /databases/$(database)/documents/peopleRotaVersions/$(data.versionId)
+        ).data.organisationId == data.organisationId &&
+
+        get(
+          /databases/$(database)/documents/peopleRotaVersions/$(data.versionId)
+        ).data.weekId == data.weekId &&
+
+        get(
+          /databases/$(database)/documents/peopleRotaVersions/$(data.versionId)
+        ).data.weekStart == data.weekStart &&
+
+        get(
+          /databases/$(database)/documents/peopleRotaVersions/$(data.versionId)
+        ).data.status == "BUILDING";
+
+    }
+
+
+    function isValidPeopleRotaWeek(
+      data
+    ) {
+
+      return data.keys().hasAll([
+          "organisationId",
+          "weekStart",
+          "publishedVersionId",
+          "publishedVersionNumber",
+          "publishedByUid",
+          "publishedByName",
+          "publishedAt",
+          "previousPublishedVersionId",
+          "updatedByUid",
+          "updatedAt"
+        ]) &&
+
+        data.keys().hasOnly([
+          "organisationId",
+          "weekStart",
+          "publishedVersionId",
+          "publishedVersionNumber",
+          "publishedByUid",
+          "publishedByName",
+          "publishedAt",
+          "previousPublishedVersionId",
+          "updatedByUid",
+          "updatedAt"
+        ]) &&
+
+        isPeopleRotaString(data.organisationId, 120) &&
+        isPeopleRotaDateKey(data.weekStart) &&
+        isPeopleRotaString(data.publishedVersionId, 180) &&
+        data.publishedVersionNumber is int &&
+        data.publishedVersionNumber > 0 &&
+        data.publishedVersionNumber <= 1000000 &&
+        isPeopleRotaString(data.publishedByUid, 128) &&
+        isPeopleRotaString(data.publishedByName, 160) &&
+        data.publishedAt is timestamp &&
+        isPeopleRotaNullableString(data.previousPublishedVersionId, 180) &&
+        isPeopleRotaString(data.updatedByUid, 128) &&
+        data.updatedAt is timestamp;
+
+    }
+
+
+    function peopleRotaWeekPointsToPublishedVersion(
+      data,
+      weekId
+    ) {
+
+      return getAfter(
+          /databases/$(database)/documents/peopleRotaVersions/$(data.publishedVersionId)
+        ).data.organisationId == data.organisationId &&
+
+        getAfter(
+          /databases/$(database)/documents/peopleRotaVersions/$(data.publishedVersionId)
+        ).data.weekId ==
+          weekId &&
+
+        getAfter(
+          /databases/$(database)/documents/peopleRotaVersions/$(data.publishedVersionId)
+        ).data.weekStart == data.weekStart &&
+
+        getAfter(
+          /databases/$(database)/documents/peopleRotaVersions/$(data.publishedVersionId)
+        ).data.versionNumber == data.publishedVersionNumber &&
+
+        getAfter(
+          /databases/$(database)/documents/peopleRotaVersions/$(data.publishedVersionId)
+        ).data.status == "PUBLISHED";
+
+    }
+
+
+    match /peopleRotaWeeks/{weekId} {
+
+      allow get: if
+        isPlatformAdmin() ||
+
+        (
+          isActiveUser() &&
+
+          weekId.matches(
+            "^" +
+            currentOrganisationId() +
+            "__[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          ) &&
+
+          (
+            resource == null ||
+
+            resource.data.organisationId ==
+              currentOrganisationId()
+          )
+        );
+
+
+      allow list: if
+        canReadPeopleRota(
+          resource.data
+        );
+
+
+      allow create: if
+        canWritePeopleRota(
+          request.resource.data
+        ) &&
+        isValidPeopleRotaWeek(
+          request.resource.data
+        ) &&
+        request.resource.data.previousPublishedVersionId == null &&
+        request.resource.data.publishedVersionNumber == 1 &&
+        request.resource.data.publishedByUid == request.auth.uid &&
+        request.resource.data.updatedByUid == request.auth.uid &&
+        request.resource.data.publishedAt == request.time &&
+        request.resource.data.updatedAt == request.time &&
+        peopleRotaWeekPointsToPublishedVersion(
+          request.resource.data,
+          weekId
+        );
+
+
+      allow update: if
+        canWritePeopleRota(
+          request.resource.data
+        ) &&
+        resource.data.organisationId ==
+          currentOrganisationId() &&
+        isValidPeopleRotaWeek(
+          request.resource.data
+        ) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          "publishedVersionId",
+          "publishedVersionNumber",
+          "publishedByUid",
+          "publishedByName",
+          "publishedAt",
+          "previousPublishedVersionId",
+          "updatedByUid",
+          "updatedAt"
+        ]) &&
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+        request.resource.data.weekStart ==
+          resource.data.weekStart &&
+        request.resource.data.previousPublishedVersionId ==
+          resource.data.publishedVersionId &&
+        request.resource.data.publishedVersionNumber ==
+          resource.data.publishedVersionNumber + 1 &&
+        request.resource.data.publishedByUid == request.auth.uid &&
+        request.resource.data.updatedByUid == request.auth.uid &&
+        request.resource.data.publishedAt == request.time &&
+        request.resource.data.updatedAt == request.time &&
+        peopleRotaWeekPointsToPublishedVersion(
+          request.resource.data,
+          weekId
+        );
+
+
+      allow delete: if false;
+
+    }
+
+
+    match /peopleRotaVersions/{versionId} {
+
+      allow read: if
+        canReadPeopleRotaVersion(
+          resource.data
+        );
+
+
+      allow create: if
+        canWritePeopleRota(
+          request.resource.data
+        ) &&
+        isValidPeopleRotaVersion(
+          request.resource.data
+        ) &&
+        request.resource.data.status == "BUILDING" &&
+        request.resource.data.createdByUid == request.auth.uid &&
+        request.resource.data.updatedByUid == request.auth.uid &&
+        request.resource.data.createdAt == request.time &&
+        request.resource.data.updatedAt == request.time;
+
+
+      allow update: if
+        canWritePeopleRota(
+          request.resource.data
+        ) &&
+        resource.data.organisationId ==
+          currentOrganisationId() &&
+        isValidPeopleRotaVersion(
+          request.resource.data
+        ) &&
+        resource.data.status == "BUILDING" &&
+        request.resource.data.status == "PUBLISHED" &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          "status",
+          "publishedByUid",
+          "publishedByName",
+          "publishedAt",
+          "updatedByUid",
+          "updatedAt"
+        ]) &&
+        request.resource.data.organisationId ==
+          resource.data.organisationId &&
+        request.resource.data.weekId ==
+          resource.data.weekId &&
+        request.resource.data.weekStart ==
+          resource.data.weekStart &&
+        request.resource.data.versionNumber ==
+          resource.data.versionNumber &&
+        request.resource.data.publishedByUid == request.auth.uid &&
+        request.resource.data.updatedByUid == request.auth.uid &&
+        request.resource.data.publishedAt == request.time &&
+        request.resource.data.updatedAt == request.time;
+
+
+      allow delete: if false;
+
+    }
+
+
+    match /peopleRotaEntries/{entryId} {
+
+      allow read: if
+        canReadPeopleRotaEntry(
+          resource.data
+        );
+
+
+      allow create: if
+        canWritePeopleRota(
+          request.resource.data
+        ) &&
+        isValidPeopleRotaEntry(
+          request.resource.data
+        ) &&
+        request.resource.data.createdByUid == request.auth.uid &&
+        request.resource.data.createdAt == request.time &&
+        peopleRotaEntryVersionExists(
+          request.resource.data
+        );
+
+
+      allow update, delete: if false;
+
+    }
+
+
+    /* =====================================================
+       PEOPLE INDUCTION RECORDS
+
+       All induction business operations run through the
+       authenticated callable functions. Public certificate
+       verification also uses an exact-ID callable that returns
+       only safe fields. Direct browser access stays closed.
+    ===================================================== */
+
+    match /inductions/{inductionId} {
+      allow read, write: if false;
+    }
+
+    match /inductionRequests/{requestId} {
+      allow read, write: if false;
+    }
+
+    match /inductionSettings/{settingsId} {
+      allow read, write: if false;
+    }
+
+    match /counters/inductions {
+      allow read, write: if false;
     }
 
 

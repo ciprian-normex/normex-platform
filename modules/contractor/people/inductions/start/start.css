@@ -1,0 +1,725 @@
+/* =========================================================
+   NORMEX PEOPLE
+   START INDUCTION
+========================================================= */
+
+
+/* =========================================================
+   PAGE LAYOUT
+========================================================= */
+
+.induction-start-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.7fr)
+    minmax(285px, 0.62fr);
+
+  gap: 12px;
+
+  align-items: stretch;
+}
+
+
+.induction-start-card,
+.induction-journey-card {
+  border:
+    1px solid
+    rgba(40, 62, 48, 0.08);
+
+  border-radius: 18px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 8px 24px
+    rgba(14, 29, 20, 0.03);
+}
+
+
+/* =========================================================
+   FORM CARD
+========================================================= */
+
+.induction-start-card {
+  padding: 22px;
+}
+
+
+.induction-start-card__header {
+  margin-bottom: 18px;
+}
+
+
+.induction-start-card__header h2,
+.induction-journey-card h2 {
+  margin: 0;
+
+  color: #223c2f;
+
+  font-size: var(--people-text-md, 0.94rem);
+  font-weight: 900;
+}
+
+
+.induction-start-card__header > div > p:last-child {
+  max-width: 680px;
+
+  margin:
+    5px
+    0
+    0;
+
+  color: #75837b;
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   FIELDS
+========================================================= */
+
+.induction-start-card .field label {
+  color: #344e40;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+.induction-start-card .field input {
+  min-height: 39px;
+
+  font-size: var(--people-text-sm, 0.78rem);
+}
+
+
+.induction-start-card .field small {
+  color: #89948e;
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  line-height: 1.35;
+}
+
+
+.induction-start-card .field--controlled input {
+  border-color: #e0e6e2;
+
+  background: #f5f7f6;
+
+  color: #52655a;
+}
+
+
+/* =========================================================
+   ACTION AREA
+========================================================= */
+
+.induction-start-actions {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 22px;
+
+  margin-top: 20px;
+
+  padding-top: 17px;
+
+  border-top:
+    1px solid
+    var(--induction-line-soft);
+}
+
+
+.induction-start-actions__note {
+  display: grid;
+
+  gap: 4px;
+
+  max-width: 570px;
+}
+
+
+.induction-start-actions__note strong {
+  color: #40584b;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+.induction-start-actions__note span {
+  color: #87938c;
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height: 1.45;
+}
+
+
+/* =========================================================
+   BEGIN BUTTON
+
+   Deliberately overrides shared .button styles.
+========================================================= */
+
+.induction-start-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  flex: 0 0 auto;
+
+  min-width: 138px;
+  min-height: 40px;
+
+  padding:
+    8px
+    15px;
+
+  border:
+    1px solid
+    #1d4934;
+
+  border-radius: 9px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #24553d,
+      #183d2c
+    );
+
+  color: #ffffff;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+
+  box-shadow:
+    0 5px 13px
+    rgba(23, 58, 42, 0.14);
+
+  cursor: pointer;
+
+  transition:
+    transform 140ms ease,
+    background 140ms ease,
+    box-shadow 140ms ease,
+    border-color 140ms ease;
+}
+
+
+.induction-start-button:hover:not(:disabled) {
+  border-color: #153927;
+
+  background:
+    linear-gradient(
+      180deg,
+      #1f4b36,
+      #133426
+    );
+
+  color: #ffffff;
+
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0 8px 18px
+    rgba(23, 58, 42, 0.18);
+}
+
+
+.induction-start-button:active:not(:disabled) {
+  transform:
+    translateY(0);
+
+  box-shadow:
+    0 3px 8px
+    rgba(23, 58, 42, 0.15);
+}
+
+
+.induction-start-button:focus-visible {
+  outline:
+    3px solid
+    rgba(42, 104, 73, 0.18);
+
+  outline-offset: 2px;
+}
+
+
+/*
+ * Important:
+ * disabled buttons should look deliberately unavailable,
+ * not like a broken hover state.
+ */
+
+.induction-start-button:disabled {
+  border-color: #cbd5cf;
+
+  background: #e6ebe8;
+
+  color: #87938c;
+
+  box-shadow: none;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+  opacity: 1;
+}
+
+
+.induction-start-button:disabled:hover {
+  border-color: #cbd5cf;
+
+  background: #e6ebe8;
+
+  color: #87938c;
+
+  box-shadow: none;
+
+  transform: none;
+}
+
+
+/* =========================================================
+   JOURNEY PANEL
+========================================================= */
+
+.induction-journey-card {
+  position: relative;
+
+  overflow: hidden;
+
+  padding: 19px;
+}
+
+
+.induction-journey-card header {
+  margin-bottom: 17px;
+}
+
+
+/*
+ * Very subtle ambient movement.
+ *
+ * Gives the page some life while the person completes
+ * their information, without looking like a loading screen.
+ */
+
+.induction-journey-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: -80px;
+  right: -75px;
+
+  width: 180px;
+  height: 180px;
+
+  border:
+    1px solid
+    rgba(50, 91, 69, 0.08);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  animation:
+    inductionAmbientRing
+    9s
+    ease-in-out
+    infinite;
+}
+
+
+.induction-journey-card::after {
+  content: "";
+
+  position: absolute;
+
+  top: -45px;
+  right: -40px;
+
+  width: 105px;
+  height: 105px;
+
+  border:
+    1px solid
+    rgba(50, 91, 69, 0.055);
+
+  border-radius: 50%;
+
+  pointer-events: none;
+
+  animation:
+    inductionAmbientRingSecondary
+    12s
+    ease-in-out
+    infinite;
+}
+
+
+/* =========================================================
+   JOURNEY STEPS
+========================================================= */
+
+.induction-journey-steps {
+  position: relative;
+
+  z-index: 1;
+
+  display: grid;
+
+  gap: 0;
+
+  margin: 0;
+
+  padding: 0;
+
+  list-style: none;
+}
+
+
+.induction-journey-step {
+  position: relative;
+
+  display: grid;
+
+  grid-template-columns:
+    32px
+    minmax(0, 1fr);
+
+  gap: 10px;
+
+  min-height: 72px;
+
+  padding:
+    5px
+    0
+    15px;
+}
+
+
+.induction-journey-step:not(:last-child)::after {
+  content: "";
+
+  position: absolute;
+
+  top: 35px;
+  bottom: 0;
+  left: 15px;
+
+  width: 1px;
+
+  background: #dce5df;
+}
+
+
+.induction-journey-step__number {
+  position: relative;
+
+  z-index: 2;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  border:
+    1px solid
+    #d8e2dc;
+
+  border-radius: 999px;
+
+  background: #f6f8f7;
+
+  color: #75827a;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+.induction-journey-step div {
+  padding-top: 2px;
+}
+
+
+.induction-journey-step strong,
+.induction-journey-step span {
+  display: block;
+}
+
+
+.induction-journey-step strong {
+  color: #40584b;
+
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+
+.induction-journey-step span {
+  margin-top: 3px;
+
+  color: #89948e;
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height: 1.4;
+}
+
+
+/* =========================================================
+   ACTIVE STEP
+========================================================= */
+
+.induction-journey-step.is-current
+.induction-journey-step__number {
+  border-color: #24533d;
+
+  background: #214b37;
+
+  color: #ffffff;
+
+  box-shadow:
+    0 0 0 0
+    rgba(36, 83, 61, 0.2);
+
+  animation:
+    inductionStepPulse
+    3.2s
+    ease-out
+    infinite;
+}
+
+
+.induction-journey-step.is-current strong {
+  color: #214936;
+}
+
+
+/*
+ * Soft animated progress on the vertical line beneath
+ * the current step.
+ */
+
+.induction-journey-step.is-current:not(:last-child)::after {
+  background:
+    linear-gradient(
+      to bottom,
+      #5f8870 0%,
+      #5f8870 25%,
+      #dce5df 25%,
+      #dce5df 100%
+    );
+
+  background-size:
+    100%
+    200%;
+
+  animation:
+    inductionJourneyLine
+    4.5s
+    ease-in-out
+    infinite;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes inductionStepPulse {
+
+  0% {
+    box-shadow:
+      0 0 0 0
+      rgba(36, 83, 61, 0.18);
+  }
+
+  55% {
+    box-shadow:
+      0 0 0 7px
+      rgba(36, 83, 61, 0);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 0
+      rgba(36, 83, 61, 0);
+  }
+
+}
+
+
+@keyframes inductionJourneyLine {
+
+  0%,
+  100% {
+    background-position:
+      0
+      0%;
+  }
+
+  50% {
+    background-position:
+      0
+      100%;
+  }
+
+}
+
+
+@keyframes inductionAmbientRing {
+
+  0%,
+  100% {
+    transform:
+      scale(1)
+      translate3d(0, 0, 0);
+
+    opacity: 0.6;
+  }
+
+  50% {
+    transform:
+      scale(1.07)
+      translate3d(-4px, 4px, 0);
+
+    opacity: 1;
+  }
+
+}
+
+
+@keyframes inductionAmbientRingSecondary {
+
+  0%,
+  100% {
+    transform:
+      scale(1)
+      translate3d(0, 0, 0);
+
+    opacity: 0.45;
+  }
+
+  50% {
+    transform:
+      scale(1.11)
+      translate3d(3px, -2px, 0);
+
+    opacity: 0.8;
+  }
+
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .induction-journey-card::before,
+  .induction-journey-card::after,
+  .induction-journey-step.is-current
+  .induction-journey-step__number,
+  .induction-journey-step.is-current:not(:last-child)::after {
+    animation: none;
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+  .induction-start-layout {
+    grid-template-columns: 1fr;
+  }
+
+
+  .induction-journey-card {
+    order: -1;
+  }
+
+
+  .induction-journey-steps {
+    grid-template-columns:
+      repeat(
+        4,
+        minmax(0, 1fr)
+      );
+
+    gap: 7px;
+  }
+
+
+  .induction-journey-step {
+    display: block;
+
+    min-height: 0;
+
+    padding: 10px;
+
+    border:
+      1px solid
+      var(--induction-line-soft);
+
+    border-radius: 10px;
+  }
+
+
+  .induction-journey-step::after {
+    display: none;
+  }
+
+
+  .induction-journey-step__number {
+    margin-bottom: 8px;
+  }
+
+}
+
+
+@media (max-width: 650px) {
+
+  .induction-start-actions {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+
+  .induction-start-button {
+    width: 100%;
+  }
+
+
+  .induction-journey-steps {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+}

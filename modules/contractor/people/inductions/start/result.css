@@ -1,0 +1,297 @@
+/* =========================================================
+   NORMEX PEOPLE
+   INDUCTION RESULT
+========================================================= */
+
+:root {
+  --ir-ink: #20372c;
+  --ir-text: #385044;
+  --ir-muted: #748179;
+  --ir-muted-soft: #8d9992;
+  --ir-green: #28543d;
+  --ir-green-soft: #e9f2ec;
+  --ir-green-border: #bad3c2;
+  --ir-amber: #7d5d1a;
+  --ir-amber-soft: #fbf3df;
+  --ir-amber-border: #e7cf91;
+  --ir-line: #dce5df;
+  --ir-line-soft: #e8eeea;
+  --ir-shadow: 0 12px 30px rgba(16, 36, 24, 0.045);
+}
+
+.induction-result-page {
+  padding-bottom: 38px;
+}
+
+.induction-result-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.32fr);
+  gap: 14px;
+  align-items: stretch;
+}
+
+.induction-result-card {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid rgba(39, 64, 49, 0.08);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: var(--ir-shadow);
+}
+
+.induction-result-host {
+  min-height: 440px;
+}
+
+.induction-result-loading {
+  min-height: 440px;
+  display: grid;
+  place-items: center;
+  color: var(--ir-muted);
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 800;
+}
+
+/* =========================================================
+   HERO RESULT PANEL
+========================================================= */
+
+.induction-result-state {
+  min-height: 440px;
+  display: flex;
+  flex-direction: column;
+}
+
+.induction-result-banner {
+  position: relative;
+  overflow: hidden;
+  padding: 28px 24px;
+  border: 1px solid var(--ir-green-border);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 8% 10%, rgba(71, 132, 92, 0.14), transparent 30%),
+    linear-gradient(145deg, #ffffff, #f3f8f4);
+  text-align: center;
+}
+
+.induction-result-banner.is-failed {
+  border-color: var(--ir-amber-border);
+  background:
+    radial-gradient(circle at 8% 10%, rgba(193, 142, 45, 0.12), transparent 30%),
+    linear-gradient(145deg, #ffffff, #fcf8ef);
+}
+
+.induction-result-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 13px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #35664b, #254c38);
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 950;
+  box-shadow: 0 10px 24px rgba(32, 79, 52, 0.18);
+}
+
+.induction-result-banner.is-failed .induction-result-icon {
+  background: linear-gradient(145deg, #9a7527, #765817);
+  box-shadow: 0 10px 24px rgba(125, 93, 26, 0.16);
+}
+
+.induction-result-kicker {
+  margin: 0;
+  color: #47745b;
+  font-size: var(--people-text-xs, 0.72rem);
+  font-weight: 950;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.induction-result-banner.is-failed .induction-result-kicker {
+  color: var(--ir-amber);
+}
+
+.induction-result-banner h2 {
+  margin: 8px 0 0;
+  color: var(--ir-ink);
+  font-size: 1.55rem;
+  font-weight: 950;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.induction-result-banner p {
+  max-width: 600px;
+  margin: 10px auto 0;
+  color: var(--ir-muted);
+  font-size: var(--people-text-sm, 0.78rem);
+  line-height: 1.55;
+}
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.induction-result-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.induction-result-summary > div {
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px 11px;
+  border: 1px solid var(--ir-line);
+  border-radius: 10px;
+  background: #f8faf9;
+}
+
+.induction-result-summary span {
+  color: var(--ir-muted-soft);
+  font-size: var(--people-text-xs, 0.72rem);
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.induction-result-summary strong {
+  color: var(--ir-text);
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   RECORD / NEXT ACTION
+========================================================= */
+
+.induction-result-record {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.induction-result-record > div {
+  padding: 11px 12px;
+  border: 1px solid var(--ir-line-soft);
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.induction-result-record span,
+.induction-result-record strong {
+  display: block;
+}
+
+.induction-result-record span {
+  color: var(--ir-muted-soft);
+  font-size: var(--people-text-xs, 0.72rem);
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.induction-result-record strong {
+  margin-top: 4px;
+  color: var(--ir-text);
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+.induction-result-next {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid var(--ir-line-soft);
+  border-radius: 11px;
+  background: #f8faf9;
+}
+
+.induction-result-next strong {
+  display: block;
+  color: var(--ir-text);
+  font-size: var(--people-text-sm, 0.78rem);
+  font-weight: 900;
+}
+
+.induction-result-next span {
+  display: block;
+  margin-top: 4px;
+  color: var(--ir-muted);
+  font-size: var(--people-text-xs, 0.72rem);
+  line-height: 1.45;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.induction-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.induction-result-journey {
+  height: 100%;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+  .induction-result-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .induction-result-journey {
+    order: -1;
+    height: auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .induction-result-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .induction-result-card {
+    padding: 14px;
+  }
+
+  .induction-result-state,
+  .induction-result-host,
+  .induction-result-loading {
+    min-height: 0;
+  }
+
+  .induction-result-banner {
+    padding: 22px 16px;
+  }
+
+  .induction-result-summary,
+  .induction-result-record {
+    grid-template-columns: 1fr;
+  }
+
+  .induction-result-actions {
+    flex-direction: column;
+  }
+
+  .induction-result-actions .button {
+    width: 100%;
+  }
+}

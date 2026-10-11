@@ -594,3 +594,28 @@ function formatRoleCode(
     .join(" ");
 
 }
+
+
+/* =========================================================
+   ACCOUNT ADMINISTRATION OPTIONS
+
+   UI convenience only. Trusted backend authorization remains
+   authoritative for every managed-account mutation.
+========================================================= */
+
+export function getAssignableAccountRoleOptions(profile) {
+
+  const actorLevel = Number(profile?.accessLevel);
+
+  if (!Number.isFinite(actorLevel)) {
+    return [];
+  }
+
+  return Object.values(ROLE_CODES)
+    .filter((roleCode) => ROLE_ACCESS_LEVELS[roleCode] < actorLevel)
+    .map((roleCode) => ({
+      value: roleCode,
+      label: getRoleLabel(roleCode)
+    }));
+
+}

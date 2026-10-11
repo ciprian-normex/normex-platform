@@ -1,0 +1,1091 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>
+    Plant Suppliers | NORMEX
+  </title>
+
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/plant/shared/plant-shell.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/plant/suppliers/suppliers.css"
+  />
+
+</head>
+
+
+<body>
+
+  <div class="workspace">
+
+
+    <!-- =====================================================
+         ORGANISATION HEADER
+    ====================================================== -->
+
+    <header class="workspace-header">
+
+      <div class="workspace-container">
+
+        <div class="workspace-header__surface">
+
+
+          <div class="workspace-brand">
+
+            <p class="workspace-brand__product">
+              NORMEX · Contractor Workspace
+            </p>
+
+            <h1
+              id="workspaceOrganisationName"
+              class="workspace-brand__name"
+            >
+              Colemans
+            </h1>
+
+            <p class="workspace-brand__tagline">
+              Projects, resources and operational control
+            </p>
+
+          </div>
+
+
+          <div class="workspace-header-actions">
+
+            <div class="workspace-user">
+
+              <div class="workspace-user__details">
+
+                <span
+                  id="workspaceUserName"
+                  class="workspace-user__name"
+                >
+                  User
+                </span>
+
+                <span
+                  id="workspaceUserRole"
+                  class="workspace-user__role"
+                >
+                  Loading
+                </span>
+
+              </div>
+
+              <button
+                id="workspaceLogoutButton"
+                class="workspace-user__logout"
+                type="button"
+              >
+                Log out
+              </button>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ORGANISATION NAV
+    ====================================================== -->
+
+    <nav
+      class="workspace-nav"
+      aria-label="Organisation navigation"
+    >
+
+      <div class="workspace-container">
+
+        <div
+          id="contractorNavSurface"
+          class="workspace-nav__surface"
+        >
+
+          <div
+            id="contractorNavLinks"
+            class="workspace-nav__links"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="workspace-main">
+
+      <div class="workspace-container">
+
+
+        <!-- =================================================
+             PLANT SUBMENU
+        ================================================== -->
+
+        <nav
+          id="plantSubnav"
+          aria-label="Plant workspace navigation"
+        ></nav>
+
+
+        <section class="suppliers-page">
+
+
+          <!-- =================================================
+               SUPPLIER CONTROL BAR
+          ================================================== -->
+
+          <section class="suppliers-header">
+
+
+            <div>
+
+              <p class="suppliers-eyebrow">
+                External supply chain
+              </p>
+
+              <h2>
+                Suppliers
+              </h2>
+
+              <p class="suppliers-lead">
+                Plant hire, vehicle hire, transport, repair, parts and inspection contacts in one operational directory.
+              </p>
+
+              <p id="supplierPageStatus" class="suppliers-page-status" role="status">
+                Loading supplier directory…
+              </p>
+
+            </div>
+
+
+            <button
+              id="addSupplierButton"
+              class="suppliers-primary-button"
+              type="button"
+            >
+              + Add Supplier
+            </button>
+
+
+          </section>
+
+
+          <!-- =================================================
+               SEARCH / FILTER
+          ================================================== -->
+
+          <section class="suppliers-toolbar">
+
+
+            <label class="suppliers-search">
+
+              <span>
+                Search supplier
+              </span>
+
+              <input
+                id="supplierSearchInput"
+                type="search"
+                placeholder="Company, service, contact or postcode"
+                autocomplete="off"
+              />
+
+            </label>
+
+
+            <label class="suppliers-filter">
+
+              <span>
+                Category
+              </span>
+
+              <select id="supplierCategoryFilter">
+
+                <option value="">
+                  All categories
+                </option>
+
+                <option value="PLANT_HIRE">
+                  Plant Hire
+                </option>
+
+                <option value="VEHICLE_HIRE">
+                  Vehicle Hire
+                </option>
+
+                <option value="TRANSPORT">
+                  Transport
+                </option>
+
+                <option value="WORKSHOP">
+                  Repair / Workshop
+                </option>
+
+                <option value="PARTS">
+                  Parts
+                </option>
+
+                <option value="TYRES">
+                  Tyres
+                </option>
+
+                <option value="INSPECTION">
+                  Inspection / LOLER
+                </option>
+
+                <option value="OTHER">
+                  Other
+                </option>
+
+              </select>
+
+            </label>
+
+
+            <label class="suppliers-filter">
+
+              <span>
+                Status
+              </span>
+
+              <select id="supplierStatusFilter">
+
+                <option value="">
+                  All
+                </option>
+
+                <option value="ACTIVE">
+                  Active
+                </option>
+
+                <option value="INACTIVE">
+                  Inactive
+                </option>
+
+              </select>
+
+            </label>
+
+
+            <div class="suppliers-toolbar-summary">
+
+              <span>
+                Suppliers
+              </span>
+
+              <strong id="supplierCount">
+                —
+              </strong>
+
+            </div>
+
+
+          </section>
+
+
+          <!-- =================================================
+               EXPOSURE STRIP
+          ================================================== -->
+
+          <section class="suppliers-exposure-strip">
+
+
+            <article>
+
+              <span>
+                Active hires
+              </span>
+
+              <strong id="supplierActiveHireCount">
+                —
+              </strong>
+
+              <small>
+                Across all suppliers
+              </small>
+
+            </article>
+
+
+            <article>
+
+              <span>
+                Current hire exposure
+              </span>
+
+              <strong id="supplierCurrentExposure">
+                —
+              </strong>
+
+              <small>
+                Known active commitment
+              </small>
+
+            </article>
+
+
+            <article>
+
+              <span>
+                Workshop suppliers
+              </span>
+
+              <strong id="supplierWorkshopCount">
+                —
+              </strong>
+
+              <small>
+                Repair / service contacts
+              </small>
+
+            </article>
+
+
+            <article>
+
+              <span>
+                Transport suppliers
+              </span>
+
+              <strong id="supplierTransportCount">
+                —
+              </strong>
+
+              <small>
+                Haulage / movement support
+              </small>
+
+            </article>
+
+
+          </section>
+
+
+          <section class="suppliers-performance-panel">
+
+            <header class="suppliers-section-heading">
+              <div>
+                <p class="suppliers-section-kicker">Supplier performance</p>
+                <h3>Operational intelligence</h3>
+                <p>Factual supplier-linked activity from the current Plant records.</p>
+              </div>
+            </header>
+
+            <div class="suppliers-performance-grid">
+              <div id="supplierPerformanceMetrics" class="suppliers-performance-metrics"></div>
+              <div class="suppliers-downtime-panel">
+                <div class="suppliers-performance-title">Downtime by supplier</div>
+                <div id="supplierDowntimeChart" class="suppliers-downtime-chart"></div>
+              </div>
+            </div>
+
+          </section>
+
+
+          <!-- =================================================
+               SUPPLIER DIRECTORY
+          ================================================== -->
+
+          <section class="suppliers-directory-panel">
+
+
+            <header class="suppliers-section-heading">
+
+              <div>
+
+                <p class="suppliers-section-kicker">
+                  Directory
+                </p>
+
+                <h3>
+                  Supplier Network
+                </h3>
+
+                <p>
+                  Primary contacts, services and current exposure.
+                </p>
+
+              </div>
+
+            </header>
+
+
+            <div
+              id="supplierCardGrid"
+              class="suppliers-card-grid"
+            >
+
+              <div class="suppliers-empty-state">
+
+                <strong>
+                  No suppliers loaded
+                </strong>
+
+                <span>
+                  Add your first Plant, transport or workshop supplier.
+                </span>
+
+              </div>
+
+            </div>
+
+
+          </section>
+
+
+          <!-- =================================================
+               CONTACT QUICK ACCESS
+          ================================================== -->
+
+          <section class="suppliers-contact-panel">
+
+
+            <header class="suppliers-section-heading">
+
+              <div>
+
+                <p class="suppliers-section-kicker">
+                  Operational contacts
+                </p>
+
+                <h3>
+                  Quick Contact Directory
+                </h3>
+
+                <p>
+                  Find the right hire desk, workshop, breakdown, transport or accounts contact without opening individual supplier records.
+                </p>
+
+              </div>
+
+            </header>
+
+
+            <div class="suppliers-contact-table-wrap">
+
+              <table
+                class="suppliers-contact-table"
+                aria-label="Supplier contacts"
+              >
+
+                <thead>
+
+                  <tr>
+
+                    <th>
+                      Supplier
+                    </th>
+
+                    <th>
+                      Department
+                    </th>
+
+                    <th>
+                      Contact
+                    </th>
+
+                    <th>
+                      Phone
+                    </th>
+
+                    <th>
+                      Email
+                    </th>
+
+                    <th>
+                      Availability
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+
+                <tbody id="supplierContactBody">
+
+                  <tr>
+
+                    <td colspan="6">
+
+                      <div class="suppliers-empty-state suppliers-empty-state--table">
+
+                        <strong>
+                          No contacts loaded
+                        </strong>
+
+                        <span>
+                          Supplier department contacts will appear here.
+                        </span>
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+
+          </section>
+
+
+        </section>
+
+
+      </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="workspace-footer">
+
+      <div class="workspace-container">
+
+        <div class="workspace-footer__inner">
+
+          <span class="workspace-footer__brand">
+            <strong>NORMEX</strong>
+          </span>
+
+          <span
+            id="workspaceFooterOrganisation"
+            class="workspace-footer__context"
+          >
+            Colemans
+          </span>
+
+        </div>
+
+      </div>
+
+    </footer>
+
+
+  </div>
+
+
+  <!-- =====================================================
+       MOBILE NAV
+  ====================================================== -->
+
+  <aside
+    id="contractorMobileNav"
+    class="workspace-mobile-nav"
+    hidden
+  >
+
+    <div
+      id="mobileNavBackdrop"
+      class="workspace-mobile-nav__backdrop"
+    ></div>
+
+    <div class="workspace-mobile-nav__panel">
+
+      <header class="workspace-mobile-nav__header">
+
+        <div>
+
+          <span class="workspace-mobile-nav__eyebrow">
+            Colemans
+          </span>
+
+          <h2 class="workspace-mobile-nav__title">
+            Navigation
+          </h2>
+
+        </div>
+
+        <button
+          id="mobileNavClose"
+          class="workspace-mobile-nav__close"
+          type="button"
+        >
+          ×
+        </button>
+
+      </header>
+
+      <nav
+        id="contractorMobileNavLinks"
+        class="workspace-mobile-nav__links"
+      ></nav>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =====================================================
+       ADD / EDIT SUPPLIER DIALOG
+  ====================================================== -->
+
+  <dialog
+    id="supplierDialog"
+    class="suppliers-dialog"
+    aria-labelledby="supplierDialogTitle"
+  >
+
+    <form
+      id="supplierForm"
+      novalidate
+    >
+
+
+      <header class="suppliers-dialog-header">
+
+        <div>
+
+          <p>
+            Supplier management
+          </p>
+
+          <h2 id="supplierDialogTitle">
+            Add Supplier
+          </h2>
+
+          <span id="supplierDialogDescription">
+            Add organisation and operational contact information.
+          </span>
+
+        </div>
+
+
+        <button
+          id="supplierDialogClose"
+          type="button"
+          aria-label="Close supplier"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div class="suppliers-dialog-body">
+
+
+        <section class="suppliers-form-section">
+
+          <h3>
+            Supplier details
+          </h3>
+
+
+          <div class="suppliers-form-grid">
+
+
+            <label>
+
+              <span>
+                Company name *
+              </span>
+
+              <input
+                id="supplierName"
+                name="supplierName"
+                type="text"
+                required
+              />
+
+            </label>
+
+
+            <label>
+
+              <span>Categories * <small>Select one or more</small></span>
+
+              <select
+                id="supplierCategory"
+                name="supplierCategory"
+                multiple
+                size="4"
+                required
+              >
+
+                <option value="PLANT_HIRE">
+                  Plant Hire
+                </option>
+
+                <option value="VEHICLE_HIRE">
+                  Vehicle Hire
+                </option>
+
+                <option value="TRANSPORT">
+                  Transport
+                </option>
+
+                <option value="WORKSHOP">
+                  Repair / Workshop
+                </option>
+
+                <option value="PARTS">
+                  Parts
+                </option>
+
+                <option value="TYRES">
+                  Tyres
+                </option>
+
+                <option value="INSPECTION">
+                  Inspection / LOLER
+                </option>
+
+                <option value="OTHER">
+                  Other
+                </option>
+
+              </select>
+
+            </label>
+
+
+            <label>
+              <span>Status *</span>
+              <select id="supplierStatus" name="supplierStatus" required>
+                <option value="ACTIVE">Active</option>
+                <option value="INACTIVE">Inactive</option>
+              </select>
+            </label>
+
+
+            <label class="suppliers-form-flags">
+              <span>Supplier flags</span>
+              <span class="suppliers-checkbox-row">
+                <label><input id="supplierPreferred" type="checkbox" /> Preferred</label>
+                <label><input id="supplierApproved" type="checkbox" /> Approved</label>
+              </span>
+            </label>
+
+
+            <label>
+
+              <span>
+                Main phone
+              </span>
+
+              <input
+                id="supplierPhone"
+                name="supplierPhone"
+                type="tel"
+              />
+
+            </label>
+
+
+            <label>
+              <span>Payment terms</span>
+              <input id="supplierPaymentTerms" name="supplierPaymentTerms" type="text" />
+            </label>
+
+
+            <label class="suppliers-form-wide">
+              <span>Commercial notes</span>
+              <textarea id="supplierCommercialNotes" name="supplierCommercialNotes" rows="3"></textarea>
+            </label>
+
+
+            <label>
+
+              <span>
+                Main email
+              </span>
+
+              <input
+                id="supplierEmail"
+                name="supplierEmail"
+                type="email"
+              />
+
+            </label>
+
+
+            <label class="suppliers-form-wide">
+
+              <span>
+                Address
+              </span>
+
+              <input
+                id="supplierAddress"
+                name="supplierAddress"
+                type="text"
+              />
+
+            </label>
+
+
+            <label>
+
+              <span>
+                Postcode
+              </span>
+
+              <input
+                id="supplierPostcode"
+                name="supplierPostcode"
+                type="text"
+              />
+
+            </label>
+
+
+            <label>
+
+              <span>
+                Account reference
+              </span>
+
+              <input
+                id="supplierAccountReference"
+                name="supplierAccountReference"
+                type="text"
+              />
+
+            </label>
+
+
+          </div>
+
+        </section>
+
+
+        <section class="suppliers-form-section">
+
+          <div class="suppliers-form-section-heading">
+
+            <div>
+
+              <h3>
+                Department contacts
+              </h3>
+
+              <p>
+                Hire desk, breakdown, workshop, transport, accounts or other useful contacts.
+              </p>
+
+            </div>
+
+
+            <button
+              id="addSupplierContactButton"
+              class="suppliers-secondary-button"
+              type="button"
+            >
+              + Add Contact
+            </button>
+
+          </div>
+
+
+          <div
+            id="supplierContactEditor"
+            class="suppliers-contact-editor"
+          ></div>
+
+
+        </section>
+
+
+        <section class="suppliers-form-section">
+
+          <h3>
+            Notes
+          </h3>
+
+
+          <label>
+
+            <span>
+              Operational notes
+            </span>
+
+            <textarea
+              id="supplierNotes"
+              name="supplierNotes"
+              rows="4"
+              placeholder="Account instructions, out-of-hours information, preferred contacts or other useful information"
+            ></textarea>
+
+          </label>
+
+        </section>
+
+
+        <p
+          id="supplierFormError"
+          class="suppliers-form-error"
+          hidden
+        ></p>
+
+
+      </div>
+
+
+      <footer class="suppliers-dialog-footer">
+
+        <button
+          id="supplierCancelButton"
+          class="suppliers-secondary-button"
+          type="button"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="supplierSaveButton"
+          class="suppliers-primary-button"
+          type="submit"
+        >
+          Save Supplier
+        </button>
+
+      </footer>
+
+
+    </form>
+
+  </dialog>
+
+
+  <!-- =====================================================
+       SUPPLIER DETAIL DRAWER
+  ====================================================== -->
+
+  <aside
+    id="supplierDrawer"
+    class="suppliers-drawer"
+    aria-hidden="true"
+  >
+
+    <div
+      id="supplierDrawerBackdrop"
+      class="suppliers-drawer__backdrop"
+    ></div>
+
+
+    <section class="suppliers-drawer__panel">
+
+
+      <header class="suppliers-drawer__header">
+
+        <div>
+
+          <p id="supplierDrawerCategory">
+            Supplier
+          </p>
+
+          <h2 id="supplierDrawerTitle">
+            Supplier
+          </h2>
+
+          <span id="supplierDrawerSubtitle">Operational contact information</span>
+
+        </div>
+
+
+        <button
+          id="supplierDrawerClose"
+          type="button"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div
+        id="supplierDrawerBody"
+        class="suppliers-drawer__body"
+      ></div>
+
+
+      <footer class="suppliers-drawer__actions">
+
+        <button
+          id="editSupplierButton"
+          class="suppliers-secondary-button"
+          type="button"
+        >
+          Edit Supplier
+        </button>
+
+      </footer>
+
+
+    </section>
+
+
+  </aside>
+
+
+  <!-- =====================================================
+       SCRIPTS
+  ====================================================== -->
+
+  <script
+    src="/modules/contractor/shared/js/config.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/shared/js/shell.js"
+  ></script>
+
+  <script
+    type="module"
+    src="/modules/contractor/plant/suppliers/suppliers.js"
+  ></script>
+
+
+</body>
+
+</html>

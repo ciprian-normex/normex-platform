@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#10271c" />
+  <title>Induction Certificate | NORMEX</title>
+  <link rel="stylesheet" href="./certificate.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+</head>
+<body>
+  <main class="certificate-page">
+
+    <header class="certificate-toolbar">
+      <div>
+        <p class="certificate-toolbar__eyebrow">NORMEX · VERIFIED INDUCTION RECORD</p>
+        <h1>Induction certificate</h1>
+        <p>Keep this certificate available as evidence of a current induction record. Its live status can be checked at any time.</p>
+      </div>
+
+      <div class="certificate-toolbar__actions">
+        <a id="checkInductionButton" class="certificate-action certificate-action--secondary" href="../verify/">
+          Check induction
+        </a>
+        <button id="printCertificateButton" class="certificate-action certificate-action--primary" type="button">
+          Print / Save PDF
+        </button>
+      </div>
+    </header>
+
+    <div id="certificateError" class="certificate-error" hidden></div>
+
+    <section class="certificate-stage" aria-label="Certificate preview">
+      <article id="certificateSheet" class="certificate-sheet">
+
+        <header class="certificate-sheet__header">
+          <div class="certificate-brand-mark">
+            <span class="certificate-brand-mark__letters">NX</span>
+            <span>VERIFIED</span>
+          </div>
+
+          <div class="certificate-sheet__title">
+            <p id="certificateOrganisationTop" class="certificate-sheet__organisation">Organisation</p>
+            <h2>Certificate of Completion</h2>
+            <p>Induction Completion Record</p>
+          </div>
+
+          <div id="certificateStatusStamp" class="certificate-status-stamp">
+            <span>CERTIFICATE</span>
+            <strong id="certificateStatusText">VALID</strong>
+            <b id="certificateStatusIcon">✓</b>
+          </div>
+        </header>
+
+        <section class="certificate-recipient">
+          <p>THIS CERTIFICATE CONFIRMS THAT</p>
+          <h3 id="certificateWorkerName">—</h3>
+          <span>has successfully completed the organisation's induction and associated knowledge assessment.</span>
+        </section>
+
+        <section class="certificate-id-ribbon">
+          <div>
+            <span>INDUCTION NUMBER</span>
+            <strong id="certificateNumber">—</strong>
+          </div>
+
+          <p>
+            Use this induction number to verify the record and to clock in or out where NORMEX attendance kiosks are enabled.
+          </p>
+        </section>
+
+        <section class="certificate-main-grid">
+
+          <div class="certificate-details">
+            <div class="certificate-detail certificate-detail--wide">
+              <span>ORGANISATION</span>
+              <strong id="certificateCompany">—</strong>
+            </div>
+
+            <div class="certificate-detail">
+              <span>ROLE / TRADE</span>
+              <strong id="certificateRole">—</strong>
+            </div>
+
+            <div class="certificate-detail">
+              <span>CERTIFICATE TYPE</span>
+              <strong>Induction Completion</strong>
+            </div>
+
+            <div class="certificate-detail">
+              <span>DATE COMPLETED</span>
+              <strong id="certificateIssuedAt">—</strong>
+            </div>
+
+            <div class="certificate-detail">
+              <span>VALID UNTIL</span>
+              <strong id="certificateExpiresAt">—</strong>
+            </div>
+
+            <div class="certificate-detail">
+              <span>VIDEO VERSION</span>
+              <strong id="certificateVideoVersion">—</strong>
+            </div>
+
+            <section class="certificate-scope">
+              <h4>Certificate scope</h4>
+              <p>
+                This certificate confirms successful completion of the organisation's induction and the associated knowledge assessment.
+              </p>
+              <p>
+                It does not replace project or site-specific inductions, RAMS briefings, permits, competence checks, supervision requirements or any local controls that apply to the work.
+              </p>
+            </section>
+          </div>
+
+          <aside class="certificate-verification">
+            <div id="certificateQr" class="certificate-qr" aria-label="QR code for live induction verification"></div>
+
+            <div class="certificate-verification__copy">
+              <span>LIVE VERIFICATION</span>
+              <strong>Scan to check induction</strong>
+              <p>Scan the QR code or use the induction number to confirm the current live status of this record.</p>
+              <a id="certificateVerifyLink" href="../verify/">Open verification</a>
+            </div>
+          </aside>
+
+        </section>
+
+        <footer class="certificate-sheet__footer">
+          <div>
+            <span>RECORD STATUS</span>
+            <strong id="certificateFooterStatus">VALID</strong>
+          </div>
+
+          <div>
+            <span>ISSUED BY</span>
+            <strong id="certificateOrganisationFooter">Organisation</strong>
+          </div>
+
+          <div>
+            <span>GENERATED</span>
+            <strong id="certificateGeneratedAt">—</strong>
+          </div>
+        </footer>
+
+      </article>
+    </section>
+
+    <p class="certificate-landscape-note">
+      On smaller screens, rotate your device or scroll sideways to view the full landscape certificate.
+    </p>
+  </main>
+
+  <script type="module" src="./certificate.js"></script>
+</body>
+</html>

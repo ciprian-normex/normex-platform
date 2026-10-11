@@ -1,0 +1,904 @@
+/* =========================================================
+   NORMEX PEOPLE
+   CORE COMPANY INDUCTION
+   VIDEO PAGE
+
+   Shared journey styling:
+   ../induction-journey.css
+========================================================= */
+
+:root {
+  --iv-ink: #20372c;
+  --iv-text: #385044;
+
+  --iv-muted: #6f7e76;
+  --iv-muted-soft: #8d9992;
+
+  --iv-green: #28543d;
+  --iv-green-deep: #1e4330;
+  --iv-green-soft: #e9f2ec;
+
+  --iv-line: #dce5df;
+  --iv-line-soft: #e8eeea;
+
+  --iv-panel: #ffffff;
+  --iv-panel-soft: #f7faf8;
+
+  --iv-amber: #866313;
+  --iv-amber-bg: #f7efd8;
+
+  --iv-shadow:
+    0 12px 30px
+    rgba(16, 36, 24, 0.045);
+}
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.induction-video-page {
+  padding-bottom:
+    38px;
+}
+
+
+.induction-video-hero {
+  margin-bottom:
+    0;
+}
+
+
+/* =========================================================
+   MAIN WORKSPACE
+========================================================= */
+
+.induction-video-layout {
+  display:
+    grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(300px, 0.32fr);
+
+  gap:
+    14px;
+
+  align-items:
+    stretch;
+
+  min-width:
+    0;
+}
+
+
+/* =========================================================
+   VIDEO CARD
+========================================================= */
+
+.induction-video-card {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  min-width:
+    0;
+
+  padding:
+    18px;
+
+  border:
+    1px solid
+    rgba(39, 64, 49, 0.08);
+
+  border-radius:
+    18px;
+
+  background:
+    var(--iv-panel);
+
+  box-shadow:
+    var(--iv-shadow);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.induction-video-card__header {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    24px;
+
+  min-height:
+    68px;
+
+  margin-bottom:
+    14px;
+}
+
+
+.induction-video-card__heading {
+  min-width:
+    0;
+
+  max-width:
+    720px;
+}
+
+
+.induction-video-card__heading h2 {
+  margin:
+    0;
+
+  color:
+    var(--iv-ink);
+
+  font-size:
+    1rem;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    -0.018em;
+
+  line-height:
+    1.15;
+}
+
+
+.induction-video-card__heading > p:last-child {
+  max-width:
+    620px;
+
+  margin:
+    6px
+    0
+    0;
+
+  color:
+    var(--iv-muted);
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height:
+    1.55;
+}
+
+
+/* =========================================================
+   VERSION
+========================================================= */
+
+.induction-video-version {
+  display:
+    grid;
+
+  align-content:
+    center;
+
+  gap:
+    4px;
+
+  flex:
+    0 0 auto;
+
+  width:
+    116px;
+
+  min-height:
+    58px;
+
+  padding:
+    9px
+    12px;
+
+  border:
+    1px solid
+    var(--iv-line);
+
+  border-radius:
+    11px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #fafcfb,
+      #f5f8f6
+    );
+
+  text-align:
+    right;
+}
+
+
+.induction-video-version span {
+  color:
+    var(--iv-muted-soft);
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  font-weight:
+    850;
+
+  letter-spacing:
+    0.07em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.induction-video-version strong {
+  color:
+    var(--iv-text);
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  font-weight:
+    900;
+}
+
+
+/* =========================================================
+   PLAYER
+========================================================= */
+
+.induction-video-player {
+  position:
+    relative;
+
+  display:
+    grid;
+
+  place-items:
+    center;
+
+  width:
+    100%;
+
+  aspect-ratio:
+    16 / 9;
+
+  min-height:
+    340px;
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid
+    rgba(15, 34, 23, 0.76);
+
+  border-radius:
+    14px;
+
+  background:
+    radial-gradient(
+      circle at 50% 44%,
+      #1d3025 0%,
+      #111d16 52%,
+      #0a120d 100%
+    );
+
+  box-shadow:
+    inset
+    0 0 90px
+    rgba(0, 0, 0, 0.22);
+}
+
+
+/* =========================================================
+   VIDEO
+
+   Native video controls stay enabled.
+   This gives:
+   - play / pause
+   - timeline seeking
+   - volume
+   - fullscreen
+
+   video.js still controls which ranges actually count
+   as watched.
+========================================================= */
+
+.induction-video-player__media {
+  position:
+    relative;
+
+  z-index:
+    3;
+
+  display:
+    block;
+
+  width:
+    100%;
+
+  height:
+    100%;
+
+  object-fit:
+    contain;
+
+  background:
+    #080d0a;
+}
+
+
+.induction-video-player__media[hidden] {
+  display:
+    none;
+}
+
+
+/* =========================================================
+   LOADING / UNAVAILABLE
+========================================================= */
+
+.induction-video-loading,
+.induction-video-unavailable {
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  z-index:
+    2;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  flex-direction:
+    column;
+
+  gap:
+    6px;
+
+  padding:
+    30px;
+
+  text-align:
+    center;
+}
+
+
+.induction-video-loading[hidden],
+.induction-video-unavailable[hidden] {
+  display:
+    none;
+}
+
+
+.induction-video-loading strong,
+.induction-video-unavailable strong {
+  color:
+    #f4f7f5;
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  font-weight:
+    900;
+}
+
+
+.induction-video-loading > span:last-child,
+.induction-video-unavailable > span:last-child {
+  max-width:
+    390px;
+
+  color:
+    rgba(226, 235, 229, 0.66);
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  line-height:
+    1.5;
+}
+
+
+/* =========================================================
+   LOADING PULSE
+========================================================= */
+
+.induction-video-loading__pulse {
+  width:
+    10px;
+
+  height:
+    10px;
+
+  margin-bottom:
+    8px;
+
+  border-radius:
+    50%;
+
+  background:
+    #79b38c;
+
+  animation:
+    ivLoadingPulse
+    2.4s
+    ease-out
+    infinite;
+}
+
+
+/* =========================================================
+   UNAVAILABLE ICON
+========================================================= */
+
+.induction-video-unavailable__icon {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  width:
+    30px;
+
+  height:
+    30px;
+
+  margin-bottom:
+    5px;
+
+  border:
+    1px solid
+    rgba(225, 236, 229, 0.22);
+
+  border-radius:
+    50%;
+
+  color:
+    #c9d8ce;
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  font-weight:
+    900;
+}
+
+
+/* =========================================================
+   PROGRESS AREA
+========================================================= */
+
+.induction-video-progress {
+  padding:
+    14px
+    2px
+    1px;
+}
+
+
+.induction-video-progress__heading {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    12px;
+
+  margin-bottom:
+    8px;
+}
+
+
+.induction-video-progress__copy {
+  display:
+    grid;
+
+  gap:
+    2px;
+}
+
+
+.induction-video-progress__copy span {
+  color:
+    var(--iv-muted-soft);
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.07em;
+
+  text-transform:
+    uppercase;
+}
+
+
+.induction-video-progress__copy strong {
+  color:
+    var(--iv-text);
+
+  font-size: var(--people-text-sm, 0.78rem);
+
+  font-weight:
+    900;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.induction-video-status {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  min-height:
+    24px;
+
+  padding:
+    4px
+    9px;
+
+  border-radius:
+    999px;
+
+  background:
+    var(--iv-amber-bg);
+
+  color:
+    var(--iv-amber);
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  font-weight:
+    900;
+}
+
+
+.induction-video-status.is-complete {
+  background:
+    var(--iv-green-soft);
+
+  color:
+    #286043;
+}
+
+
+/* =========================================================
+   PROGRESS BAR
+========================================================= */
+
+.induction-video-progress__track {
+  position:
+    relative;
+
+  width:
+    100%;
+
+  height:
+    7px;
+
+  overflow:
+    hidden;
+
+  border-radius:
+    999px;
+
+  background:
+    #e7ede9;
+}
+
+
+.induction-video-progress__bar {
+  width:
+    0;
+
+  height:
+    100%;
+
+  border-radius:
+    inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      #49785c,
+      #2b5b41
+    );
+
+  transition:
+    width
+    220ms
+    ease;
+}
+
+
+.induction-video-progress p {
+  margin:
+    8px
+    0
+    0;
+
+  color:
+    var(--iv-muted-soft);
+
+  font-size: var(--people-text-xs, 0.72rem);
+
+  line-height:
+    1.45;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.induction-video-actions {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    12px;
+
+  margin-top:
+    13px;
+
+  padding-top:
+    13px;
+
+  border-top:
+    1px solid
+    var(--iv-line-soft);
+}
+
+
+.induction-video-back {
+  gap:
+    6px;
+}
+
+
+.induction-video-continue {
+  gap:
+    8px;
+
+  min-width:
+    168px;
+}
+
+
+.induction-video-continue:not(:disabled):hover {
+  color:
+    #ffffff;
+}
+
+
+.induction-video-continue:disabled,
+.induction-video-continue:disabled:hover {
+  border-color:
+    #cbd5cf;
+
+  background:
+    #e7ebe8;
+
+  color:
+    #87938d;
+
+  opacity:
+    1;
+
+  box-shadow:
+    none;
+
+  transform:
+    none;
+
+  cursor:
+    not-allowed;
+}
+
+
+/* =========================================================
+   JOURNEY PLACEMENT ONLY
+
+   The actual journey appearance lives in:
+   ../induction-journey.css
+========================================================= */
+
+.induction-video-journey {
+  height:
+    100%;
+}
+
+
+/* =========================================================
+   LOADING ANIMATION
+========================================================= */
+
+@keyframes ivLoadingPulse {
+
+  0% {
+    box-shadow:
+      0 0 0 0
+      rgba(121, 179, 140, 0.30);
+  }
+
+  70% {
+    box-shadow:
+      0 0 0 9px
+      rgba(121, 179, 140, 0);
+  }
+
+  100% {
+    box-shadow:
+      0 0 0 0
+      rgba(121, 179, 140, 0);
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1050px) {
+
+  .induction-video-layout {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(270px, 0.36fr);
+  }
+
+}
+
+
+@media (max-width: 900px) {
+
+  .induction-video-layout {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .induction-video-journey {
+    order:
+      -1;
+
+    height:
+      auto;
+  }
+
+
+  .induction-video-player {
+    min-height:
+      320px;
+  }
+
+}
+
+
+@media (max-width: 620px) {
+
+  .induction-video-card {
+    padding:
+      14px;
+
+    border-radius:
+      16px;
+  }
+
+
+  .induction-video-card__header {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column;
+
+    gap:
+      12px;
+  }
+
+
+  .induction-video-version {
+    width:
+      100%;
+
+    min-height:
+      50px;
+
+    text-align:
+      left;
+  }
+
+
+  .induction-video-player {
+    min-height:
+      220px;
+
+    border-radius:
+      12px;
+  }
+
+
+  .induction-video-actions {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column-reverse;
+  }
+
+
+  .induction-video-actions .button {
+    width:
+      100%;
+  }
+
+
+  .induction-video-continue {
+    min-width:
+      0;
+  }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .induction-video-loading__pulse {
+    animation:
+      none;
+  }
+
+
+  .induction-video-progress__bar {
+    transition:
+      none;
+  }
+
+}

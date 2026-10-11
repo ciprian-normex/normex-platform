@@ -1,0 +1,579 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <meta
+    name="theme-color"
+    content="#17271f"
+  />
+
+  <title>
+    Induction Video | People | NORMEX
+  </title>
+
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/theme-colemans.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="/modules/contractor/shared/css/workspace.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="../inductions.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="../induction-journey.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="./video.css"
+  />
+
+</head>
+
+
+<body>
+
+
+  <main
+    data-induction-page
+    class="induction-page induction-video-page"
+  >
+
+
+    <!-- =====================================================
+         PEOPLE WORKSPACE
+    ====================================================== -->
+
+    <nav
+      class="people-workspace-nav"
+      aria-label="People workspace navigation"
+    >
+
+      <div class="people-workspace-nav__identity">
+
+        <span class="people-workspace-nav__badge">
+          People
+        </span>
+
+
+        <div>
+
+          <span class="people-workspace-nav__eyebrow">
+            People workspace
+          </span>
+
+          <strong>
+            Workforce &amp; People Control
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <div class="people-workspace-nav__links">
+
+        <a
+          class="people-workspace-nav__link"
+          href="/modules/contractor/people/"
+        >
+          Overview
+        </a>
+
+        <a
+          class="people-workspace-nav__link"
+          href="/modules/contractor/people/rota/"
+        >
+          Rota
+        </a>
+
+        <a
+          class="people-workspace-nav__link"
+          href="/modules/contractor/people/resource-planning/"
+        >
+          Resource Planning
+        </a>
+
+        <a
+          class="people-workspace-nav__link"
+          href="/modules/contractor/people/my-team/"
+        >
+          My Team
+        </a>
+
+        <a
+          class="people-workspace-nav__link is-active"
+          href="/modules/contractor/people/inductions/"
+        >
+          Inductions
+        </a>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <header class="induction-hero induction-video-hero">
+
+      <div class="induction-hero__copy">
+
+        <p class="induction-eyebrow">
+          People · Core Company Induction
+        </p>
+
+        <h1>
+          Watch your induction
+        </h1>
+
+        <p class="induction-hero__note">
+          Watch the full video before continuing to the assessment. You can pause, rewind or replay any section if needed.
+        </p>
+
+      </div>
+
+
+      <div class="induction-hero__context">
+
+        <span>
+          Step 2 of 4
+        </span>
+
+        <strong>
+          Video
+        </strong>
+
+      </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         INDUCTION NAV
+    ====================================================== -->
+
+    <div
+      id="pageNav"
+      class="induction-nav-host"
+    ></div>
+
+
+    <!-- =====================================================
+         NOTICE
+    ====================================================== -->
+
+    <div
+      id="notice"
+      class="notice"
+      hidden
+    ></div>
+
+
+    <!-- =====================================================
+         CONTENT
+    ====================================================== -->
+
+    <section class="induction-video-layout">
+
+
+      <!-- =================================================
+           VIDEO
+      ================================================== -->
+
+      <section class="induction-video-card">
+
+
+        <header class="induction-video-card__header">
+
+          <div class="induction-video-card__heading">
+
+            <p class="induction-eyebrow">
+              Induction video
+            </p>
+
+            <h2 id="videoTitle">
+              Core Company Induction
+            </h2>
+
+            <p id="videoDescription">
+              This video covers the information you need before starting work. Watch it in full and the assessment will unlock automatically.
+            </p>
+
+          </div>
+
+
+          <div class="induction-video-version">
+
+            <span>
+              Video version
+            </span>
+
+            <strong id="videoVersion">
+              —
+            </strong>
+
+          </div>
+
+        </header>
+
+
+        <!-- =============================================
+             PLAYER
+        ============================================== -->
+
+        <div
+          id="videoPlayerState"
+          class="induction-video-player"
+        >
+
+
+          <div
+            id="videoLoading"
+            class="induction-video-loading"
+          >
+
+            <span class="induction-video-loading__pulse"></span>
+
+            <strong>
+              Loading induction video
+            </strong>
+
+            <span>
+              Please wait while the current controlled video is prepared.
+            </span>
+
+          </div>
+
+
+          <video
+            id="inductionVideo"
+            class="induction-video-player__media"
+            controls
+            controlslist="nodownload"
+            preload="metadata"
+            playsinline
+            hidden
+          ></video>
+
+
+          <div
+            id="videoUnavailable"
+            class="induction-video-unavailable"
+            hidden
+          >
+
+            <span class="induction-video-unavailable__icon">
+              i
+            </span>
+
+            <strong>
+              Induction video unavailable
+            </strong>
+
+            <span>
+              The current company induction video could not be loaded. Please contact your manager.
+            </span>
+
+          </div>
+
+
+        </div>
+
+
+        <!-- =============================================
+             PROGRESS
+        ============================================== -->
+
+        <section class="induction-video-progress">
+
+          <div class="induction-video-progress__heading">
+
+            <div class="induction-video-progress__copy">
+
+              <span>
+                Video progress
+              </span>
+
+              <strong id="videoProgressLabel">
+                0% watched
+              </strong>
+
+            </div>
+
+
+            <span
+              id="videoCompletionState"
+              class="induction-video-status"
+            >
+              Incomplete
+            </span>
+
+          </div>
+
+
+          <div
+            class="induction-video-progress__track"
+            aria-hidden="true"
+          >
+
+            <div
+              id="videoProgressBar"
+              class="induction-video-progress__bar"
+              style="width: 0%"
+            ></div>
+
+          </div>
+
+
+          <p id="videoProgressMessage">
+            Watch the induction video to unlock the assessment.
+          </p>
+
+        </section>
+
+
+        <!-- =============================================
+             ACTIONS
+        ============================================== -->
+
+        <footer class="induction-video-actions">
+
+          <a
+            class="button induction-video-back"
+            href="./"
+          >
+            ← Back to details
+          </a>
+
+
+          <button
+            id="continueToAssessment"
+            class="button button--primary induction-video-continue"
+            type="button"
+            disabled
+          >
+            Continue to assessment
+
+            <span aria-hidden="true">
+              →
+            </span>
+          </button>
+
+        </footer>
+
+
+      </section>
+
+
+      <!-- =================================================
+           JOURNEY
+      ================================================== -->
+
+      <aside class="induction-journey-card induction-video-journey">
+
+
+        <header class="induction-journey-card__header">
+
+          <p class="induction-eyebrow">
+            Your journey
+          </p>
+
+          <h2>
+            Induction progress
+          </h2>
+
+          <p>
+            Complete each step in order to finish your induction.
+          </p>
+
+        </header>
+
+
+        <ol class="induction-journey-steps">
+
+
+          <!-- STEP 1 -->
+
+          <li class="induction-journey-step is-complete">
+
+            <span class="induction-journey-step__marker">
+
+              <span class="induction-journey-step__number">
+                ✓
+              </span>
+
+            </span>
+
+
+            <div class="induction-journey-step__body">
+
+              <strong>
+                Confirm details
+              </strong>
+
+              <span>
+                Your information has been confirmed.
+              </span>
+
+            </div>
+
+          </li>
+
+
+          <!-- STEP 2 -->
+
+          <li class="induction-journey-step is-current">
+
+            <span class="induction-journey-step__marker">
+
+              <span
+                class="induction-journey-step__orbit"
+                aria-hidden="true"
+              ></span>
+
+              <span class="induction-journey-step__number">
+                2
+              </span>
+
+            </span>
+
+
+            <div class="induction-journey-step__body">
+
+              <strong>
+                Watch induction
+              </strong>
+
+              <span>
+                Watch the full company induction video.
+              </span>
+
+            </div>
+
+          </li>
+
+
+          <!-- STEP 3 -->
+
+          <li class="induction-journey-step">
+
+            <span class="induction-journey-step__marker">
+
+              <span class="induction-journey-step__number">
+                3
+              </span>
+
+            </span>
+
+
+            <div class="induction-journey-step__body">
+
+              <strong>
+                Assessment
+              </strong>
+
+              <span>
+                Complete the induction questions.
+              </span>
+
+            </div>
+
+          </li>
+
+
+          <!-- STEP 4 -->
+
+          <li class="induction-journey-step">
+
+            <span class="induction-journey-step__marker">
+
+              <span class="induction-journey-step__number">
+                4
+              </span>
+
+            </span>
+
+
+            <div class="induction-journey-step__body">
+
+              <strong>
+                Certificate
+              </strong>
+
+              <span>
+                Your certificate is issued after passing.
+              </span>
+
+            </div>
+
+          </li>
+
+
+        </ol>
+
+
+        <div class="induction-journey-guidance">
+
+          <span class="induction-journey-guidance__icon">
+            i
+          </span>
+
+
+          <div>
+
+            <strong>
+              Take your time
+            </strong>
+
+            <span>
+              Use the player controls to pause, rewind or move through the video. Sections you skip will not count as watched until you view them.
+            </span>
+
+          </div>
+
+        </div>
+
+
+      </aside>
+
+
+    </section>
+
+
+  </main>
+
+
+  <script
+    src="/modules/contractor/shared/js/config.js"
+  ></script>
+
+  <script
+    type="module"
+    src="./video.js"
+  ></script>
+
+
+</body>
+
+</html>

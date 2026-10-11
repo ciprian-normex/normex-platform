@@ -53,6 +53,12 @@ let hireReadComplete = false;
 let assignments =
   [];
 
+let people =
+  [];
+
+let peopleReadComplete =
+  false;
+
 let movements =
   [];
 
@@ -70,7 +76,6 @@ let issues =
 
 let documents =
   [];
-
 let documentsReadComplete =
   false;
 
@@ -83,12 +88,7 @@ let canManagePlant =
 let canViewPlantCosts =
   false;
 
-
-/* =========================================================
-   BASIC HELPERS
-========================================================= */
-
-function getElement(
+  function getElement(
   id
 ) {
 
@@ -97,8 +97,6 @@ function getElement(
   );
 
 }
-
-
 function setText(
   id,
   value
@@ -484,6 +482,66 @@ function getAssetPlantId() {
 
   );
 
+}
+
+
+function personDisplayName(
+  person
+) {
+
+  return cleanString(
+    person?.displayName
+    ||
+    [person?.firstName, person?.lastName].filter(Boolean).join(" ")
+  );
+
+}
+
+
+function activeAssignmentsOfType(
+  records,
+  assignmentType
+) {
+
+  return records
+    .filter(
+      record =>
+        cleanString(record.assignmentType).toUpperCase() === assignmentType
+        &&
+        activeAssignment(record)
+    )
+    .sort(
+      (a, b) => String(b.assignedFrom || "").localeCompare(String(a.assignedFrom || ""))
+    );
+
+}
+
+
+function currentPersonAssignment(
+  records = assignments
+) {
+
+  return activeAssignmentsOfType(records, "PERSON")[0] || null;
+
+}
+
+
+function currentProjectAssignment(
+  records = assignments
+) {
+
+  return activeAssignmentsOfType(records, "PROJECT")[0] || null;
+
+}
+
+
+function primaryAssignmentRecord() {
+  return isRoadVehicle() ? currentPersonAssignment() : currentProjectAssignment();
+}
+
+
+function primaryAssignmentLabel() {
+  return isRoadVehicle() ? "Assigned To" : "Current Project";
 }
 
 
@@ -1007,6 +1065,37 @@ async function loadOrganisationCollection(
 
 }
 
+
+async function loadAssetLinkedCollection(
+  collectionName,
+  includeEntityId = false
+) {
+
+  const assetIdentifiers = [asset?.id, asset?.plantId, asset?.plantReference]
+    .map(cleanString)
+    .filter((value, index, list) => value && list.indexOf(value) === index);
+  const fields = ["assetId", "plantId", "plantReference"];
+  const identifiers = fields.flatMap(field => assetIdentifiers.map(value => [field, value]));
+
+  if (includeEntityId) {
+    identifiers.push(...assetIdentifiers.map(value => ["entityId", value]));
+  }
+
+  const reads = identifiers
+    .filter(([, value], index, list) => cleanString(value) && list.findIndex(([field, candidate]) => field === identifiers[index][0] && candidate === value) === index)
+    .map(([field, value]) => getDocs(query(
+      collection(db, collectionName),
+      where("organisationId", "==", organisationId),
+      where(field, "==", value)
+    )));
+
+  const snapshots = await Promise.all(reads);
+  const records = new Map();
+  snapshots.forEach(snapshot => snapshot.docs.forEach(item => records.set(item.id, { id: item.id, ...item.data() })));
+  return [...records.values()];
+
+}
+
 /* =========================================================
    RELATED RECORD LOADERS
 ========================================================= */
@@ -1038,6 +1127,41 @@ async function loadAssignments() {
     records.filter(
       recordBelongsToAsset
     );
+
+}
+
+
+async function loadPeople() {
+
+  peopleReadComplete = false;
+
+  try {
+
+    const snapshot =
+      await getDocs(
+        query(
+          collection(db, "people"),
+          where("organisationId", "==", organisationId)
+        )
+      );
+
+    people = snapshot.docs
+      .map(item => ({ id: item.id, ...item.data() }))
+      .filter(person => {
+        const status = cleanString(person.employmentStatus).toUpperCase();
+        const disabled = person.disabled === true || cleanString(person.disabled).toUpperCase() === "TRUE" || person.isDisabled === true;
+        const inactive = cleanString(person.status).toUpperCase() === "INACTIVE" || cleanString(person.personStatus).toUpperCase() === "INACTIVE";
+        return !["LEFT", "INACTIVE", "DISABLED", "ARCHIVED"].includes(status) && person.archived !== true && !disabled && !inactive;
+      });
+    peopleReadComplete = true;
+
+  } catch (error) {
+
+    console.warn("NORMEX people records unavailable:", error);
+    people = [];
+    peopleReadComplete = false;
+
+  }
 
 }
 
@@ -1257,7 +1381,8 @@ function renderHero() {
   if (workspace) workspace.dataset.assetClass = assetClass;
 
   const roadVehicle = assetClass === "ROAD_VEHICLE";
-  const currentAssignment = getCurrentAssignment(assignments);
+  const personAssignment = currentPersonAssignment();
+  const projectAssignment = currentProjectAssignment();
 
   setText(
     "assetEyebrow",
@@ -1297,7 +1422,7 @@ function renderHero() {
   if (identityMeta) identityMeta.hidden = false;
 
   const positionLabels = roadVehicle
-    ? ["Current Location", "Current Project", "Current Use", "Assigned To", "Last Inspection", "Next Action"]
+    ? ["Current Location", "Assigned To", "Current Use", "Operational Status", "Last Inspection", "Next Action"]
     : ["Current Location", "Current Project", "Current Use", "Assigned To", "Last Inspection", "Next Action"];
   positionLabels.forEach((label, index) => setText(`assetPositionLabel${index + 1}`, label));
 
@@ -1310,7 +1435,9 @@ function renderHero() {
 
   setText(
     "assetCurrentProject",
-    unknownValue(asset.currentProjectName)
+    roadVehicle
+      ? "Not applicable"
+      : unknownValue(projectAssignment?.projectName || asset.currentProjectName)
   );
 
 
@@ -1319,24 +1446,32 @@ function renderHero() {
     deriveCurrentUse()
   );
 
+  setText(
+    "assetHeroAssignment",
+    isRoadVehicle()
+      ? unknownValue(personAssignment?.personName || asset.currentAssignedPersonName)
+      : unknownValue(projectAssignment?.projectName || asset.currentProjectName)
+  );
+
 
   const latestInspection =
     getLatestInspection();
 
 
   setText(
-    "assetHeroInspection",
-    latestInspection
-      ? formatDate(
-          latestInspection.inspectionDate ||
-          latestInspection.completedAt ||
-          latestInspection.createdAt
-        )
-      : (
-          asset.lastInspectionLabel ||
-          "Not recorded"
-        )
-  );
+  "assetHeroInspection",
+  latestInspection
+    ? formatDate(
+        latestInspection.inspectionDate ||
+        latestInspection.completedAt ||
+        latestInspection.createdAt
+      )
+    : (
+        asset.lastInspectionLabel ||
+        "Not recorded"
+      )
+);
+
 
 
   const nextMovement =
@@ -2048,6 +2183,10 @@ function renderOverviewView() {
 
   `;
 
+  root.querySelectorAll("[data-deployment-action]").forEach(button => {
+    button.addEventListener("click", () => openDeploymentEditor(button.dataset.deploymentAction));
+  });
+
 }
 
 
@@ -2062,17 +2201,39 @@ function renderClassAwareOverviewControls(
   const inspectionDate = latestInspection
     ? formatDate(latestInspection.inspectionDate || latestInspection.completedAt || latestInspection.createdAt)
     : unknownValue(asset.lastInspectionLabel);
+  const personAssignment = currentPersonAssignment();
+  const projectAssignment = currentProjectAssignment();
 
   if (isRoadVehicle()) {
+    const canManageAssignment = canEditAsset(currentProfile, organisationId, asset);
+    const assignmentAction = personAssignment ? "person-change" : "person-assign";
+    const assignmentLabel = personAssignment ? "Change Person" : "Assign Person";
+    const assignmentCard = `
+      <div class="asset-overview-assignment">
+        ${controlCard("Assigned To", personAssignment?.personName || asset.currentAssignedPersonName || "Not allocated", "Primary person responsibility")}
+        ${canManageAssignment ? `<button type="button" class="asset-action-button asset-action-button--primary" data-deployment-action="${assignmentAction}">${assignmentLabel}</button>` : ""}
+      </div>
+    `;
+
     return [
       controlCard("Availability", deriveCurrentUse(), "Current vehicle state", isOffRoad() ? "alert" : ""),
       controlCard("MOT", asset.motExpiry ? formatDate(asset.motExpiry) : "Not recorded", asset.motExpiry ? "Expiry date" : "MOT evidence required", asset.motExpiry ? "" : "watch"),
       controlCard("Service", relatedReadStatus.plantMaintenance === false ? "Unknown" : asset.nextServiceDate ? formatDate(asset.nextServiceDate) : "Not recorded", relatedReadStatus.plantMaintenance === false ? "Maintenance read failed" : asset.lastServiceDate ? `Last ${formatDate(asset.lastServiceDate)}` : "Service baseline incomplete", relatedReadStatus.plantMaintenance === false || !asset.nextServiceDate ? "watch" : ""),
       controlCard("Inspection", inspectionDate, latestInspection ? formatText(latestInspection.result || "Recorded") : "No inspection history", latestInspection ? "" : "watch"),
       controlCard("Defects", relatedReadStatus.plantDefects === false ? "Unknown" : String(openDefects.length), relatedReadStatus.plantDefects === false ? "Defect read failed" : openDefects.length ? "Unresolved vehicle faults" : "No open defects recorded", relatedReadStatus.plantDefects === false ? "watch" : openDefects.length ? "alert" : ""),
-      controlCard("Assignment", asset.currentProjectName || "Not allocated", asset.assignedPersonName || "No person recorded")
+      assignmentCard
     ].join("");
   }
+
+  const canManageAssignment = canEditAsset(currentProfile, organisationId, asset);
+  const assignmentAction = projectAssignment ? "project-change" : "project-assign";
+  const assignmentLabel = projectAssignment ? "Change Project" : "Assign Project";
+  const assignmentCard = `
+    <div class="asset-overview-assignment">
+      ${controlCard("Current Project", projectAssignment?.projectName || asset.currentProjectName || "Not allocated", "Primary project responsibility")}
+      ${canManageAssignment ? `<button type="button" class="asset-action-button asset-action-button--primary" data-deployment-action="${assignmentAction}">${assignmentLabel}</button>` : ""}
+    </div>
+  `;
 
   return [
     controlCard("Availability", deriveCurrentUse(), asset.currentProjectName || "Current asset position", isOffRoad() ? "alert" : ""),
@@ -2080,7 +2241,7 @@ function renderClassAwareOverviewControls(
     controlCard("Maintenance", relatedReadStatus.plantMaintenance === false ? "Unknown" : nextMaintenance ? formatDate(nextMaintenance.dueDate || nextMaintenance.plannedDate) : "Not recorded", relatedReadStatus.plantMaintenance === false ? "Maintenance read failed" : nextMaintenance ? "Next planned service" : "Maintenance baseline incomplete", relatedReadStatus.plantMaintenance === false || !nextMaintenance ? "watch" : ""),
     controlCard("Inspection", inspectionDate, latestInspection ? formatText(latestInspection.result || "Recorded") : "No inspection history", latestInspection ? "" : "watch"),
     controlCard("Defects", relatedReadStatus.plantDefects === false ? "Unknown" : String(openDefects.length), relatedReadStatus.plantDefects === false ? "Defect read failed" : openDefects.length ? "Unresolved Plant faults" : "No open defects recorded", relatedReadStatus.plantDefects === false ? "watch" : openDefects.length ? "alert" : ""),
-    controlCard("Deployment", asset.currentProjectName || "Not allocated", nextMovement ? `Next movement ${formatDate(nextMovement.plannedDate)}` : "No movement planned")
+    assignmentCard
   ].join("");
 }
 
@@ -2167,8 +2328,14 @@ function renderOverviewFinancialPanel() {
 
           ${financialCard(
             "Maintenance Spend",
-            calculateMaintenanceSpend(),
-            "Recorded maintenance cost"
+            calculateActualMaintenanceSpend(),
+            "Completed maintenance only"
+          )}
+
+          ${financialCard(
+            "Committed Maintenance",
+            calculateCommittedMaintenanceCost(),
+            "Scheduled and planned maintenance"
           )}
 
           ${financialCard(
@@ -2379,8 +2546,8 @@ function renderFinancialView() {
 
 
   renderOwnedFinancialView(
-    root
-  );
+      root
+    );
 
 }
 
@@ -2583,10 +2750,15 @@ function renderOwnedFinancialView(
 
       ${summaryCard(
         "Maintenance Spend",
-        calculateMaintenanceSpend(),
-        "Recorded maintenance costs"
+        calculateActualMaintenanceSpend(),
+        "Completed maintenance costs"
       )}
 
+      ${summaryCard(
+        "Committed Maintenance",
+        calculateCommittedMaintenanceCost(),
+        "Scheduled and planned maintenance"
+      )}
 
       ${summaryCard(
         "Transport Spend",
@@ -2604,25 +2776,23 @@ function renderOwnedFinancialView(
 
       ${summaryCard(
         "Open Defects",
-        String(
-          getOpenDefects().length
-        ),
-        "Unresolved defect records",
-        getOpenDefects().length
-          ? "alert"
-          : ""
+        relatedReadStatus.plantDefects === false ? "Unknown" : String(getOpenDefects().length),
+        relatedReadStatus.plantDefects === false ? "Defect read failed" : "Unresolved defect records",
+        relatedReadStatus.plantDefects === false ? "watch" : getOpenDefects().length ? "alert" : ""
       )}
 
 
       ${summaryCard(
         "Next Service",
-        getNextMaintenance()
+        relatedReadStatus.plantMaintenance === false
+          ? "Unknown"
+          : getNextMaintenance()
           ? formatDate(
               getNextMaintenance().dueDate ||
               getNextMaintenance().plannedDate
             )
           : "Not planned",
-        "Future maintenance"
+        relatedReadStatus.plantMaintenance === false ? "Maintenance read failed" : "Future maintenance"
       )}
 
 
@@ -2649,14 +2819,15 @@ function renderDeploymentView() {
   const root = getElement("assetWorkspace");
   if (!root) return;
   const timeline = buildDeploymentTimeline();
-  const currentAssignment = getCurrentAssignment(assignments);
+  const currentPerson = currentPersonAssignment();
+  const currentProject = currentProjectAssignment();
   const canManageDeployment = canEditAsset(currentProfile, organisationId, asset);
   root.innerHTML = `
     ${sectionHeading("Operational Location", "Location & Deployment", isRoadVehicle() ? "Where the vehicle is, where it has been and what is planned next." : "Where the plant is, where it has been and what is planned next.")}
-    ${renderDeploymentActionBar(canManageDeployment, currentAssignment)}
+    ${renderDeploymentActionBar(canManageDeployment, currentPerson, currentProject)}
     <div class="asset-summary-grid">
-      ${summaryCard("Current Position", asset.currentProjectName || "Not allocated", asset.currentLocationLabel || "Location not confirmed")}
-      ${summaryCard("Assignment Status", currentAssignment ? formatText(currentAssignment.status) : "Unassigned", currentAssignment ? `Since ${formatDate(currentAssignment.assignedFrom)}` : "No active assignment")}
+      ${summaryCard(isRoadVehicle() ? "Assigned Person" : "Current Project", isRoadVehicle() ? currentPerson?.personName || asset.currentAssignedPersonName || "Not allocated" : currentProject?.projectName || asset.currentProjectName || "Not allocated", isRoadVehicle() ? (currentPerson ? `Since ${formatDate(currentPerson.assignedFrom)}` : "No active person assignment") : (currentProject ? `Since ${formatDate(currentProject.assignedFrom)}` : "No active project assignment"))}
+      ${summaryCard(isRoadVehicle() ? "Current Project" : "Current Location", isRoadVehicle() ? "Not applicable" : asset.currentLocationLabel || "Not recorded", isRoadVehicle() ? "Road vehicle responsibility is person-based." : asset.currentLocationConfirmedByName || asset.currentLocationConfirmedByUid || "Confirmation required")}
       ${summaryCard("Location Confirmed", asset.currentLocationConfirmedAt ? formatDate(asset.currentLocationConfirmedAt) : "Not recorded", asset.currentLocationConfirmedByName || asset.currentLocationConfirmedByUid || "Confirmation required")}
       ${summaryCard("Operational State", deriveCurrentUse(), getPlantStatusLabel(asset.status || "AVAILABLE"))}
     </div>
@@ -3053,11 +3224,11 @@ function renderMaintenanceView() {
 
 
       ${summaryCard(
-        "Recorded Spend",
+        "Actual Spend",
         canViewPlantCosts
-          ? calculateMaintenanceSpend()
+          ? calculateActualMaintenanceSpend()
           : "Restricted",
-        "Maintenance costs recorded"
+        "Completed maintenance costs"
       )}
 
 
@@ -3118,9 +3289,7 @@ function renderMaintenanceView() {
 
                       <span>
                         ${escapeHtml(
-                          record.description ||
-                          record.supplierName ||
-                          "Maintenance record"
+                          renderMaintenanceRecordDetails(record)
                         )}
                       </span>
 
@@ -3175,6 +3344,30 @@ function renderMaintenanceBaseline() {
       ];
 
   return fields.map(([label, value]) => summaryCard(label, unknownValue(value), "Asset master baseline")).join("");
+}
+
+
+function renderMaintenanceRecordDetails(
+  record
+) {
+
+  const fields = [];
+  const type = cleanString(record.maintenanceType).toUpperCase();
+  const date = record.serviceDate || record.testDate || record.plannedDate || record.completedDate;
+  if (date) fields.push(formatDate(date));
+  if (type) fields.push(type);
+  if (record.provider) fields.push(`Provider: ${record.provider}`);
+  if (record.mileage !== undefined && record.mileage !== null && cleanString(record.mileage)) fields.push(`Mileage: ${record.mileage}`);
+  if (record.estimatedCost !== undefined && record.estimatedCost !== null && cleanString(record.estimatedCost)) fields.push(`Estimated: ${formatCurrency(record.estimatedCost)}`);
+  if (record.cost !== undefined && record.cost !== null && cleanString(record.cost)) fields.push(`Cost: ${formatCurrency(record.cost)}`);
+  if (record.workCompleted) fields.push(`Work: ${record.workCompleted}`);
+  if (record.result) fields.push(`Result: ${formatText(record.result)}`);
+  if (record.newExpiryDate) fields.push(`Expiry: ${formatDate(record.newExpiryDate)}`);
+  if (record.expectedReturnDate) fields.push(`Return: ${formatDate(record.expectedReturnDate)}`);
+  if (record.nextServiceDate) fields.push(`Next service: ${formatDate(record.nextServiceDate)}`);
+  if (record.nextServiceMileage !== undefined && record.nextServiceMileage !== null && cleanString(record.nextServiceMileage)) fields.push(`Next mileage: ${record.nextServiceMileage}`);
+  if (record.notes) fields.push(`Notes: ${record.notes}`);
+  return fields.join(" · ") || "Maintenance record";
 }
 
 
@@ -3561,20 +3754,29 @@ function renderAssetActionBar(
   secondary = ""
 ) {
 
-  return `<div class="asset-action-bar"><div class="asset-action-bar__context"><strong>${escapeHtml(context)}</strong><span>${escapeHtml(explanation)}</span></div><div class="asset-action-bar__actions"><button type="button" class="asset-action-button asset-action-button--primary" data-asset-shortcut="${escapeHtml(`${path}?assetId=${encodeURIComponent(asset.id)}&assetReference=${encodeURIComponent(asset.plantReference || asset.plantId || "")}`)}">${escapeHtml(label)}</button>${secondary}</div></div>`;
+  return `<div class="asset-action-bar"><div class="asset-action-bar__context"><strong>${escapeHtml(context)}</strong><span>${escapeHtml(explanation)}</span></div><div class="asset-action-bar__actions"><button type="button" class="asset-action-button asset-action-button--primary" data-asset-shortcut="${escapeHtml(`${path}?assetId=${encodeURIComponent(asset.id)}&assetReference=${encodeURIComponent(asset.plantReference || asset.plantId || "")}&assetClass=${encodeURIComponent(resolvedAssetClass(asset))}`)}">${escapeHtml(label)}</button>${secondary}</div></div>`;
 }
 
 
 function renderDeploymentActionBar(
   canManageDeployment,
-  currentAssignment
+  currentPerson,
+  currentProject
 ) {
 
   if (!canManageDeployment) {
     return `<div class="asset-action-bar"><div class="asset-action-bar__context"><strong>Deployment is read-only</strong><span>Plant-management permission is required to change this asset's position.</span></div></div>`;
   }
 
-  return `<div class="asset-action-bar"><div class="asset-action-bar__context"><strong>${isRoadVehicle() ? "Vehicle deployment" : "Plant deployment"}</strong><span>Assignment history and location confirmations are retained.</span></div><div class="asset-action-bar__actions"><button type="button" class="asset-action-button asset-action-button--primary" data-deployment-action="assign">Update Deployment</button><button type="button" class="asset-action-button" data-deployment-action="location">Confirm Location</button>${currentAssignment ? `<button type="button" class="asset-action-button" data-deployment-action="release">Release</button>` : ""}</div></div>`;
+  const personActions = isRoadVehicle()
+    ? `${currentPerson ? `<button type="button" class="asset-action-button" data-deployment-action="person-change">Change Person</button><button type="button" class="asset-action-button" data-deployment-action="person-release">Release Person</button>` : `<button type="button" class="asset-action-button" data-deployment-action="person-assign">Assign Person</button>`}`
+    : "";
+  const projectActions = isRoadVehicle()
+    ? ""
+    : currentProject
+      ? `<button type="button" class="asset-action-button" data-deployment-action="project-change">Change Project</button><button type="button" class="asset-action-button" data-deployment-action="project-release">Release Project</button>`
+      : `<button type="button" class="asset-action-button asset-action-button--primary" data-deployment-action="project-assign">Assign Project</button>`;
+  return `<div class="asset-action-bar"><div class="asset-action-bar__context"><strong>${isRoadVehicle() ? "Vehicle deployment" : "Plant deployment"}</strong><span>Assignment history and location confirmations are retained.</span></div><div class="asset-action-bar__actions">${personActions}${projectActions}<button type="button" class="asset-action-button" data-deployment-action="location">Confirm Location</button></div></div>`;
 }
 
 
@@ -3765,6 +3967,9 @@ function emptyState(
 
 function renderIdentityDetails() {
 
+  const personAssignment = currentPersonAssignment();
+  const projectAssignment = currentProjectAssignment();
+
   const fields = isRoadVehicle()
     ? [
         ["Registration", asset.registrationNumber],
@@ -3780,9 +3985,8 @@ function renderIdentityDetails() {
         ["Last Service Date", formatDate(asset.lastServiceDate)],
         ["Last Service Mileage", asset.lastServiceMileage],
         ["Next Service / Review", formatDate(asset.nextServiceDate)],
-        ["Current Project", asset.currentProjectName],
         ["Current Location", asset.currentLocationLabel],
-        ["Assigned Person", asset.assignedPersonName],
+        ["Assigned Person", personAssignment?.personName || asset.currentAssignedPersonName],
         ["Status", getPlantStatusLabel(asset.status || "AVAILABLE")]
       ]
     : [
@@ -4214,6 +4418,10 @@ function buildDeploymentTimeline() {
     (
       record
     ) => {
+      const type = cleanString(record.assignmentType).toUpperCase();
+      const assignmentLabel = type === "PERSON"
+        ? record.personName || record.personId || "Person assignment"
+        : record.projectName || record.projectId || "Project assignment";
 
       records.push({
 
@@ -4225,13 +4433,14 @@ function buildDeploymentTimeline() {
           "ASSIGNMENT",
 
         title:
-          record.projectName ||
-          "Plant Assignment",
+          assignmentLabel,
 
         description:
-          record.assignmentPurpose ||
-          record.currentPosition ||
-          `Assigned to project${record.createdByName || record.createdByUid ? ` by ${record.createdByName || record.createdByUid}` : ""}`,
+          type === "PERSON"
+            ? `Person assignment${record.createdByName || record.createdByUid ? ` by ${record.createdByName || record.createdByUid}` : ""}`
+            : record.assignmentPurpose ||
+              record.currentPosition ||
+              `Assigned to project${record.createdByName || record.createdByUid ? ` by ${record.createdByName || record.createdByUid}` : ""}`,
 
         status:
           record.status ||
@@ -4456,7 +4665,7 @@ function calculateRepairSpend() {
 }
 
 
-function calculateMaintenanceSpend() {
+function calculateActualMaintenanceSpend() {
 
   if (relatedReadStatus.plantMaintenance === false) return "Unknown";
 
@@ -4467,11 +4676,8 @@ function calculateMaintenanceSpend() {
         record
       ) => {
 
-        const number =
-          Number(
-            record.cost ||
-            record.totalCost
-          );
+        if (cleanString(record.status).toUpperCase() !== "COMPLETED") return sum;
+        const number = Number(record.cost ?? record.totalCost ?? record.actualCost);
 
 
         return sum +
@@ -4492,6 +4698,47 @@ function calculateMaintenanceSpend() {
     total
   );
 
+}
+
+
+function calculateCommittedMaintenanceCost() {
+
+  if (relatedReadStatus.plantMaintenance === false) return "Unknown";
+
+  const total =
+    maintenanceRecords.reduce(
+      (
+        sum,
+        record
+      ) => {
+
+        const status = cleanString(record.status).toUpperCase();
+        if (!["SCHEDULED", "PLANNED", "IN_PROGRESS"].includes(status)) return sum;
+        const number = Number(record.estimatedCost ?? record.cost ?? record.totalCost ?? 0);
+
+        return sum +
+          (
+            Number.isFinite(
+              number
+            )
+              ? number
+              : 0
+          );
+
+      },
+      0
+    );
+
+
+  return formatCurrency(
+    total
+  );
+
+}
+
+
+function calculateMaintenanceSpend() {
+  return calculateActualMaintenanceSpend();
 }
 
 
@@ -5258,15 +5505,26 @@ function assetEditFields() {
   return ASSET_EDIT_SCHEMAS[resolvedAssetClass(asset)] || ASSET_EDIT_SCHEMAS.PLANT_MACHINERY;
 }
 
+function assetManagementAuthority(profile, org, record) {
+  if (!org || !profile || cleanString(profile.status).toUpperCase() !== "ACTIVE") return false;
+  if (cleanString(profile.organisationId) !== cleanString(org)) return false;
+  if (record && cleanString(record.organisationId) !== cleanString(org)) return false;
+
+  const permissions = profile.permissions || {};
+  const roleCode = cleanString(profile.roleCode || profile.role).toUpperCase();
+  const accessLevel = Number(profile.accessLevel ?? 0);
+
+  return accessLevel >= 99 ||
+    roleCode === "PLATFORM_ADMIN" ||
+    roleCode === "PLANT_TRANSPORT_MANAGER" ||
+    roleCode === "ORGANISATION_MANAGER" ||
+    permissions.canManagePlant === true ||
+    permissions.canManageTransport === true ||
+    permissions.canManageOrganisation === true;
+}
+
 function canEditAsset(profile, org, record) {
-  const bands = { WORKER: 0, SUPERVISOR: 1, SITE_MANAGER: 2, PROJECT_MANAGER: 3,
-    SENIOR_PROJECT_MANAGER: 4, HEALTH_SAFETY: 4.5, SENIOR_HEALTH_SAFETY: 4.6,
-    CONTRACTS_MANAGER: 5, PLANT_TRANSPORT_MANAGER: 5.5, ORGANISATION_MANAGER: 6, PLATFORM_ADMIN: 99 };
-  if (!org || profile?.status !== "ACTIVE" || profile.organisationId !== org || record?.organisationId !== org ||
-      !profile.permissions || typeof profile.permissions !== "object" || Array.isArray(profile.permissions) ||
-      !Object.hasOwn(bands, profile.roleCode) || profile.accessLevel !== bands[profile.roleCode]) return false;
-  return ["PLATFORM_ADMIN", "PLANT_TRANSPORT_MANAGER"].includes(profile.roleCode) ||
-    profile.permissions?.canManagePlant === true || profile.permissions?.canManageOrganisation === true;
+  return assetManagementAuthority(profile, org, record);
 }
 
 function normaliseAssetEditValue(key, value) {
@@ -5419,12 +5677,10 @@ function activeAssignment(record) {
   return ["ACTIVE", "CONFIRMED", "PLANNED"].includes(status) && (!record.assignedUntil || String(record.assignedUntil).slice(0, 10) >= localCalendarDay());
 }
 function getCurrentAssignment(records) { return records.filter(activeAssignment).sort((a, b) => String(b.assignedFrom || "").localeCompare(String(a.assignedFrom || "")))[0] || null; }
-function deploymentActor(profile, record) { return canEditAsset(profile, organisationId, record); }
+function deploymentActor(profile, record) { return assetManagementAuthority(profile, organisationId, record); }
 
 function freshPlantManager(profile, record) {
-  return profile?.status === "ACTIVE" && profile.organisationId === organisationId && record?.organisationId === organisationId && (
-    Number(profile.accessLevel) >= 99 || profile.roleCode === "PLANT_TRANSPORT_MANAGER" || profile.roleCode === "ORGANISATION_MANAGER" || profile.permissions?.canManagePlant === true || profile.permissions?.canManageOrganisation === true
-  );
+  return assetManagementAuthority(profile, organisationId, record);
 }
 
 function workflowDialog() {
@@ -5548,15 +5804,59 @@ async function loadDeploymentProjects() {
   }
 }
 
+
+function projectDisplayName(
+  project
+) {
+
+  return cleanString(
+    project?.projectName
+    ||
+    project?.name
+    ||
+    project?.projectCode
+    ||
+    project?.id
+  );
+
+}
+
+
+function activeAssignmentConflict(
+  records,
+  assignmentType
+) {
+
+  return activeAssignmentsOfType(records, assignmentType).length > 1;
+
+}
+
+
+function assignmentTargetType(
+  mode
+) {
+
+  return mode.startsWith("person")
+    ? "PERSON"
+    : "PROJECT";
+
+}
+
 function openDeploymentEditor(mode) {
   if (!auth.currentUser || !deploymentActor(currentProfile, asset)) return;
   const dialog = getElement("deploymentDialog");
-  const current = getCurrentAssignment(assignments);
-  deploymentMode = mode === "assign" && current ? "reassign" : mode;
+  const assignmentType = assignmentTargetType(mode);
+  const current = assignmentType === "PERSON" ? currentPersonAssignment() : currentProjectAssignment();
+  const currentPerson = currentPersonAssignment();
+  const currentProject = currentProjectAssignment();
+  deploymentMode = mode;
   setText("deploymentIdentity", asset.plantReference || asset.plantId || asset.id);
-  setText("deploymentCurrentPosition", `${asset.currentProjectName || "No project"} · ${asset.currentLocationLabel || "Location not confirmed"}`);
+  const deploymentPosition = isRoadVehicle()
+    ? `${currentPerson?.personName || asset.currentAssignedPersonName || "No person"} · ${asset.currentLocationLabel || "Location not confirmed"}`
+    : `${currentProject?.projectName || asset.currentProjectName || "No project"} · ${currentPerson?.personName || asset.currentAssignedPersonName || "No person"} · ${asset.currentLocationLabel || "Location not confirmed"}`;
+  setText("deploymentCurrentPosition", deploymentPosition);
   getElement("deploymentError").hidden = true;
-  const titles = { location: ["Confirm / Update Location", "Record the asset's current location. This does not create a transport movement."], assign: ["Assign to Project", "Create a project deployment record and update the current project."], reassign: ["Reassign Asset", "Release the active assignment and create a new project deployment record."], release: ["Release Asset", "Close the active assignment and clear the current project."] };
+  const titles = { location: ["Confirm / Update Location", "Record the asset's current location. This does not create a transport movement."], "person-assign": ["Assign Person", "Create a person responsibility record for this vehicle."], "person-change": ["Change Person", "Release the current person responsibility and create a new one."], "person-release": ["Release Person", "Close the current person responsibility."], "project-assign": ["Assign Project", "Create a project deployment record and update the project cache."], "project-change": ["Change Project", "Release the current project deployment and create a new one."], "project-release": ["Release Project", "Close the current project deployment and clear the project cache."] };
   setText("deploymentTitle", titles[deploymentMode][0]); setText("deploymentDescription", titles[deploymentMode][1]);
   setText("deploymentHelp", deploymentMode === "location" ? "A location confirmation is retained in the asset history." : "Assignment history is retained; this action does not create a movement.");
   if (deploymentMode === "location") {
@@ -5564,18 +5864,36 @@ function openDeploymentEditor(mode) {
     getElement("deploymentSave").textContent = "Confirm location";
     dialog.showModal(); return;
   }
-  if (deploymentMode === "release") {
+  if (deploymentMode.endsWith("release")) {
     if (!current) return;
-    getElement("deploymentFields").innerHTML = `<section><h3>Release from project</h3><p class="asset-deployment-actions__restricted">This will close the active assignment to ${escapeHtml(current.projectName || current.projectId)} today. Physical collection or relocation belongs in Movements.</p></section>`;
-    getElement("deploymentSave").textContent = "Release asset";
+    const currentLabel = assignmentType === "PERSON" ? current.personName : current.projectName;
+    getElement("deploymentFields").innerHTML = `<section><h3>Release ${assignmentType === "PERSON" ? "person" : "project"}</h3><p class="asset-deployment-actions__restricted">This will close the active assignment to ${escapeHtml(currentLabel || "the current assignment")} today. History is retained.</p></section>`;
+    getElement("deploymentSave").textContent = `Release ${assignmentType === "PERSON" ? "person" : "project"}`;
     dialog.showModal(); return;
   }
-  getElement("deploymentFields").innerHTML = `<section><h3>Project</h3><div class="asset-edit-grid"><label class="asset-edit-wide">Project *<select id="deploymentProject" required><option value="">Loading projects…</option></select><small>Only projects in this organisation can be selected.</small></label></div></section>`;
-  getElement("deploymentSave").textContent = deploymentMode === "reassign" ? "Reassign asset" : "Assign asset";
+  if (assignmentType === "PERSON") {
+    getElement("deploymentFields").innerHTML = `<section><h3>Person</h3><div class="asset-edit-grid"><label class="asset-edit-wide">Person *<select id="deploymentPerson" required><option value="">Loading people…</option></select><small>Only active people in this organisation can be selected.</small></label><label>Assigned from *<input id="deploymentAssignedFrom" type="date" value="${escapeHtml(localCalendarDay())}" required></label><label>Assigned until <input id="deploymentAssignedUntil" type="date"></label><label class="asset-edit-wide">Current location *<input id="deploymentLocation" maxlength="160" value="${escapeHtml(asset.currentLocationLabel || "")}" required></label><label class="asset-edit-wide">Notes <textarea id="deploymentNotes" rows="3" maxlength="500" placeholder="Operational notes or handover remarks"></textarea></label></div></section>`;
+    getElement("deploymentSave").textContent = deploymentMode === "person-change" ? "Change person" : "Assign person";
+    dialog.showModal();
+    loadPeople().then(() => {
+      const select = getElement("deploymentPerson");
+      if (!select || !dialog.open) return;
+      select.innerHTML = `<option value="">Select person</option>${people.map(person => `<option value="${escapeHtml(person.id)}">${escapeHtml([personDisplayName(person), person.primaryRole || person.role || person.jobTitle].filter(Boolean).join(" · "))}</option>`).join("")}`;
+      if (currentPerson && deploymentMode === "person-change") {
+        select.value = currentPerson.personId || currentPerson.personName || "";
+      }
+    });
+    return;
+  }
+  getElement("deploymentFields").innerHTML = `<section><h3>Project</h3><div class="asset-edit-grid"><label class="asset-edit-wide">Project *<select id="deploymentProject" required><option value="">Loading projects…</option></select><small>Only active projects in this organisation can be selected.</small></label><label>Assigned from *<input id="deploymentAssignedFrom" type="date" value="${escapeHtml(localCalendarDay())}" required></label><label>Assigned until <input id="deploymentAssignedUntil" type="date"></label><label class="asset-edit-wide">Current location *<input id="deploymentLocation" maxlength="160" value="${escapeHtml(asset.currentLocationLabel || "")}" required></label><label class="asset-edit-wide">Notes <textarea id="deploymentNotes" rows="3" maxlength="500" placeholder="Operational notes or handover remarks"></textarea></label></div></section>`;
+  getElement("deploymentSave").textContent = deploymentMode === "project-change" ? "Change project" : "Assign project";
   dialog.showModal();
   loadDeploymentProjects().then(projects => {
     const select = getElement("deploymentProject"); if (!select || !dialog.open) return;
-    select.innerHTML = `<option value="">Select project</option>${projects.map(project => `<option value="${escapeHtml(project.id)}">${escapeHtml(project.name || project.projectName || project.projectCode || project.id)}</option>`).join("")}`;
+    select.innerHTML = `<option value="">Select project</option>${projects.map(project => `<option value="${escapeHtml(project.id)}">${escapeHtml(projectDisplayName(project) || project.projectCode || project.name || project.id)}</option>`).join("")}`;
+    if (currentProject && deploymentMode === "project-change") {
+      select.value = currentProject.projectId || currentProject.projectName || "";
+    }
   }).catch(error => { const errorElement = getElement("deploymentError"); errorElement.textContent = error.message; errorElement.hidden = false; getElement("deploymentSave").disabled = true; });
 }
 
@@ -5588,42 +5906,128 @@ function deploymentLocationUpdate(current, location, uid, profile, eventDate, ti
 }
 
 async function saveDeployment(event) {
-  event.preventDefault(); if (deploymentSaving || !deploymentMode) return;
-  const errorElement = getElement("deploymentError"); errorElement.hidden = true; deploymentSaving = true;
-  getElement("deploymentFields").disabled = true; getElement("deploymentSave").disabled = true;
+  event.preventDefault();
+  if (deploymentSaving || !deploymentMode) return;
+  const errorElement = getElement("deploymentError");
+  errorElement.hidden = true;
+  deploymentSaving = true;
+  getElement("deploymentFields").disabled = true;
+  getElement("deploymentSave").disabled = true;
   try {
-    const uid = auth.currentUser?.uid; if (!uid) throw new Error("Your session has ended. Sign in again before saving.");
-    const mode = deploymentMode, eventDate = localCalendarDay();
-    const location = mode === "location" ? cleanString(getElement("deploymentLocation")?.value) : null;
-    const selectedProjectId = ["assign", "reassign"].includes(mode) ? cleanString(getElement("deploymentProject")?.value) : null;
+    const uid = auth.currentUser?.uid;
+    if (!uid) throw new Error("Your session has ended. Sign in again before saving.");
+    const mode = deploymentMode;
+    const eventDate = localCalendarDay();
+    const assignedFrom = cleanString(getElement("deploymentAssignedFrom")?.value) || eventDate;
+    const assignedUntil = cleanString(getElement("deploymentAssignedUntil")?.value) || null;
+    const location = mode === "location" ? cleanString(getElement("deploymentLocation")?.value) : cleanString(getElement("deploymentLocation")?.value) || asset.currentLocationLabel || "";
+    const notes = cleanString(getElement("deploymentNotes")?.value) || null;
+    const assignmentType = assignmentTargetType(mode);
+    const selectedPersonId = mode.includes("person") && !mode.endsWith("release") ? cleanString(getElement("deploymentPerson")?.value) : null;
+    const selectedProjectId = mode.includes("project") && !mode.endsWith("release") ? cleanString(getElement("deploymentProject")?.value) : null;
     if (mode === "location" && !location) throw new Error("Enter the current location.");
-    if (["assign", "reassign"].includes(mode) && !selectedProjectId) throw new Error("Select a project.");
+    if (mode.includes("person") && !mode.endsWith("release") && !selectedPersonId) throw new Error("Select a person.");
+    if (mode.includes("project") && !mode.endsWith("release") && !selectedProjectId) throw new Error("Select a project.");
+    if (mode !== "location" && !assignedFrom) throw new Error("Select the assignment start date.");
+    const preflightAssignments = mode === "location"
+      ? []
+      : await loadAssetLinkedCollection("plantAssignments");
+    const preflightRelevant = activeAssignmentsOfType(preflightAssignments, assignmentType);
+    if (preflightRelevant.length > 1) throw new Error(`Multiple active ${assignmentType === "PERSON" ? "person" : "project"} assignments exist. Resolve the data-integrity issue before creating another.`);
+    const preflightCurrentId = preflightRelevant[0]?.id || null;
     const result = await runTransaction(db, async transaction => {
       const profileSnapshot = await transaction.get(doc(db, "users", uid));
-      const assetReference = doc(db, "plantAssets", asset.id); const assetSnapshot = await transaction.get(assetReference);
+      const assetReference = doc(db, "plantAssets", asset.id);
+      const assetSnapshot = await transaction.get(assetReference);
       if (!profileSnapshot.exists() || !assetSnapshot.exists()) throw new Error("Your profile or this asset is no longer available.");
-      const latest = { ...assetSnapshot.data(), id: assetSnapshot.id }, profile = profileSnapshot.data();
-      if (auth.currentUser?.uid !== uid || !deploymentActor(profile, latest)) throw new Error("You no longer have permission to change this asset.");
-      const assignmentSnapshot = await transaction.get(query(collection(db, "plantAssignments"), where("organisationId", "==", organisationId)));
-      const related = assignmentSnapshot.docs.map(item => ({ ...item.data(), id: item.id })).filter(record => recordBelongsToAsset({ ...record, plantId: record.plantId }));
-      const current = getCurrentAssignment(related); if (related.filter(activeAssignment).length > 1) throw new Error("Multiple active assignments need review before this asset can be changed.");
-      const timestamp = serverTimestamp(); let assetUpdate = {};
-      if (mode === "location") assetUpdate = deploymentLocationUpdate(latest, location, uid, profile, eventDate, timestamp);
-      else if (mode === "release") { if (!current) throw new Error("There is no active assignment to release."); transaction.update(doc(db, "plantAssignments", current.id), { status: "RELEASED", assignedUntil: eventDate, releasedAt: timestamp, releasedByUid: uid, releasedByName: cleanString(profile.displayName) || null, updatedByUid: uid, updatedByName: cleanString(profile.displayName) || null, updatedAt: timestamp }); assetUpdate = { currentProjectId: null, currentProjectName: null, updatedByUid: uid, updatedByName: cleanString(profile.displayName) || null, updatedAt: timestamp }; }
-      else {
-        const projectSnapshot = await transaction.get(doc(db, "projects", selectedProjectId)); if (!projectSnapshot.exists()) throw new Error("The selected project is no longer available.");
-        const project = projectSnapshot.data(); if (project.organisationId !== organisationId || ["CLOSED", "CANCELLED", "ARCHIVED"].includes(cleanString(project.status).toUpperCase())) throw new Error("The selected project cannot receive this asset.");
-        if (current && mode === "assign") throw new Error("This asset already has an active assignment. Use Reassign instead.");
-        if (current) transaction.update(doc(db, "plantAssignments", current.id), { status: "RELEASED", assignedUntil: eventDate, releasedAt: timestamp, releasedByUid: uid, releasedByName: cleanString(profile.displayName) || null, updatedByUid: uid, updatedByName: cleanString(profile.displayName) || null, updatedAt: timestamp });
-        const assignmentReference = doc(collection(db, "plantAssignments")); transaction.set(assignmentReference, { organisationId, plantId: latest.plantId, plantReference: latest.plantReference || latest.plantId, assetId: latest.id, projectId: selectedProjectId, projectName: cleanString(project.name || project.projectName || project.projectCode || selectedProjectId), status: "ACTIVE", assignedFrom: eventDate, createdByUid: uid, createdByName: cleanString(profile.displayName) || null, createdAt: timestamp, updatedByUid: uid, updatedByName: cleanString(profile.displayName) || null, updatedAt: timestamp });
-        assetUpdate = { currentProjectId: selectedProjectId, currentProjectName: cleanString(project.name || project.projectName || project.projectCode || selectedProjectId), updatedByUid: uid, updatedByName: cleanString(profile.displayName) || null, updatedAt: timestamp };
+      const profile = { uid, ...profileSnapshot.data() };
+      const latest = { id: assetSnapshot.id, ...assetSnapshot.data() };
+      if (auth.currentUser?.uid !== uid || !freshPlantManager(profile, latest)) throw new Error("You no longer have permission to change this asset.");
+      if (mode === "location") {
+        const assetUpdate = deploymentLocationUpdate(latest, location, uid, profile, eventDate, serverTimestamp());
+        transaction.update(assetReference, assetUpdate);
+        return { assetUpdate };
       }
-      transaction.update(assetReference, assetUpdate); return { latest, assetUpdate };
+      let current = null;
+      if (preflightCurrentId) {
+        const currentReference = doc(db, "plantAssignments", preflightCurrentId);
+        const currentSnapshot = await transaction.get(currentReference);
+        if (!currentSnapshot.exists()) throw new Error("The assignment changed while this action was opening. Refresh and try again.");
+        const exactCurrent = { id: currentSnapshot.id, ...currentSnapshot.data() };
+        if (exactCurrent.organisationId !== organisationId || !recordBelongsToAsset(exactCurrent) || cleanString(exactCurrent.assignmentType).toUpperCase() !== assignmentType || !activeAssignment(exactCurrent)) {
+          throw new Error("The assignment changed while this action was opening. Refresh and try again.");
+        }
+        current = exactCurrent;
+      }
+      const timestamp = serverTimestamp();
+      if (mode.endsWith("release")) {
+        if (!current) throw new Error("There is no active assignment to release.");
+        const releaseDate = eventDate;
+        transaction.update(doc(db, "plantAssignments", current.id), { status: "RELEASED", assignedUntil: releaseDate, releasedAt: timestamp, releasedByUid: uid, releasedByName: cleanString(profile.displayName) || null, updatedByUid: uid, updatedByName: cleanString(profile.displayName) || null, updatedAt: timestamp });
+        const assetUpdate = assignmentType === "PERSON" ? { currentAssignedPersonId: null, currentAssignedPersonName: null } : { currentProjectId: null, currentProjectName: null };
+        transaction.update(assetReference, { ...assetUpdate, currentLocationLabel: location || latest.currentLocationLabel || null, updatedByUid: uid, updatedByName: cleanString(profile.displayName) || null, updatedAt: timestamp });
+        return { assetUpdate: { ...assetUpdate, currentLocationLabel: location || latest.currentLocationLabel || null, updatedAt: timestamp } };
+      }
+      let selectedId = selectedPersonId;
+      let selectedName = "";
+      let extra = {};
+      if (assignmentType === "PERSON") {
+        const person = people.find(item => item.id === selectedPersonId);
+        if (!person || person.organisationId !== organisationId || ["LEFT", "INACTIVE", "DISABLED"].includes(cleanString(person.employmentStatus).toUpperCase()) || person.archived === true) throw new Error("The selected person is no longer active in this organisation.");
+        selectedName = personDisplayName(person);
+        extra = { personId: selectedId, personName: selectedName };
+      } else {
+        const projectSnapshot = await transaction.get(doc(db, "projects", selectedProjectId));
+        if (!projectSnapshot.exists()) throw new Error("The selected project is no longer available.");
+        const project = { id: projectSnapshot.id, ...projectSnapshot.data() };
+        if (project.organisationId !== organisationId || ["CLOSED", "CANCELLED", "ARCHIVED"].includes(cleanString(project.status).toUpperCase())) throw new Error("The selected project cannot receive this asset.");
+        selectedName = projectDisplayName(project);
+        extra = { projectId: selectedId, projectName: selectedName };
+      }
+      if (current) transaction.update(doc(db, "plantAssignments", current.id), { status: "RELEASED", assignedUntil: assignedFrom || eventDate, releasedAt: timestamp, releasedByUid: uid, releasedByName: cleanString(profile.displayName) || null, updatedByUid: uid, updatedByName: cleanString(profile.displayName) || null, updatedAt: timestamp });
+      const assignment = {
+        organisationId,
+        assetId: latest.id,
+        plantId: latest.plantId || latest.plantReference || latest.id,
+        plantReference: latest.plantReference || latest.plantId || latest.id,
+        assetClass: resolvedAssetClass(latest),
+        assignmentType,
+        status: "ACTIVE",
+        assignedFrom,
+        assignedUntil: assignedUntil || null,
+        location: location || latest.currentLocationLabel || null,
+        notes: notes || null,
+        createdByUid: uid,
+        createdByName: cleanString(profile.displayName) || null,
+        createdAt: timestamp,
+        updatedByUid: uid,
+        updatedByName: cleanString(profile.displayName) || null,
+        updatedAt: timestamp,
+        ...extra
+      };
+      transaction.set(doc(collection(db, "plantAssignments")), assignment);
+      const assetUpdate = assignmentType === "PERSON"
+        ? { currentAssignedPersonId: selectedId, currentAssignedPersonName: selectedName }
+        : { currentProjectId: selectedId, currentProjectName: selectedName };
+      const cacheLocation = { currentLocationLabel: location || latest.currentLocationLabel || null };
+      transaction.update(assetReference, { ...assetUpdate, ...cacheLocation, updatedByUid: uid, updatedByName: cleanString(profile.displayName) || null, updatedAt: timestamp });
+      return { assetUpdate: { ...assetUpdate, ...cacheLocation, updatedAt: timestamp } };
     });
-    asset = { ...result.latest, ...result.assetUpdate, ...(deploymentMode === "location" ? { currentLocationConfirmedAt: eventDate } : {}) };
-    await loadAssignments(); renderHero(); renderSelectedView(); closeDeploymentEditor(); setText("assetEditConfirmation", deploymentMode === "location" ? "Location confirmed" : deploymentMode === "release" ? "Asset released from project" : deploymentMode === "reassign" ? "Asset reassigned" : "Asset assigned to project"); getElement("assetEditConfirmation").hidden = false;
-  } catch (error) { errorElement.textContent = error.code?.includes("permission-denied") ? "Save denied. Your entries are retained." : error.message || "Unable to save. Your entries are retained."; errorElement.hidden = false; }
-  finally { deploymentSaving = false; getElement("deploymentFields").disabled = false; getElement("deploymentSave").disabled = false; }
+    asset = { ...asset, ...result.assetUpdate };
+    await loadAssignments();
+    renderHero();
+    renderSelectedView();
+    closeDeploymentEditor();
+    setText("assetEditConfirmation", mode === "location" ? "Location confirmed" : "Assignment updated");
+    getElement("assetEditConfirmation").hidden = false;
+  } catch (error) {
+    errorElement.textContent = error.code?.includes("permission-denied") ? "Save denied by Firestore rules. No changes were made." : error.message || "Unable to save. No changes were made.";
+    errorElement.hidden = false;
+  } finally {
+    deploymentSaving = false;
+    getElement("deploymentFields").disabled = false;
+    getElement("deploymentSave").disabled = false;
+  }
 }
 
 function bindDeploymentWorkflow() {
@@ -5728,6 +6132,22 @@ async function saveAssetDelete(event) {
   getElement("assetDeleteConfirm").disabled = true;
   try {
     const uid = auth.currentUser?.uid;
+    const linkedCollections = [
+      "plantMaintenance",
+      "plantDefects",
+      "plantInspections",
+      "plantMovements",
+      "plantAssignments",
+      "documents"
+    ];
+    const linkedHistory = (
+      await Promise.all(
+        linkedCollections.map(collectionName =>
+          loadAssetLinkedCollection(collectionName, collectionName === "documents")
+        )
+      )
+    ).flat();
+    if (linkedHistory.length) throw new Error("Linked operational history exists. Archive the asset instead of deleting it.");
     const result = await runTransaction(db, async transaction => {
       const profileSnapshot = await transaction.get(doc(db, "users", uid));
       const reference = doc(db, "plantAssets", asset.id);
@@ -5736,10 +6156,6 @@ async function saveAssetDelete(event) {
       const profile = { uid, ...profileSnapshot.data() };
       const latest = { id: assetSnapshot.id, ...assetSnapshot.data() };
       if (!isCanonicalPlatformAdmin(profile) || profile.organisationId !== organisationId || latest.organisationId !== organisationId) throw new Error("Platform Admin authority is required to delete this asset.");
-      const collectionNames = ["plantMaintenance", "plantDefects", "plantInspections", "plantMovements", "plantAssignments", "documents"];
-      const linkedSnapshots = [];
-      for (const collectionName of collectionNames) linkedSnapshots.push(await transaction.get(query(collection(db, collectionName), where("organisationId", "==", organisationId))));
-      if (linkedSnapshots.some(snapshot => snapshot.docs.some(item => recordBelongsToAsset({ id: item.id, ...item.data() })))) throw new Error("Linked operational history exists. Archive the asset instead of deleting it.");
       transaction.delete(reference);
       return true;
     });

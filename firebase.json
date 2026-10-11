@@ -5,10 +5,15 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
+  "functions": {
+    "source": "functions"
+  },
   "hosting": {
      "public": ".",
     "ignore": [
       "firebase.json",
+      "functions",
+      "functions/**",
       "**/.*",
       "**/node_modules/**"
     ]

@@ -7,7 +7,9 @@
   },
   "scripts": {
     "test": "firebase emulators:exec --only firestore --project demo-normex-security --config firebase.json \"node --test --test-concurrency=1 authority.test.mjs\"",
-    "check": "node --check prepare-rules.mjs && node --check authority.test.mjs",
+    "test:admin": "node prepare-rules.mjs && firebase emulators:exec --only firestore --project demo-normex-security --config firebase.json \"node --test --test-concurrency=1 admin-users.test.mjs\"",
+    "test:inductions": "node prepare-rules.mjs && firebase emulators:exec --only firestore --project demo-normex-inductions --config firebase.json \"node --test --test-concurrency=1 inductions.test.mjs\"",
+    "check": "node --check prepare-rules.mjs && node --check authority.test.mjs && node --check inductions.test.mjs",
     "pretest": "node -e \"const {spawnSync}=require('node:child_process');const r=spawnSync('java',['-version'],{encoding:'utf8'});const v=(r.stdout||'')+(r.stderr||'');const m=v.match(/version \\x22(\\d+)/);if(r.error||r.status!==0||!m||Number(m[1])<21){console.error('Firestore tests require JDK 21+ on PATH. Check java -version, then rerun npm test.');process.exit(1);}\" && node prepare-rules.mjs"
   },
   "devDependencies": {
